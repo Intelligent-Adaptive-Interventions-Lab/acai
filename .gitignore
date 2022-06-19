@@ -161,3 +161,6 @@ cython_debug/
 
 # Ngrok
 ngrok
+
+# Node
+node_modules/

@@ -1,0 +1,17 @@
+:root {
+    --body_background: #f0fefd;
+    --dialog_background: #f1f4fc;
+    --dialog_notice: #cdcdcd;
+    --bot_outline: #74e8d7;
+    --bot_background: #75e8d7;
+    --bot_dialog: #d9f8f3;
+    --user_outline: #59a4f7;
+    --user_background: #67abf3;
+    --user_dialog: #d5e8fc;
+    --user_clipboard: #ffffff;
+    --user_clipboard_back_hover: #2e93fe;
+    --user_id: #017aff;
+    --emoji: #7a90e6;
+    --emoji_hover: #bb95df;
+    --send_btn: #7a90e6;
+}
