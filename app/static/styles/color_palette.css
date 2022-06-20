@@ -16,4 +16,9 @@
     --emoji: #7a90e6;
     --emoji_hover: #bb95df;
     --send_btn: #7a90e6;
+
+    /* emoji picker */
+    --emoji_nav: #7a90e6;
+    --emoji_special_nav: #6e82cf;
+    --emoji_search_input: #f1f4fc;
 }

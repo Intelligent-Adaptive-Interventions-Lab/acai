@@ -126,14 +126,14 @@ Dialogues
                             <div class="input-group-text bg-transparent border-0 col-md-9 col-7 ps-1" >
                                 <button type="button" class="btn user__id bg-transparent response__box" disabled>
                                     <div class="justify-content-start">
-                                        1
+                                        {{ user }}
                                     </div>
                                 </button>
                             </div>
                         </div>
                     </div>
                     <div class="align-self-center col-md-7 col-11 ps-0 pe-3">
-                        <textarea type="text" class="form-control border-0" style="resize: none;" placeholder="Write a message..." rows="1"></textarea>
+                        <textarea type="textbox" class="send__box form-control border-0" style="resize: none;" placeholder="Write a message..." rows="1"></textarea>
                     </div>
                     <div class="col-md-2 col-1 p-0">
                         <div class="row">
@@ -156,3 +156,21 @@ Dialogues
     </div>
 </div>
 {% endblock contents %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+<script>
+
+    new EmojiPicker({
+        trigger: [
+            {
+                selector: '.emoji',
+                insertInto: ['.send__box'] // '.selector' can be used without array
+            }
+        ],
+        closeButton: true,
+        //specialButtons: green
+    });
+
+</script>
+{% endblock js_files %}
