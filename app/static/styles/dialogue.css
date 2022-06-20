@@ -18,6 +18,14 @@
     background-color: var(--dialog_notice);
 }
 
+.dialog__warning {
+    background-color: var(--dialog_warning);
+}
+
+.dialog__end {
+    background-color: var(--dialog_end);
+}
+
 .bot__avatar {
     background-color: var(--bot_background); 
 }
@@ -53,7 +61,7 @@ a.nav-link:hover, a.nav-link:visited {
 }
 
 .chat__box {
-    height: 72vh;
+    height: 70vh;
     background-color: var(--dialog_background);
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
     scrollbar-width: none; /* for Firefox */
@@ -128,5 +136,13 @@ textarea:focus {
 }
 
 .badge.dialog__notice {
+    max-width: fit-content;
+}
+
+.badge.dialog__end {
+    max-width: fit-content;
+}
+
+.badge.dialog__warning {
     max-width: fit-content;
 }

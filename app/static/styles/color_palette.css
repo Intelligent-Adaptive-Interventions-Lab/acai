@@ -1,7 +1,9 @@
 :root {
     --body_background: #f0fefd;
     --dialog_background: #f1f4fc;
-    --dialog_notice: #cdcdcd;
+    --dialog_notice: #999999;
+    --dialog_end: #dd6251;
+    --dialog_warning: #9685f0;
     --bot_outline: #74e8d7;
     --bot_background: #75e8d7;
     --bot_dialog: #d9f8f3;
