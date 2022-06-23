@@ -8,7 +8,7 @@ html {
   font-family: 'Catamaran', sans-serif;
 }
 
-.container {
+.container-fluid {
   background-color: var(--body_background);
 }
 

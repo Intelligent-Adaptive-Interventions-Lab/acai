@@ -141,6 +141,18 @@ def index():
         conversation=conversation
     )
 
+@app.route('/qualtrics')
+def qualtrics():
+    return render_template(
+        '/dialogue/qualtrics_card.html', 
+        user=USER, 
+        bot=CHATBOT, 
+        warning=WARNING, 
+        end=END,
+        notification=NOTI,
+        conversation=conversation
+    )
+
 
 @app.route('/chatsms', methods=['POST'])
 def chatsms():

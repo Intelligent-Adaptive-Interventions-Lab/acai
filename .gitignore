@@ -164,3 +164,6 @@ ngrok
 
 # Node
 node_modules/
+
+# Testing
+test/

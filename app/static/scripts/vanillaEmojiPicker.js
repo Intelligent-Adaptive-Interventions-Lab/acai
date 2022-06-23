@@ -8,7 +8,7 @@ const EmojiPicker = function(options) {
     let emojiList = undefined;
     let moseMove = false;
     const pickerWidth = this.options.closeButton ? 370 : 350;
-    const pickerHeight = 400;
+    const pickerHeight = 235;
 
     this.lib = function(el = undefined) {
 
@@ -7109,7 +7109,7 @@ const EmojiPicker = function(options) {
                         padding: 0;
                         overflow-y: scroll;
                         overflow-x: hidden;
-                        height: 323px;
+                        height: 150px;
                     }
 
                     .fg-emoji-picker-category-wrapper {
@@ -7196,7 +7196,20 @@ const EmojiPicker = function(options) {
 
 
         rePositioning: (picker) => {
-            picker.getBoundingClientRect().right > window.screen.availWidth ? picker.style.left = window.screen.availWidth - picker.offsetWidth + 'px' : false;
+            // if (picker.getBoundingClientRect().right > window.screen.availWidth) {
+            console.log(`right: ${picker.getBoundingClientRect().right}`)
+            console.log(`availWidth: ${window.screen.availWidth}`)
+            console.log(`screen width: ${window.screen.width}`)
+            console.log(`responsive width: ${Math.max(document.documentElement.clientWidth, window.innerWidth || 0)}`)
+            // }
+
+            const min_width = Math.min(
+                window.screen.availWidth,
+                window.screen.width,
+                Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+            )
+
+            picker.getBoundingClientRect().right > min_width ? picker.style.left = min_width - picker.offsetWidth + 'px' : false;
             
             if (window.innerHeight > pickerHeight) {
                 picker.getBoundingClientRect().bottom > window.innerHeight ? picker.style.top = window.innerHeight - picker.offsetHeight + 'px' : false;
@@ -7243,7 +7256,7 @@ const EmojiPicker = function(options) {
 
 
             const picker = `
-                <div class="fg-emoji-container" style="left: ${position.left - 150}px; top: ${position.top - 450}px;">
+                <div class="fg-emoji-container" style="left: ${position.left - pickerWidth/2}px; top: ${position.top - pickerHeight * 1.1}px;">
                     <nav class="fg-emoji-nav">
                         <ul>
                             ${categoriesHTML}
@@ -7254,7 +7267,7 @@ const EmojiPicker = function(options) {
                     </nav>
 
                     <div class="fg-emoji-picker-search">
-                        <input type="text" placeholder="Search" autofocus />
+                        <input type="text" placeholder="Search"/>
                         
                         <span class="fg-emoji-picker-search-icon">${icons.search}</sapn>
                     </div>
