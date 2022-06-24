@@ -7,7 +7,7 @@ const EmojiPicker = function(options) {
     let categoriesHTML = '';
     let emojiList = undefined;
     let moseMove = false;
-    const pickerWidth = this.options.closeButton ? 370 : 350;
+    const pickerWidth = this.options.closeButton ? 300 : 280;
     const pickerHeight = 235;
 
     this.lib = function(el = undefined) {
@@ -7197,10 +7197,10 @@ const EmojiPicker = function(options) {
 
         rePositioning: (picker) => {
             // if (picker.getBoundingClientRect().right > window.screen.availWidth) {
-            console.log(`right: ${picker.getBoundingClientRect().right}`)
-            console.log(`availWidth: ${window.screen.availWidth}`)
-            console.log(`screen width: ${window.screen.width}`)
-            console.log(`responsive width: ${Math.max(document.documentElement.clientWidth, window.innerWidth || 0)}`)
+            // console.log(`right: ${picker.getBoundingClientRect().right}`)
+            // console.log(`availWidth: ${window.screen.availWidth}`)
+            // console.log(`screen width: ${window.screen.width}`)
+            // console.log(`responsive width: ${Math.max(document.documentElement.clientWidth, window.innerWidth || 0)}`)
             // }
 
             const min_width = Math.min(
@@ -7233,9 +7233,16 @@ const EmojiPicker = function(options) {
                         const categoryObj = emojiObj[key];
 
                         
-                        categoriesHTML += `<li>
-                            <a title="${key}" href="#${key}">${categoryFlags[key]}</a>
-                        </li>`;
+                        if (['People', 'Nature', 'Activity'].includes(key)) {
+                            categoriesHTML += `<li>
+                                <a title="${key}" href="#${key}">${categoryFlags[key]}</a>
+                            </li>`;
+                        } else {
+                            categoriesHTML += `<li class="d-none d-sm-block">
+                                <a title="${key}" href="#${key}">${categoryFlags[key]}</a>
+                            </li>`;
+                        }
+
 
                         emojiesHTML += `<div class="fg-emoji-picker-category-wrapper" id="${key}">`;
                             emojiesHTML += `<p class="fg-emoji-picker-category-title">${key}</p>`;
@@ -7419,7 +7426,10 @@ const EmojiPicker = function(options) {
             if (moseMove) {
                 e.preventDefault();
                 const el = document.querySelector('.fg-emoji-container');
-                el.style.left = e.clientX - 320 + 'px';
+                const move_el = document.getElementById('fg-emoji-picker-move')
+                const rect = el.getBoundingClientRect();
+                const move_rect = move_el.getBoundingClientRect();
+                el.style.left = e.clientX + (rect.x - move_rect.x) * 1.1 + 'px';
                 el.style.top = e.clientY - 10 + 'px';
             }
         }
