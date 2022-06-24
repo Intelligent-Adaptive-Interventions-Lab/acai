@@ -171,4 +171,11 @@ Dialogues
     });
 
 </script>
+<script>
+
+    let lastChatBox = document.querySelectorAll('.convo__box'); 
+    lastChatBox = lastChatBox[lastChatBox.length-1]; 
+    lastChatBox.scrollIntoView();
+
+</script>
 {% endblock js_files %}

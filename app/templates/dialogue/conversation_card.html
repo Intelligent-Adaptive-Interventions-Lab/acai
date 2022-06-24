@@ -74,7 +74,7 @@ Qualtrics Dialogues
 
                             {% if slice_dict.switch is true %}
                                 {% if (convo.from == bot) and (convo.to == user) %}
-                                    <div class="d-flex align-items-start mb-2 me-4">
+                                    <div class="convo__box d-flex align-items-start mb-2 me-4">
                                         <div class="d-none d-sm-block bot__icon">
                                             <div class="img-fluid rounded-circle avatar bot__avatar"></div>
                                         </div>
@@ -87,7 +87,7 @@ Qualtrics Dialogues
                                     </div>
                                 {% else %}
                                     {% if (convo.from == user) and (convo.to == bot) %}
-                                        <div class="d-flex align-items-start text-end justify-content-end mb-2 ms-4">
+                                        <div class="convo__box d-flex align-items-start text-end justify-content-end mb-2 ms-4">
                                             <div class="pe-0 pe-sm-2">
 
                                                 {% for user_convo in conversation[slice_dict.start:loop.index] %}
@@ -171,6 +171,13 @@ Qualtrics Dialogues
         closeButton: true,
         //specialButtons: green
     });
+
+</script>
+<script>
+
+    let lastChatBox = document.querySelectorAll('.convo__box'); 
+    lastChatBox = lastChatBox[lastChatBox.length-1]; 
+    lastChatBox.scrollIntoView();
 
 </script>
 {% endblock js_files %}
