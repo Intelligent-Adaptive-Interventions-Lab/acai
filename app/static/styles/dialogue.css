@@ -1,3 +1,15 @@
+button:active,
+button:focus,
+button:hover,
+button:visited,
+button.active,
+button.focus,
+button.hover,
+button.visited { 
+    box-shadow: unset !important;
+    outline: 0 !important;
+}
+
 .bot__icon {
     min-width: 3.5rem;
     min-height: 3.5rem;
@@ -181,4 +193,36 @@ textarea:focus {
 
 .tooltip.bs-tooltip-start .tooltip-arrow::before {
     border-left-color: var(--tooltip_back) !important;
+}
+
+.modal-dialog .modal-content {
+    background-color: var(--confirmation_dialog_back);
+}
+
+.modal-content .modal-header {
+    border-bottom: 0;
+}
+
+.modal-content .modal-body {
+    color: var(--confirmation_text);
+}
+
+.modal-content .modal-footer {
+    border-top: 0;
+}
+
+.modal-footer .confirm__cancel {
+    color: var(--confirmation_cancel);
+}
+
+.modal-footer .confirm__cancel:hover {
+    color: var(--confirmation_cancel_hover);
+}
+
+.modal-footer .confirm__end {
+    color: var(--confirmation_end);
+}
+
+.modal-footer .confirm__end:hover {
+    color: var(--confirmation_end_hover);
 }
