@@ -1,6 +1,10 @@
 <div>
     <div class="card card-text user__dialog text-start d-inline-block p-2 px-3 m-1">
         {{ user_convo.message }}
-        <div class="send__time text-start">{{ user_convo.send_time.strftime("%I:%M%p") }}</div>
+        <div class="send__time text-start">
+            {% if user_convo.send_time %}
+                {{ user_convo.send_time.strftime("%I:%M%p") }}
+            {% endif %}
+        </div>
     </div>
 </div>
