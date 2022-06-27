@@ -143,6 +143,18 @@ def index():
 
 @app.route('/qualtrics')
 def qualtrics():
+    
+    # TODO: First checking if user existed in database
+    # TODO: [In Qualtrics] Second, check contextual variables in MOOClet Engine
+    # TODO: [In Qualtrics] check if this user has an arm
+    # TODO: [In Qualtrics] If user doesn't have an arm, run MOOClet Engine -> get one arm
+    # TODO: arm -> get chat log : The following is a conversation with a friend. The friend is funny, shy, empathetic, and introverted.\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?
+    # TODO: chat log -> OpenAI API -> get the generated responses for the bot
+    # TODO: chat log + genrated responses -> conversation
+    # TODO: otherwise, get all conversation from the database
+    # TODO: [NOT in this API] user can give us responses <- not from this API
+    # TODO: [NOT in this API] storing/updating this conversation to database
+    
     return render_template(
         '/dialogue/qualtrics_card.html', 
         user=USER, 
@@ -152,6 +164,12 @@ def qualtrics():
         notification=NOTI,
         conversation=conversation
     )
+
+# @app.route('/send_response/?user_id=XXX/')
+# def updating_conversation(request):
+#     # TODO: user can give us responses <- not from this API
+#     # TODO: storing/updating this conversation to database
+#     pass
 
 
 @app.route('/chatsms', methods=['POST'])
@@ -185,12 +203,14 @@ def chatsms():
 def chatweb():
     input_json = request.get_json(force=True) 
     incoming_msg = str(input_json['response'])
+    user_id = str(input_json['response'])
     print("session: ")
     print(session)
     print()
     chat_log = session.get('chat_log')
     answer = ask(incoming_msg, chat_log)
     session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,chat_log)
+    session['user_id'] = request.remote_addr
 
     dictToReturn = {
         "answer": answer,
