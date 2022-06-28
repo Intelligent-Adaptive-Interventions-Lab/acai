@@ -193,9 +193,13 @@ Qualtrics Dialogues
 
 <script>
 
-    let lastChatBox = document.querySelectorAll('.convo__box'); 
-    lastChatBox = lastChatBox[lastChatBox.length-1]; 
-    lastChatBox.scrollIntoView({behavior: "smooth", inline: "nearest"});
+    let chatBoxes = document.querySelectorAll('.convo__box'); 
+    if (chatBoxes.length > 2) {
+        let secondLastChatBox = chatBoxes[chatBoxes.length-3];
+        secondLastChatBox.scrollIntoView(alignToTop=false);
+    }
+    let lastChatBox = chatBoxes[chatBoxes.length-1];  
+    lastChatBox.scrollIntoView({behavior: "smooth", block: "start"});
 
 </script>
 

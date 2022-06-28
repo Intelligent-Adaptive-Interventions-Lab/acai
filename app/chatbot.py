@@ -50,6 +50,7 @@ def ask(question, chat_log=None):
 
 def append_interaction_to_chat_log(question, answer, chat_log=None):
     if chat_log is None: 
-        session_prompts = [session_prompt1, session_prompt2]
-        chat_log = choice(session_prompts) 
+        # session_prompts = [session_prompt1, session_prompt2]
+        # chat_log = choice(session_prompts) 
+        chat_log = session_prompt1
     return f'{chat_log}{restart_sequence} {question}{start_sequence}{answer}'

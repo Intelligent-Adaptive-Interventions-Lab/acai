@@ -1,17 +1,19 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
+from app.tasks import get_conversation
+from app.forms import ChatForm
 
-from flask import Flask, request, session, jsonify, render_template
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 from twilio.twiml.messaging_response import MessagingResponse
 # import run_with_ngrok from flask_ngrok to run the app using ngrok
-from flask_ngrok import run_with_ngrok
+# from flask_ngrok import run_with_ngrok
 
 from datetime import datetime, timezone
 
-run_with_ngrok(app)
+# run_with_ngrok(app)
 
-USER = "User"
-CHATBOT = "Chatbot"
+USER = "Person"
+CHATBOT = "AI"
 WARNING = "warning"
 END = "end"
 NOTI = "notification"
@@ -127,10 +129,31 @@ conversation = [
     }
 ]
 
+SESSION_PROMPT = "The following is a conversation with a friend. The friend is funny, shy, empathetic, and introverted."
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
+    chat_log = session.get('chat_log')
+    print(f"chat_log: {chat_log}")
+    
+    if chat_log is None:
+        chat_log = SESSION_PROMPT + "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
+    
+    print(f"FORM: {request.form}")
+    
+    form = ChatForm()
+    if form.validate_on_submit():
+        user_message = form.message.data
+        chat_log = session.get('chat_log')
+        answer = ask(user_message, chat_log)
+        session['chat_log'] = append_interaction_to_chat_log(user_message, answer, chat_log)
+        
+        print(f"click successful!!! {user_message}")
+        print(f"session: {session}")
+        print(f"chat_log: {chat_log}")
+        return redirect(url_for('index'))
+    
     return render_template(
         '/dialogue/conversation_card.html', 
         user=USER, 
@@ -138,10 +161,11 @@ def index():
         warning=WARNING, 
         end=END,
         notification=NOTI,
-        conversation=conversation
+        conversation=get_conversation(SESSION_PROMPT, chat_log),
+        form=form
     )
 
-@app.route('/qualtrics')
+@app.route('/qualtrics', methods=['GET', 'POST'])
 def qualtrics():
     
     # TODO: First checking if user existed in database
@@ -209,7 +233,7 @@ def chatweb():
     print()
     chat_log = session.get('chat_log')
     answer = ask(incoming_msg, chat_log)
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,chat_log)
+    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer, chat_log)
     session['user_id'] = request.remote_addr
 
     dictToReturn = {
@@ -218,3 +242,8 @@ def chatweb():
     }
     return jsonify(dictToReturn)
 
+@app.route('/clear', methods=['GET'])
+def clear_session():
+    
+    session['chat_log'] = None
+    return "cleared!"
