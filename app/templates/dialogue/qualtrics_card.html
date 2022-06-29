@@ -17,7 +17,7 @@ Qualtrics Dialogues
                     <a href="#!" class="nav-link p-0">
                         <div class="bot__icon position-relative">
                             <div class="img-fluid rounded-circle avatar bot__avatar"></div>
-                            <span class="position-absolute bottom-0 end-0 badge border border-light rounded-circle bg-danger bg-gradient p-1">
+                            <span id="bot-new-message" class="position-absolute bottom-0 end-0 badge border border-light rounded-circle bg-danger bg-gradient p-1">
                                 <span class="visually-hidden">unread messages</span>
                             </span>
                         </div>
@@ -125,7 +125,7 @@ Qualtrics Dialogues
                             >
                                 <i class="bi bi-person-fill icon__user__clipboard d-none d-md-block"></i>
                                 <div class="mx-auto d-block d-md-none text-truncate" style="width: 25vw;">{{ user }}</div>
-                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger bg-gradient border border-light rounded-circle">
+                                <span id="user-new-message" class="d-none position-absolute top-0 start-100 translate-middle p-1 bg-danger bg-gradient border border-light rounded-circle">
                                     <span class="visually-hidden">New alerts</span>
                                 </span>
                             </button>
@@ -276,11 +276,15 @@ Qualtrics Dialogues
 
     let textareaMessage = document.getElementById("textarea-message");
     btnSubmit.addEventListener('click', function () {
-        let textareaMessage = document.getElementById("textarea-message");
         let formMessage = document.getElementById("form-message");
+        let botNewMessage = document.getElementById("bot-new-message");
+        let userNewMessage = document.getElementById("user-new-message");
 
         if (textareaMessage.value) {
             formMessage.value = textareaMessage.value;
+
+            userNewMessage.classList.remove("d-none");
+            botNewMessage.classList.add("d-none");
         };
     });
 

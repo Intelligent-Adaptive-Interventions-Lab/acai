@@ -129,8 +129,6 @@ conversation = [
     }
 ]
 
-SESSION_PROMPT = "The following is a conversation with a friend. The friend is funny, shy, empathetic, and introverted."
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():
@@ -140,7 +138,7 @@ def start_conversation():
     
     if chat_log is None:
         select_prompt = init_prompt(random=True)
-        session["chat_log"] = select_prompt["prompt"] + "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
+        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
         
@@ -188,7 +186,7 @@ def start_qualtrics_conversation():
     
     if chat_log is None:
         select_prompt = init_prompt(random=True)
-        session["chat_log"] = select_prompt["prompt"] + "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
+        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
         

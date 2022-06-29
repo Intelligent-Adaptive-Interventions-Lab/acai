@@ -9,19 +9,23 @@ load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 completion = openai.Completion()
 
+MESSAGE_START = "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
 
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
     arm_default = {
-        "prompt": "The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.",
+        "prompt": "The following is a conversation with a counselor. The counselor helps the Human by asking lots of reflection prompts. The counselor is empathetic, trustworthy, and is an active listener.",
+        "message_start": MESSAGE_START,
         "chatbot": "AI"
     }
     arm_1 = {
-        "prompt": "The following is a conversation with a friend. The friend is funny, shy, empathetic, and introverted.",
-        "chatbot": "Friend"
+        "prompt": "The following is a conversation with a counselor. The counselor has strong interpersonal skills.",
+        "message_start": MESSAGE_START,
+        "chatbot": "AI"
     }
     arm_2 = {
-        "prompt": "The following is a conversation with a therapist. The therapist is helpful, creative, empathetic, and very friendly.",
-        "chatbot": "Friend"
+        "prompt": "The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.",
+        "message_start": MESSAGE_START,
+        "chatbot": "AI"
     }
     
     if random:
@@ -34,8 +38,8 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
 
 
 class Conversation:
-    CONVO_START = "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
-    BOT_START = "I am an AI created by OpenAI. How can I help you today?"
+    CONVO_START = MESSAGE_START
+    BOT_START = "Hello, I'm an AI designed to offer support. How can I help you?"
     USER = "Person"
     CHATBOT = "AI"
     WARNING = "warning"
