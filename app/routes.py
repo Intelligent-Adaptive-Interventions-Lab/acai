@@ -1,7 +1,7 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
-from app.tasks import get_conversation
 from app.forms import ChatForm
+from app.conversation import GPTConversation, init_prompt
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 from twilio.twiml.messaging_response import MessagingResponse
@@ -132,41 +132,44 @@ conversation = [
 SESSION_PROMPT = "The following is a conversation with a friend. The friend is funny, shy, empathetic, and introverted."
 
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-def index():
+@app.route('/conversation', methods=['GET', 'POST'])
+def start_conversation():
     chat_log = session.get('chat_log')
     print(f"chat_log: {chat_log}")
+    print(f"request.remote_addr: {request.remote_addr}")
     
     if chat_log is None:
-        chat_log = SESSION_PROMPT + "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
-    
-    print(f"FORM: {request.form}")
+        select_prompt = init_prompt(random=True)
+        session["chat_log"] = select_prompt["prompt"] + "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
+        session["chatbot"] = select_prompt["chatbot"]
+        session["user"] = request.remote_addr
+        
+    convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
+    print(f"convo.chat_log: {convo.chat_log}")
+    print(f"convo.user: {convo.user_name}")
+    print(f"convo.chatbot: {convo.chatbot_name}")
+    print(f"convo.get_conversation(): {convo.get_conversation()}")
     
     form = ChatForm()
     if form.validate_on_submit():
         user_message = form.message.data
-        chat_log = session.get('chat_log')
-        answer = ask(user_message, chat_log)
-        session['chat_log'] = append_interaction_to_chat_log(user_message, answer, chat_log)
-        
-        print(f"click successful!!! {user_message}")
-        print(f"session: {session}")
-        print(f"chat_log: {chat_log}")
-        return redirect(url_for('index'))
+        answer = convo.ask(user_message)
+        session['chat_log'] = convo.append_interaction_to_chat_log(user_message, answer)
+        return redirect(url_for('start_conversation'))
     
     return render_template(
         '/dialogue/conversation_card.html', 
-        user=USER, 
-        bot=CHATBOT, 
-        warning=WARNING, 
-        end=END,
-        notification=NOTI,
-        conversation=get_conversation(SESSION_PROMPT, chat_log),
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
         form=form
     )
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
-def qualtrics():
+def start_qualtrics_conversation():
     
     # TODO: First checking if user existed in database
     # TODO: [In Qualtrics] Second, check contextual variables in MOOClet Engine
@@ -179,21 +182,39 @@ def qualtrics():
     # TODO: [NOT in this API] user can give us responses <- not from this API
     # TODO: [NOT in this API] storing/updating this conversation to database
     
+    chat_log = session.get('chat_log')
+    print(f"chat_log: {chat_log}")
+    print(f"request.remote_addr: {request.remote_addr}")
+    
+    if chat_log is None:
+        select_prompt = init_prompt(random=True)
+        session["chat_log"] = select_prompt["prompt"] + "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?"
+        session["chatbot"] = select_prompt["chatbot"]
+        session["user"] = request.remote_addr
+        
+    convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
+    print(f"convo.chat_log: {convo.chat_log}")
+    print(f"convo.user: {convo.user_name}")
+    print(f"convo.chatbot: {convo.chatbot_name}")
+    print(f"convo.get_conversation(): {convo.get_conversation()}")
+    
+    form = ChatForm()
+    if form.validate_on_submit():
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        session['chat_log'] = convo.append_interaction_to_chat_log(user_message, answer)
+        return redirect(url_for('start_qualtrics_conversation'))
+    
     return render_template(
         '/dialogue/qualtrics_card.html', 
-        user=USER, 
-        bot=CHATBOT, 
-        warning=WARNING, 
-        end=END,
-        notification=NOTI,
-        conversation=conversation
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
+        form=form
     )
-
-# @app.route('/send_response/?user_id=XXX/')
-# def updating_conversation(request):
-#     # TODO: user can give us responses <- not from this API
-#     # TODO: storing/updating this conversation to database
-#     pass
 
 
 @app.route('/chatsms', methods=['POST'])

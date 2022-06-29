@@ -132,39 +132,47 @@ Qualtrics Dialogues
                         </div>
                         <div class="input-group-text bg-transparent border-0 col-9 ps-1 d-none d-md-flex" >
                             <button type="button" class="btn user__id bg-transparent response__box" disabled>
-                                <div class="mx-auto text-truncate" style="width: 15vw;">{{ user }}</div>
+                                <div class="mx-auto text-truncate" style="width: 10vw;">{{ user }}</div>
                             </button>
                         </div>
-                        <div class="input-group-text bg-transparent justify-content-end border-0 col-7 ps-1 pe-1 d-flex d-md-none">
+                        <div class="input-group-text bg-transparent justify-content-end border-0 col-7 ps-1 d-flex d-md-none">
                             <button class="btn bg-transparent emoji response__box">
                                 <i class="bi bi-emoji-smile"></i>
                             </button>
                         </div>
                     </div>
                 </div>
-                <div class="align-self-center col-md-7 col-11 ps-0 pe-3">
-                    <textarea type="textbox" class="send__box form-control border-0" style="resize: none;" placeholder="Write a message..." rows="1"></textarea>
-                </div>
-                <div class="col-md-2 col-1 p-0">
+                <form class="col-12 col-md-9" method="post" autocomplete="off">
+                    {{ form.hidden_tag() }}
                     <div class="row">
-                        <div class="input-group-text bg-transparent border-0 ps-0 col-4 pe-2 ps-lg-3 d-none d-md-block">
-                            <button class="btn bg-transparent emoji">
-                                <i class="bi bi-emoji-smile"></i>
-                            </button>
+                        <div class="align-self-center col-9 pe-0">
+                            <textarea id="textarea-message" type="textbox" class="send__box form-control border-0" style="resize: none;" placeholder="Write a message..." rows="1" required></textarea>
                         </div>
-                        <div class="input-group-text bg-transparent border-0 ps-1 col-12 col-md-8 ps-lg-3">
-                            <button class="btn send response__box">
-                                <div class="d-none d-md-block">
-                                    Send
-                                    <i class="bi bi-send"></i>
+                        <div class="col-3">
+                            <div class="row">
+                                <div class="input-group-text bg-transparent border-0 ps-0 col-4 pe-2 ps-lg-3 d-none d-md-block">
+                                    <button class="btn bg-transparent emoji">
+                                        <i class="bi bi-emoji-smile"></i>
+                                    </button>
                                 </div>
-                                <div class="d-block d-md-none">
-                                    <i class="bi bi-send"></i>
+                                <div class="input-group-text bg-transparent border-0 ps-1 col-12 col-md-8 ps-lg-3">
+                                    <button id="btn-submit" class="btn send response__box" type="submit">
+                                        <div class="d-none d-md-block">
+                                            Send
+                                            <i class="bi bi-send"></i>
+                                        </div>
+                                        <div class="d-block d-md-none">
+                                            <i class="bi bi-send"></i>
+                                        </div>
+                                    </button>
+                                    {{ form.message(hidden='true', id='form-message') }}
+                                    {{ form.submit(hidden='true', id='form-submit') }}
                                 </div>
-                            </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    {{ form.csrf_token }}
+                </form>
             </div>
         </div>
     </div>
@@ -194,8 +202,8 @@ Qualtrics Dialogues
 <script>
 
     let chatBoxes = document.querySelectorAll('.convo__box'); 
-    if (chatBoxes.length > 2) {
-        let secondLastChatBox = chatBoxes[chatBoxes.length-3];
+    if (chatBoxes.length > 1) {
+        let secondLastChatBox = chatBoxes[chatBoxes.length-2];
         secondLastChatBox.scrollIntoView(alignToTop=false);
     }
     let lastChatBox = chatBoxes[chatBoxes.length-1];  
@@ -205,6 +213,7 @@ Qualtrics Dialogues
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
 <script>
+
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 
     var options = {
@@ -257,5 +266,27 @@ Qualtrics Dialogues
       console.error('Action:', e.action);
       console.error('Trigger:', e.trigger);
     });
+
+</script>
+
+<script>
+
+    let btnSubmit = document.getElementById("btn-submit");
+    let formSubmit = document.getElementById("form-submit");
+
+    let textareaMessage = document.getElementById("textarea-message");
+    btnSubmit.addEventListener('click', function () {
+        let textareaMessage = document.getElementById("textarea-message");
+        let formMessage = document.getElementById("form-message");
+
+        if (textareaMessage.value) {
+            formMessage.value = textareaMessage.value;
+        };
+    });
+
+    btnSubmit.addEventListener('submit', function () {
+        formSubmit.click();
+    });
+
 </script>
 {% endblock js_files %}
