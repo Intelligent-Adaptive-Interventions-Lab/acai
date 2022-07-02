@@ -3,7 +3,7 @@ from random import choice
 import os
 import openai
 
-from typing import Dict
+from typing import Dict, overload
 
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -106,25 +106,62 @@ class GPTConversation(Conversation):
         "top_p": 1,
         "frequency_penalty": 0,
         "presence_penalty": 0.3,
-        "stop": ["\n"]
     }
     
     def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
         super().__init__(user, chatbot, chat_log)
         
         self.start_sequence = f"\n{self.CHATBOT}:"
-        self.restart_sequence = f"\n\n{self.USER}:"
+        self.restart_sequence = f"\n\n{self.USER}: "
     
     def ask(self, question: str) -> str:
-        prompt_text = f"{self.chat_log}{self.restart_sequence}: {question}{self.start_sequence}:"
+        prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
         response = openai.Completion.create(
             prompt=prompt_text,
+            stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
             **self.CONFIGS
         )
         
         story = response['choices'][0]['text']
         
-        return str(story)
+        return str(story).strip()
     
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
-            return f"{self.chat_log}{self.restart_sequence} {question}{self.start_sequence}{answer}"
+            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+    
+    def get_conversation(self) -> Dict:
+        chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        dialogs = chat_log_clean.split(self.restart_sequence)
+        
+        converation = []
+        converation.append({
+            "from": self.chatbot_name,
+            "to": self.user_name,
+            "message": self.BOT_START,
+            "send_time": None
+        })
+        
+        for i in range(1, len(dialogs)):
+            messages = dialogs[i].split(self.start_sequence)
+            
+            for msg_idx in range(len(messages)):
+                if msg_idx == 0:
+                    from_idt = self.user_name
+                    to_idt = self.chatbot_name
+                else:
+                    to_idt = self.user_name
+                    from_idt = self.chatbot_name
+                
+                convo = []
+                for text in messages[msg_idx].split("\n"):
+                    if len(text) != 0:
+                        convo.append({
+                            "from": from_idt,
+                            "to": to_idt,
+                            "message": text.strip(),
+                            "send_time": None
+                        })
+                converation.extend(convo)
+            
+        return converation
+        

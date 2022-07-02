@@ -133,8 +133,9 @@ conversation = [
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():
     chat_log = session.get('chat_log')
-    print(f"chat_log: {chat_log}")
-    print(f"request.remote_addr: {request.remote_addr}")
+    print("{} CONVO START {}".format("-"*12, "-"*12))
+    print(f"chat_log::: {chat_log}")
+    print(f"request.remote_addr::: {request.remote_addr}")
     
     if chat_log is None:
         select_prompt = init_prompt(random=True)
@@ -143,17 +144,27 @@ def start_conversation():
         session["user"] = request.remote_addr
         
     convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
-    print(f"convo.chat_log: {convo.chat_log}")
-    print(f"convo.user: {convo.user_name}")
-    print(f"convo.chatbot: {convo.chatbot_name}")
-    print(f"convo.get_conversation(): {convo.get_conversation()}")
+    print(f"convo.chat_log::: {convo.chat_log}")
+    print(f"convo.user::: {convo.user_name}")
+    print(f"convo.chatbot::: {convo.chatbot_name}")
+    print(f"convo.get_conversation()::: {convo.get_conversation()}")
     
     form = ChatForm()
     if form.validate_on_submit():
+        print("{} NEW MESSAGE {}".format("-"*12, "-"*12))
         user_message = form.message.data
         answer = convo.ask(user_message)
-        session['chat_log'] = convo.append_interaction_to_chat_log(user_message, answer)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+        
+        print(f"user_message::: {user_message}")
+        print(f"answer::: {answer}")
+        print(f"chat_log::: {chat_log}")
+        
+        session["chat_log"] = chat_log
+        
         return redirect(url_for('start_conversation'))
+    
+    print("{} RENDER WEBVIEW {}".format("-"*12, "-"*12))
     
     return render_template(
         '/dialogue/conversation_card.html', 
@@ -246,14 +257,12 @@ def chatsms():
 def chatweb():
     input_json = request.get_json(force=True) 
     incoming_msg = str(input_json['response'])
-    user_id = str(input_json['response'])
     print("session: ")
     print(session)
     print()
     chat_log = session.get('chat_log')
     answer = ask(incoming_msg, chat_log)
     session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer, chat_log)
-    session['user_id'] = request.remote_addr
 
     dictToReturn = {
         "answer": answer,
