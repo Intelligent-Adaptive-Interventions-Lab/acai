@@ -167,7 +167,7 @@ class GPTConversation(Conversation):
             converation.append({
                 "from": self.chatbot_name,
                 "to": self.END,
-                "message": "This conversation is ended.",
+                "message": "This conversation is ended. Please copy your username for the following questions in the survey.",
                 "send_time": None
             })
             

@@ -125,7 +125,6 @@ Qualtrics Dialogues
     let formSubmit = document.getElementById("form-submit");
 
     let textareaMessage = document.getElementById("textarea-message");
-    let form = document.getElementById("all-form")
     btnSubmit.addEventListener('click', function handleClick(event) {
         event.preventDefault();
 
@@ -167,7 +166,7 @@ Qualtrics Dialogues
             toastList.forEach(toast => toast.show());
         };
 
-        form.reset();
+        formMessage.value = '';
     });
 
 </script>
@@ -183,11 +182,21 @@ Qualtrics Dialogues
     endButton.addEventListener('click', function () {
         messageCard.classList.add("d-none");
         endCard.classList.remove("d-none");
+
+        fetch(`/end`)
+            .then(function (response) {
+                return response.text();
+            }).then(function (text) {
+                console.log('GET response text:');
+                console.log(text); 
+            });
     });
 
     backButton.addEventListener('click', function () {
         endCard.classList.add("d-none");
         messageCard.classList.remove("d-none");
+
+        location.reload(true);
     });
 
 </script>

@@ -220,7 +220,10 @@ def start_qualtrics_conversation():
     now = datetime.now()
     difference = now - datetime.strptime(session.get('start'), "%m/%d/%Y, %H:%M:%S")
     difference_seconds = difference.total_seconds()
-    session["end"] = (difference_seconds >= session.get('stop'))
+    
+    end = session.get('end')
+    if end is None or not end:
+        session["end"] = (difference_seconds >= session.get('stop'))
     
     print("start::: {}".format(session.get('start')))
     print("stop::: {}".format(session.get('stop')))
@@ -303,4 +306,11 @@ def chatweb():
 def clear_session():
     
     session['chat_log'] = None
+    session['start'] = None
+    session['end'] = None
     return "cleared!"
+
+@app.route('/end', methods=['GET'])
+def end():
+    session['end'] = True
+    return "ended!"
