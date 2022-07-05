@@ -226,3 +226,7 @@ textarea:focus {
 .modal-footer .confirm__end:hover {
     color: var(--confirmation_end_hover);
 }
+
+.convo__card {
+    height: 95vh;
+}

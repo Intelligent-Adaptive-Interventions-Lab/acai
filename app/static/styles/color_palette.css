@@ -23,6 +23,8 @@
     --confirmation_cancel_hover: #017aff;
     --confirmation_end: #2e93fe;
     --confirmation_end_hover: #017aff;
+    --toast_back: rgba(238, 100, 76, 0.9);
+    --toast_color: #f1f4fc;
 
     /* emoji picker */
     --emoji_nav: #7a90e6;

@@ -9,173 +9,11 @@ Qualtrics Dialogues
 {% endblock css_files %}
 
 {% block contents %}
-<div class="card" style="height: 100vh; weight: 100vw;">
-    <div class="card-header bg-transparent">
-        <div class="navbar navbar-expand p-0">
-            <ul class="navbar-nav me-auto align-items-center">
-                <li class="nav-item">
-                    <a href="#!" class="nav-link p-0">
-                        <div class="bot__icon position-relative">
-                            <div class="img-fluid rounded-circle avatar bot__avatar"></div>
-                            <span id="bot-new-message" class="position-absolute bottom-0 end-0 badge border border-light rounded-circle bg-danger bg-gradient p-1">
-                                <span class="visually-hidden">unread messages</span>
-                            </span>
-                        </div>
-                    </a>
-                </li>
-                <li class="nav-item" style="max-width: 48vw;">
-                    <a href="#!" class="nav-link bot__name">{{ bot }}</a>
-                    {% if conversation %}
-                        {% with first_convo=conversation.0 %}
-                            {% if (first_convo) and (first_convo.from == bot) and (first_convo.to == warning) %}
-                                <a href="#!" class="nav-link bot__description">
-                                    <span class="d-inline-block text-truncate" style="max-width: 100%;">
-                                        {{ first_convo.message }}
-                                    </span>
-                                </a>
-                            {% endif %}
-                        {% endwith %}
-                    {% endif %}
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="modal" data-bs-target="#confirmation"></button>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="card-body chat__box">
-        {% set slice_dict = namespace(switch=false, start=0) %}
-        {% for convo in conversation %}
-            {% if (convo.from == bot) and (convo.to == warning) %}
-                {% include 'dialogue/includes/warning_chat_box.html' %}
-                {% set slice_dict.start = loop.index %}
-                {% set slice_dict.switch = false %}
-            {% else %}
-                {% if (convo.from == bot) and (convo.to == end) %}
-                    {% include 'dialogue/includes/end_chat_box.html' %}
-                    {% set slice_dict.start = loop.index %}
-                    {% set slice_dict.switch = false %}
-                {% else %}
-                    {% if (convo.from == bot) and (convo.to == notification) %}
-                        {% include 'dialogue/includes/noti_chat_box.html' %}
-                        {% set slice_dict.start = loop.index %}
-                        {% set slice_dict.switch = false %}
-                    {% else %}
-                        {% if loop.nextitem %}
-                            {% with next_conv=loop.nextitem %}
-                                {% set slice_dict.switch = ((next_conv.from != convo.from) or (next_conv.to != convo.to)) %}
-                            {% endwith %}
-                        {% else %}
-                            {% set slice_dict.switch = true %}
-                        {% endif %}
-
-                        {% if slice_dict.switch is true %}
-                            {% if (convo.from == bot) and (convo.to == user) %}
-                                <div class="convo__box d-flex align-items-start mb-2 me-4">
-                                    <div class="d-none d-sm-flex bot__icon">
-                                        <div class="img-fluid rounded-circle avatar bot__avatar"></div>
-                                    </div>
-                                
-                                    <div class="ps-0 ps-sm-2">
-                                        {% for bot_convo in conversation[slice_dict.start:loop.index] %}
-                                            {% include 'dialogue/includes/bot_chat_box.html' %}
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            {% else %}
-                                {% if (convo.from == user) and (convo.to == bot) %}
-                                    <div class="convo__box d-flex align-items-start text-end justify-content-end mb-2 ms-4">
-                                        <div class="pe-0 pe-sm-2">
-
-                                            {% for user_convo in conversation[slice_dict.start:loop.index] %}
-                                                {% include 'dialogue/includes/user_chat_box.html' %}
-                                            {% endfor %}
-                                        </div>
-                        
-                                        <div class="d-none d-sm-flex user__icon">
-                                            <div class="img-fluid rounded-circle avatar user__avatar"></div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-
-                            {% set slice_dict.start = loop.index %}
-                            {% set slice_dict.switch = false %}
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-            {% endif %}            
-        {% endfor %}
-    </div>
-    <div class="card-footer bg-transparent bottom-0 m-0">
-        <div class="row">
-            <div class="input-group">
-                <div class="col-md-3 col-12">
-                    <div class="row">
-                        <div class="input-group-text bg-transparent border-0 col-md-3 col-5 ps-3 ps-md-1 ps-lg-2">
-                            <button 
-                                type="button" 
-                                class="btn user__clipboard response__box position-relative" 
-                                data-clipboard-text="{{ user }}"
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="top"
-                                data-bs-html="true"
-                            >
-                                <i class="bi bi-person-fill icon__user__clipboard d-none d-md-block"></i>
-                                <div class="mx-auto d-block d-md-none text-truncate" style="width: 25vw;">{{ user }}</div>
-                                <span id="user-new-message" class="d-none position-absolute top-0 start-100 translate-middle p-1 bg-danger bg-gradient border border-light rounded-circle">
-                                    <span class="visually-hidden">New alerts</span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="input-group-text bg-transparent border-0 col-9 ps-1 d-none d-md-flex" >
-                            <button type="button" class="btn user__id bg-transparent response__box" disabled>
-                                <div class="mx-auto text-truncate" style="width: 10vw;">{{ user }}</div>
-                            </button>
-                        </div>
-                        <div class="input-group-text bg-transparent justify-content-end border-0 col-7 ps-1 d-flex d-md-none">
-                            <button class="btn bg-transparent emoji response__box">
-                                <i class="bi bi-emoji-smile"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <form class="col-12 col-md-9" method="post" autocomplete="off">
-                    {{ form.hidden_tag() }}
-                    <div class="row">
-                        <div class="align-self-center col-9 pe-0">
-                            <textarea id="textarea-message" type="textbox" class="send__box form-control border-0" style="resize: none;" placeholder="Write a message..." rows="1" required></textarea>
-                        </div>
-                        <div class="col-3">
-                            <div class="row">
-                                <div class="input-group-text bg-transparent border-0 ps-0 col-4 pe-2 ps-lg-3 d-none d-md-block">
-                                    <button class="btn bg-transparent emoji">
-                                        <i class="bi bi-emoji-smile"></i>
-                                    </button>
-                                </div>
-                                <div class="input-group-text bg-transparent border-0 ps-1 col-12 col-md-8 ps-lg-3">
-                                    <button id="btn-submit" class="btn send response__box" type="submit">
-                                        <div class="d-none d-md-block">
-                                            Send
-                                            <i class="bi bi-send"></i>
-                                        </div>
-                                        <div class="d-block d-md-none">
-                                            <i class="bi bi-send"></i>
-                                        </div>
-                                    </button>
-                                    {{ form.message(hidden='true', id='form-message') }}
-                                    {{ form.submit(hidden='true', id='form-submit') }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {{ form.csrf_token }}
-                </form>
-            </div>
-        </div>
-    </div>
+<div id='message-card' class="card" style="height: 100vh; weight: 100vw;">
+    {% include 'dialogue/includes/message_card.html' %}
+</div>
+<div id='end-card' class="d-none card" style="height: 100vh; weight: 100vw; background-color: var(--confirmation_dialog_back);">
+    {% include 'dialogue/includes/conversation_end_notice.html' %}
 </div>
 
 {% include 'dialogue/includes/confirmation_dialog.html' %}
@@ -208,6 +46,18 @@ Qualtrics Dialogues
     }
     let lastChatBox = chatBoxes[chatBoxes.length-1];  
     lastChatBox.scrollIntoView({behavior: "smooth", block: "start"});
+
+    var options = {
+        animation: true,
+        autohide: true,
+        delay: 5000
+    };
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    var toastList = toastElList.map(function (toastEl) {
+        return new bootstrap.Toast(toastEl, options)
+    });
+
+    toastList.forEach(toast => toast.show());
 
 </script>
 
@@ -275,21 +125,69 @@ Qualtrics Dialogues
     let formSubmit = document.getElementById("form-submit");
 
     let textareaMessage = document.getElementById("textarea-message");
-    btnSubmit.addEventListener('click', function () {
+    let form = document.getElementById("all-form")
+    btnSubmit.addEventListener('click', function handleClick(event) {
+        event.preventDefault();
+
         let formMessage = document.getElementById("form-message");
         let botNewMessage = document.getElementById("bot-new-message");
         let userNewMessage = document.getElementById("user-new-message");
 
         if (textareaMessage.value) {
             formMessage.value = textareaMessage.value;
+            formSubmit.click();
+            textareaMessage.value = '';
 
             userNewMessage.classList.remove("d-none");
             botNewMessage.classList.add("d-none");
+
+            let tempUserBox = document.getElementById("temp-user-box");
+            let tempUserMsg = document.getElementById("temp-user-msg");
+            tempUserMsg.insertAdjacentText('afterbegin', formMessage.value);
+            tempUserBox.classList.remove("d-none");
+
+            let chatBoxes = document.querySelectorAll('.convo__box'); 
+            if (chatBoxes.length > 1) {
+                let secondLastChatBox = chatBoxes[chatBoxes.length-2];
+                secondLastChatBox.scrollIntoView(alignToTop=false);
+            }
+            let lastChatBox = chatBoxes[chatBoxes.length-1];  
+            lastChatBox.scrollIntoView({behavior: "smooth", block: "start"});
+
+            let options = {
+                animation: true,
+                autohide: true,
+                delay: 5000
+            }
+            let toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            let toastList = toastElList.map(function (toastEl) {
+                return new bootstrap.Toast(toastEl, options)
+            });
+
+            toastList.forEach(toast => toast.show());
         };
+
+        form.reset();
     });
 
-    btnSubmit.addEventListener('submit', function () {
-        formSubmit.click();
+</script>
+
+<script>
+
+    var endButton = document.getElementById("end-button");
+    var backButton = document.getElementById("back-button");
+
+    var messageCard = document.getElementById('message-card');
+    var endCard = document.getElementById('end-card');
+
+    endButton.addEventListener('click', function () {
+        messageCard.classList.add("d-none");
+        endCard.classList.remove("d-none");
+    });
+
+    backButton.addEventListener('click', function () {
+        endCard.classList.add("d-none");
+        messageCard.classList.remove("d-none");
     });
 
 </script>
