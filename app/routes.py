@@ -148,7 +148,7 @@ def start_conversation():
     print(f"convo.user::: {convo.user_name}")
     print(f"convo.chatbot::: {convo.chatbot_name}")
     print(f"convo.get_conversation()::: {convo.get_conversation()}")
-    
+
     form = ChatForm()
     if form.validate_on_submit():
         print("{} NEW MESSAGE {}".format("-"*12, "-"*12))
@@ -192,27 +192,56 @@ def start_qualtrics_conversation():
     # TODO: [NOT in this API] storing/updating this conversation to database
     
     chat_log = session.get('chat_log')
-    print(f"chat_log: {chat_log}")
-    print(f"request.remote_addr: {request.remote_addr}")
+    print("{} CONVO START {}".format("-"*12, "-"*12))
+    print(f"chat_log::: {chat_log}")
+    print(f"request.remote_addr::: {request.remote_addr}")
     
     if chat_log is None:
         select_prompt = init_prompt(random=True)
         session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
+        session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         
     convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
-    print(f"convo.chat_log: {convo.chat_log}")
-    print(f"convo.user: {convo.user_name}")
-    print(f"convo.chatbot: {convo.chatbot_name}")
-    print(f"convo.get_conversation(): {convo.get_conversation()}")
+    print(f"convo.chat_log::: {convo.chat_log}")
+    print(f"convo.user::: {convo.user_name}")
+    print(f"convo.chatbot::: {convo.chatbot_name}")
+    print(f"convo.get_conversation()::: {convo.get_conversation()}")
+
+    start = session.get('start')
+    if start is None:
+        session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+    stop = session.get('stop')
+    if stop is None:
+        session["stop"] = 5*60
+
+    now = datetime.now()
+    difference = now - datetime.strptime(session.get('start'), "%m/%d/%Y, %H:%M:%S")
+    difference_seconds = difference.total_seconds()
+    session["end"] = (difference_seconds >= session.get('stop'))
     
+    print("start::: {}".format(session.get('start')))
+    print("stop::: {}".format(session.get('stop')))
+    print(f"difference_seconds::: {difference_seconds}")
+    print("end::: {}".format(session.get('end')))
+
     form = ChatForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and not session.get('end'):
+        print("{} NEW MESSAGE {}".format("-"*12, "-"*12))
         user_message = form.message.data
         answer = convo.ask(user_message)
-        session['chat_log'] = convo.append_interaction_to_chat_log(user_message, answer)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        print(f"user_message::: {user_message}")
+        print(f"answer::: {answer}")
+        print(f"chat_log::: {chat_log}")
+
+        session['chat_log'] = chat_log
         return redirect(url_for('start_qualtrics_conversation'))
+    
+    print("{} RENDER WEBVIEW {}".format("-"*12, "-"*12))
     
     return render_template(
         '/dialogue/qualtrics_card.html', 
@@ -221,7 +250,7 @@ def start_qualtrics_conversation():
         warning=convo.WARNING, 
         end=convo.END,
         notification=convo.NOTI,
-        conversation=convo.get_conversation(),
+        conversation=convo.get_conversation(end=session.get('end')),
         form=form
     )
 
