@@ -142,6 +142,7 @@ def start_conversation():
         session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
+        session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         
     convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
     print(f"convo.chat_log::: {convo.chat_log}")
