@@ -174,9 +174,9 @@ def start_conversation():
             sqlite_insert_query = """INSERT INTO chats
                                   (user_id, chat_log) 
                                    VALUES 
-                                  ("""+session["user"]+","+chat_log+")"
-
-            count = cursor.execute(sqlite_insert_query)
+                                  (?,?);"""
+            param_tuple = (session["user"],session["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
             cursor.close()
@@ -277,9 +277,9 @@ def start_qualtrics_conversation():
             sqlite_insert_query = """INSERT INTO chats
                                   (user_id, chat_log) 
                                    VALUES 
-                                  ("""+session["user"]+","+chat_log+")"
-
-            count = cursor.execute(sqlite_insert_query)
+                                  (?,?);"""
+            param_tuple = (session["user"],session["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
             cursor.close()
