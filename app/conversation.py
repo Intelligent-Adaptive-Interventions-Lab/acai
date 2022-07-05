@@ -167,7 +167,7 @@ class GPTConversation(Conversation):
             converation.append({
                 "from": self.chatbot_name,
                 "to": self.END,
-                "message": "This conversation is ended. Please copy your username for the following questions in the survey.",
+                "message": "This conversation is ended. Your username is the secrete key in the survey. Please copy your username for the following questions.",
                 "send_time": None
             })
             
