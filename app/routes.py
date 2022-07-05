@@ -11,6 +11,9 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 from datetime import datetime, timezone
 
+import sqlite3
+
+
 # run_with_ngrok(app)
 
 USER = "Person"
@@ -143,6 +146,7 @@ def start_conversation():
         session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
+        session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         
     convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
     print(f"convo.chat_log::: {convo.chat_log}")
@@ -162,6 +166,28 @@ def start_conversation():
         print(f"chat_log::: {chat_log}")
         
         session["chat_log"] = chat_log
+        
+        try:
+            sqliteConnection = sqlite3.connect('database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"],session["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
         
         return redirect(url_for('start_conversation'))
     
@@ -244,6 +270,29 @@ def start_qualtrics_conversation():
         print(f"chat_log::: {chat_log}")
 
         session['chat_log'] = chat_log
+        
+        try:
+            sqliteConnection = sqlite3.connect('database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"],session["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+                
         return redirect(url_for('start_qualtrics_conversation'))
     
     print("{} RENDER WEBVIEW {}".format("-"*12, "-"*12))
