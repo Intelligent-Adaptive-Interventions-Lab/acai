@@ -12,7 +12,7 @@ cur.execute("INSERT INTO chats (user_id, chat_log) VALUES (?, ?)",
             ('127.0.0.1', 'Content for the first chat')
             )
 
-cur.execute("INSERT INTO posts (title, content) VALUES (?, ?)",
+cur.execute("INSERT INTO chats (user_id, chat_log) VALUES (?, ?)",
             ('127.0.0.1', 'Content for the second chat')
             )
 
