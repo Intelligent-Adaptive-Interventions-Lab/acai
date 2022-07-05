@@ -1,4 +1,5 @@
 from app import app
+from app import csrf
 from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm
 from app.conversation import GPTConversation, init_prompt
@@ -178,6 +179,7 @@ def start_conversation():
     )
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
+@csrf.exempt
 def start_qualtrics_conversation():
     
     # TODO: First checking if user existed in database

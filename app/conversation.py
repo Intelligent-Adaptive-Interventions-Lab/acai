@@ -124,7 +124,9 @@ class GPTConversation(Conversation):
         
         story = response['choices'][0]['text']
         
-        return str(story).strip()
+        answer = str(story).strip().split(self.restart_sequence)[0]
+        
+        return answer
     
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
