@@ -178,7 +178,13 @@ class GPTConversation(Conversation):
             converation.append({
                 "from": self.chatbot_name,
                 "to": self.END,
-                "message": "This conversation is ended. Your username is the secrete key in the survey. Please copy your username for the following questions.",
+                "message": "This conversation is ended. Your username is the secret key, which you have to paste in the previous survey window.",
+                "send_time": None
+            })
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.END,
+                "message": "To copy the secret key (i.e. username), you can click the blue button on the bottom left of your screen.",
                 "send_time": None
             })
             
