@@ -58,7 +58,7 @@ class Conversation:
     def get_chatbot(self) -> str:
         return self.chatbot_name
     
-    def get_conversation(self, end: bool=False) -> Dict:
+    def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
         dialogs = chat_log_clean.split("\n\n")
         
@@ -131,11 +131,20 @@ class GPTConversation(Conversation):
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
     
-    def get_conversation(self, end: bool=False) -> Dict:
+    def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
         dialogs = chat_log_clean.split(self.restart_sequence)
         
         converation = []
+        
+        if test:
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.WARNING,
+                "message": self.prompt,
+                "send_time": None
+            })
+        
         converation.append({
             "from": self.chatbot_name,
             "to": self.user_name,

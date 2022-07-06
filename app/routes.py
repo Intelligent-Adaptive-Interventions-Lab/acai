@@ -200,7 +200,7 @@ def start_conversation():
         warning=convo.WARNING, 
         end=convo.END,
         notification=convo.NOTI,
-        conversation=convo.get_conversation(),
+        conversation=convo.get_conversation(test=True),
         form=form
     )
 
