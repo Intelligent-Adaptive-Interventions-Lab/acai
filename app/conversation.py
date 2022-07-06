@@ -105,7 +105,7 @@ class GPTConversation(Conversation):
         "max_tokens": 150,
         "top_p": 1,
         "frequency_penalty": 0,
-        "presence_penalty": 0.3,
+        "presence_penalty": 0.6,
     }
     
     def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
