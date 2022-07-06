@@ -142,7 +142,11 @@ def start_conversation():
     print(f"request.remote_addr::: {request.remote_addr}")
     
     if chat_log is None:
-        select_prompt = init_prompt(random=True)
+        arm_no = session.get("arm_no")
+        if arm_no is None:
+            select_prompt = init_prompt(random=True)
+        else:
+            select_prompt = init_prompt(arm_no=arm_no)
         session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
@@ -225,7 +229,11 @@ def start_qualtrics_conversation():
     print(f"request.remote_addr::: {request.remote_addr}")
     
     if chat_log is None:
-        select_prompt = init_prompt(random=True)
+        arm_no = session.get("arm_no")
+        if arm_no is None:
+            select_prompt = init_prompt(random=True)
+        else:
+            select_prompt = init_prompt(arm_no=arm_no)
         session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
@@ -355,13 +363,25 @@ def chatweb():
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
-    
-    session['chat_log'] = None
-    session['start'] = None
-    session['end'] = None
+    for k, v in session.items():
+        session[k] = None
+    # session['chat_log'] = None
+    # session['start'] = None
+    # session['end'] = None
+    # session['arm_no'] = None
     return "cleared!"
 
 @app.route('/end', methods=['GET'])
 def end():
     session['end'] = True
     return "ended!"
+
+@app.route('/arm', methods=['POST'])
+@csrf.exempt
+def select_arm():
+    input_json = request.get_json(force=True)
+    if 'arm' not in input_json:
+        return "Arm not found", 400
+    arm_no = int(input_json['arm'])
+    session['arm_no'] = arm_no
+    return jsonify(init_prompt(arm_no=arm_no)), 200
