@@ -13,17 +13,17 @@ MESSAGE_START = "\n\nPerson: Hello, who are you?\nAI: I am an AI created by Open
 
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
     arm_default = {
-        "prompt": "The following is a conversation with a counselor. The counselor helps the Human by asking lots of reflection prompts. The counselor is empathetic, trustworthy, and is an active listener.",
+        "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach has strong interpersonal skills.",
         "message_start": MESSAGE_START,
         "chatbot": "AI"
     }
     arm_1 = {
-        "prompt": "The following is a conversation with a counselor. The counselor has strong interpersonal skills.",
+        "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach is optimistic, flexible, and empathetic.",
         "message_start": MESSAGE_START,
         "chatbot": "AI"
     }
     arm_2 = {
-        "prompt": "The following is a conversation with an AI assistant. The assistant is helpful, creative, clever, and very friendly.",
+        "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach is trustworthy, is an active listener, and is empathetic. The coach offers supportive and helpful attention, with no expectation of reciprocity.",
         "message_start": MESSAGE_START,
         "chatbot": "AI"
     }
