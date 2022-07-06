@@ -39,12 +39,12 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
 
 class Conversation:
     CONVO_START = MESSAGE_START
-    BOT_START = "Hello, I'm an AI designed to offer support. How can I help you?"
+    BOT_START = "Hello. I am an AI agent designed to help you manage your mood and mental health. How can I help you?"
     USER = "Person"
     CHATBOT = "AI"
-    WARNING = "warning"
-    END = "end"
-    NOTI = "notification"
+    WARNING = "Warning"
+    END = "End"
+    NOTI = "Notification"
     
     def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
         self.user_name = user
