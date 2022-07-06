@@ -132,7 +132,7 @@ conversation = [
     }
 ]
 
-@app.route('/', methods=['GET', 'POST'])
+# @app.route('/', methods=['GET', 'POST'])
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():
     chat_log = session.get('chat_log')
