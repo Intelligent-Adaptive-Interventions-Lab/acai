@@ -361,12 +361,11 @@ def chatweb():
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
-    for k, v in session.items():
-        session[k] = None
-    # session['chat_log'] = None
-    # session['start'] = None
-    # session['end'] = None
-    # session['arm_no'] = None
+    session['chat_log'] = None
+    session['start'] = None
+    session['end'] = None
+    session['arm_no'] = None
+    session["start"] = None
     return "cleared!"
 
 @app.route('/end', methods=['GET'])
