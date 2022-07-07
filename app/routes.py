@@ -374,11 +374,21 @@ def end():
     session['end'] = True
     return "ended!"
 
-@app.route('/arm', methods=['POST'])
+@app.route('/arm', methods=['GET'])
 def select_arm():
-    input_json = request.get_json(force=True)
-    if 'arm' not in input_json:
-        return "Arm not found", 400
-    arm_no = int(input_json['arm'])
+    args = request.args
+    location = int(args['location'])
+    if location == 152436:
+        arm_no = 1
+    elif location == 489324:
+        arm_no = 2
+    else:
+        arm_no = 3
     session['arm_no'] = arm_no
-    return jsonify(init_prompt(arm_no=arm_no)), 200
+    return redirect(url_for('start_qualtrics_conversation'))
+    # input_json = request.get_json(force=True)
+    # if 'arm' not in input_json:
+    #     return "Arm not found", 400
+    # arm_no = int(input_json['arm'])
+    # session['arm_no'] = arm_no
+    # return jsonify(init_prompt(arm_no=arm_no)), 200
