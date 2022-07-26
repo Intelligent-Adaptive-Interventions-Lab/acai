@@ -11,7 +11,7 @@ completion = openai.Completion()
 
 MESSAGE_START = "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
 
-def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
+def _init_prompt_behavior(arm_no: int=0, random: bool=False) -> Dict:
     arm_default = {
         "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach has strong interpersonal skills.",
         "message_start": MESSAGE_START,
@@ -35,6 +35,36 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
     if arm_no == 2:
         return arm_2
     return arm_default
+
+
+def _init_prompt_identity(arm_no: int=0, random: bool=False) -> Dict:
+    arm_default = {
+        "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach has strong interpersonal skills.",
+        "message_start": MESSAGE_START,
+        "chatbot": "AI"
+    }
+    arm_1 = {
+        "prompt": "The following is a conversation with a friend. The friend asks open-ended reflection questions and helps the Human develop coping skills. The friend has strong interpersonal skills.",
+        "message_start": MESSAGE_START,
+        "chatbot": "AI"
+    }
+    arm_2 = {
+        "prompt": "The following is a conversation with a mental health professional. The mental health professional asks open-ended reflection questions and helps the Human develop coping skills. The mental health professional has strong interpersonal skills.",
+        "message_start": MESSAGE_START,
+        "chatbot": "AI"
+    }
+    
+    if random:
+        return choice([arm_default, arm_1, arm_2])
+    if arm_no == 1:
+        return arm_1
+    if arm_no == 2:
+        return arm_2
+    return arm_default
+
+
+def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
+    return _init_prompt_identity(arm_no, random)
 
 
 class Conversation:
