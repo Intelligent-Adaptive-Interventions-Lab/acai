@@ -171,7 +171,7 @@ def start_conversation():
         session["chat_log"] = chat_log
         
         try:
-            sqliteConnection = sqlite3.connect('database.db')
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
@@ -278,7 +278,7 @@ def start_qualtrics_conversation():
         session['chat_log'] = chat_log
         
         try:
-            sqliteConnection = sqlite3.connect('database.db')
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
