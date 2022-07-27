@@ -153,8 +153,12 @@ class GPTConversation(Conversation):
         )
         
         story = response['choices'][0]['text']
-        
-        answer = str(story).strip().split(self.restart_sequence)[0]
+        # print(f"{'=' * 12} CHECKING STORY {'=' * 12}")
+        # print(story)
+        # print(f"{'-' * 12} ANSWER {'-' * 12}")
+        answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
+        # print(answer)
+        # print(f"{'=' * 12} CHECKING STORY END {'=' * 12}")
         
         return answer
     
