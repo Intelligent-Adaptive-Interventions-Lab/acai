@@ -9,7 +9,7 @@ load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 completion = openai.Completion()
 
-MESSAGE_START = "\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
+MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
 
 def _init_prompt_behavior(arm_no: int=0, random: bool=False) -> Dict:
     arm_default = {
@@ -189,7 +189,7 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
 class Conversation:
     CONVO_START = MESSAGE_START
     BOT_START = "Hello. I am an AI agent designed to help you manage your mood and mental health. How can I help you?"
-    USER = "Person"
+    USER = "Human"
     CHATBOT = "AI"
     WARNING = "Warning"
     END = "End"
