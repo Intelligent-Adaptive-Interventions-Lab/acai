@@ -387,32 +387,32 @@ def select_arm():
         arm_no = 3
     elif location == 56789:
         arm_no = 4
-    elif location == 56789:
-        arm_no = 5
     elif location == 67891:
-        arm_no = 6
+        arm_no = 5
     elif location == 78910:
-        arm_no = 7
+        arm_no = 6
     elif location == 89101:
-        arm_no = 8
+        arm_no = 7
     elif location == 91011:
-        arm_no = 9
+        arm_no = 8
     elif location == 10111:
-        arm_no = 10
+        arm_no = 9
     elif location == 11121:
-        arm_no = 11
+        arm_no = 10
     elif location == 12131:
-        arm_no = 12
+        arm_no = 11
     elif location == 13141:
-        arm_no = 13
+        arm_no = 12
     elif location == 14151:
-        arm_no = 14
+        arm_no = 13
     elif location == 15161:
-        arm_no = 15
+        arm_no = 14
     elif location == 16171:
-        arm_no = 16
+        arm_no = 15
     elif location == 17181:
-        arm_no = 17
+        arm_no = 16
+    elif location == 18192:
+        arm_no = 16
     session['arm_no'] = arm_no
     return redirect(url_for('start_qualtrics_conversation'))
     # input_json = request.get_json(force=True)
