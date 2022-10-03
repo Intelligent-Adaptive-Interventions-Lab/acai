@@ -182,8 +182,37 @@ def _init_prompt_field(arm_no: int=0, random: bool=False) -> Dict:
     return arms[0]
 
 
+def _init_prompt_field_psyc(arm_no: int=0, random: bool=False) -> Dict:
+    arms = [
+        # arm 0 
+        {
+            "prompt": "The following is a conversation with a client-centered therapist. The client-centered therapist provides the conditions for the human to express their own inherent growth tendency and self-realization. The client-centered therapist empathizes with the human and empowers the human to pursue his own goals in a nondirective way.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 1
+        {
+            "prompt": "The following is a conversation with a psychoanalyst. The psychoanalyst facilitates awareness of unconscious motivations, thereby increasing choice. The psychoanalyst explores the ways in which the human avoids painful or threatening feelings, fantasies, and thoughts. The psychoanalyst makes reflections and interpretations to make the human more aware of unconscious experiences and relational patterns. The psychoanalyst pays attention to the therapeutic relationship, including transference and countertransference.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 2
+        {
+            "prompt": "The following is a conversation with a cognitive-behavioral therapist. The cognitive-behavioral therapist aims to help the human think about situations in more balanced, helpful ways and promote behavioral flexibility. The cognitive-behavioral therapist highlights the relations among thoughts, behaviors, and feelings. The cognitive-behavioral therapist uses Socratic questioning to uncover core beliefs. The cognitive-behavioral therapist encourages the human to restructure negative automatic thoughts to be more helpful, and to approach situations that elicit anxiety rather than avoiding them.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        }
+    ]
+    
+    if random:
+        return choice(arms)
+    if arm_no < len(arms):
+        return arms[arm_no]
+    return arms[0]
+    
+
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
-    return _init_prompt_field(arm_no, random)
+    return _init_prompt_field_psyc(arm_no, random)
 
 
 class Conversation:
