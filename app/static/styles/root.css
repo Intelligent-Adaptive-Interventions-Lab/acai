@@ -30,4 +30,23 @@
     --emoji_nav: #7a90e6;
     --emoji_special_nav: #6e82cf;
     --emoji_search_input: #f1f4fc;
+
+    /* main page */
+    --body-background: #f0fefd;
+    --nav-color: #f0fefd;
+    --panel-btn-color: #f0fefd;
+    --key-table-head-color: #f0fefd;
+    --choice-btn-color: #f0fefd;
+    --nav-background: #5c696d;
+    --key-table-head-background: #5c696d;
+    --body-color: #5c696d;
+    --breadcrumb-background: #c2f5f9;
+    --panel-background: #c2f5f9;
+    --card-head-background: #c2f5f9;
+    --btn-background: #7abbe6;
+    --icon-background: #7abbe6;
+    --panel-btn-background: #7abbe6;
+    --choice-btn-background: #EB7847;
+    --card-body-background: #E7F6FC;
+    --icon-color: #f1f4fc;
 }

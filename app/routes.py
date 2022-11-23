@@ -3,12 +3,11 @@ from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm
 from app.conversation import GPTConversation, init_prompt
 
+
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 from twilio.twiml.messaging_response import MessagingResponse
-# import run_with_ngrok from flask_ngrok to run the app using ngrok
-# from flask_ngrok import run_with_ngrok
-
 from datetime import datetime, timezone
+
 
 import sqlite3
 
@@ -132,14 +131,16 @@ conversation = [
     }
 ]
 
-# @app.route('/', methods=['GET', 'POST'])
+
+@app.route('/')
+def main():
+    return render_template("/pages/main.html")
+
+
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():
     chat_log = session.get('chat_log')
-    print("{} CONVO START {}".format("-"*12, "-"*12))
-    print(f"chat_log::: {chat_log}")
-    print(f"request.remote_addr::: {request.remote_addr}")
-    
+
     if chat_log is None:
         arm_no = session.get("arm_no")
         if arm_no is None:
@@ -150,26 +151,16 @@ def start_conversation():
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        
+
     convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
-    print(f"convo.chat_log::: {convo.chat_log}")
-    print(f"convo.user::: {convo.user_name}")
-    print(f"convo.chatbot::: {convo.chatbot_name}")
-    print(f"convo.get_conversation()::: {convo.get_conversation()}")
 
     form = ChatForm()
     if form.validate_on_submit():
-        print("{} NEW MESSAGE {}".format("-"*12, "-"*12))
         user_message = form.message.data
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
-        
-        print(f"user_message::: {user_message}")
-        print(f"answer::: {answer}")
-        print(f"chat_log::: {chat_log}")
-        
         session["chat_log"] = chat_log
-        
+
         try:
             sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
@@ -194,8 +185,6 @@ def start_conversation():
         
         return redirect(url_for('start_conversation'))
     
-    print("{} RENDER WEBVIEW {}".format("-"*12, "-"*12))
-    
     return render_template(
         '/dialogue/conversation_card.html', 
         user=convo.get_user(), 
@@ -209,23 +198,7 @@ def start_conversation():
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
 def start_qualtrics_conversation():
-    
-    # TODO: First checking if user existed in database
-    # TODO: [In Qualtrics] Second, check contextual variables in MOOClet Engine
-    # TODO: [In Qualtrics] check if this user has an arm
-    # TODO: [In Qualtrics] If user doesn't have an arm, run MOOClet Engine -> get one arm
-    # TODO: arm -> get chat log : The following is a conversation with a friend. The friend is funny, shy, empathetic, and introverted.\n\nPerson: Hello, who are you?\nAI: I am an AI created by OpenAI. How can I help you today?
-    # TODO: chat log -> OpenAI API -> get the generated responses for the bot
-    # TODO: chat log + genrated responses -> conversation
-    # TODO: otherwise, get all conversation from the database
-    # TODO: [NOT in this API] user can give us responses <- not from this API
-    # TODO: [NOT in this API] storing/updating this conversation to database
-    
     chat_log = session.get('chat_log')
-    print("{} CONVO START {}".format("-"*12, "-"*12))
-    print(f"chat_log::: {chat_log}")
-    print(f"request.remote_addr::: {request.remote_addr}")
-    
     if chat_log is None:
         arm_no = session.get("arm_no")
         if arm_no is None:
@@ -236,12 +209,8 @@ def start_qualtrics_conversation():
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        
+
     convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
-    print(f"convo.chat_log::: {convo.chat_log}")
-    print(f"convo.user::: {convo.user_name}")
-    print(f"convo.chatbot::: {convo.chatbot_name}")
-    print(f"convo.get_conversation()::: {convo.get_conversation()}")
 
     start = session.get('start')
     if start is None:
@@ -254,26 +223,16 @@ def start_qualtrics_conversation():
     now = datetime.now()
     difference = now - datetime.strptime(session.get('start'), "%m/%d/%Y, %H:%M:%S")
     difference_seconds = difference.total_seconds()
-    
+
     end = session.get('end')
     if end is None or not end:
         session["end"] = (difference_seconds >= session.get('stop'))
-    
-    print("start::: {}".format(session.get('start')))
-    print("stop::: {}".format(session.get('stop')))
-    print(f"difference_seconds::: {difference_seconds}")
-    print("end::: {}".format(session.get('end')))
 
     form = ChatForm()
     if form.validate_on_submit() and not session.get('end'):
-        print("{} NEW MESSAGE {}".format("-"*12, "-"*12))
         user_message = form.message.data
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
-
-        print(f"user_message::: {user_message}")
-        print(f"answer::: {answer}")
-        print(f"chat_log::: {chat_log}")
 
         session['chat_log'] = chat_log
         
@@ -298,11 +257,9 @@ def start_qualtrics_conversation():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-                
+
         return redirect(url_for('start_qualtrics_conversation'))
-    
-    print("{} RENDER WEBVIEW {}".format("-"*12, "-"*12))
-    
+
     return render_template(
         '/dialogue/qualtrics_card.html', 
         user=convo.get_user(), 
@@ -318,27 +275,14 @@ def start_qualtrics_conversation():
 @app.route('/chatsms', methods=['POST'])
 def chatsms():
     incoming_msg = request.values['Body']
-    print("request: ")
-    print(request)
-    print()
-
-    print("incoming_msg: {}".format(incoming_msg))
-    print()
     chat_log = session.get('chat_log')
-    print("chat_log: {}".format(chat_log))
-    print()
-
     answer = ask(incoming_msg, chat_log)
-    print("answer: {}".format(answer))
-    print()
 
     session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,chat_log)
-    
+
     msg = MessagingResponse()
     msg.message(answer)
 
-    print("message: {}".format(msg))
-    print()
     return str(msg)
 
 
@@ -346,9 +290,6 @@ def chatsms():
 def chatweb():
     input_json = request.get_json(force=True) 
     incoming_msg = str(input_json['response'])
-    print("session: ")
-    print(session)
-    print()
     chat_log = session.get('chat_log')
     answer = ask(incoming_msg, chat_log)
     session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer, chat_log)
@@ -368,10 +309,12 @@ def clear_session():
     session["start"] = None
     return "cleared!"
 
+
 @app.route('/end', methods=['GET'])
 def end():
     session['end'] = True
     return "ended!"
+
 
 @app.route('/arm', methods=['GET'])
 def select_arm():
@@ -415,9 +358,4 @@ def select_arm():
         arm_no = 16
     session['arm_no'] = arm_no
     return redirect(url_for('start_qualtrics_conversation'))
-    # input_json = request.get_json(force=True)
-    # if 'arm' not in input_json:
-    #     return "Arm not found", 400
-    # arm_no = int(input_json['arm'])
-    # session['arm_no'] = arm_no
-    # return jsonify(init_prompt(arm_no=arm_no)), 200
+
