@@ -1,0 +1,153 @@
+{% extends '_base.html' %}
+
+{% block title %}
+Bot-To-Bot Conversation
+{% endblock title %}
+
+{% block css_files %}
+
+{% endblock css_files %}
+
+{% block contents %}
+
+{% include 'pages/includes/navbar.html' %}
+
+{% include 'pages/includes/breadcrumb.html' %}
+
+<div class="container-fluid" style="height: 80vh; width: 90vw;">
+    <div class="d-flex flex-column w-100 gap-3 mt-3 mb-3">
+        <h5 id="page-id" class="m-0 fs-3 d-none">Bot-To-Bot Conversation</h5>
+    </div>
+
+    <div class="row gy-3">
+        <div class="col-mb-6">
+            <div class="card">
+                <div class="card-header d-flex" style="background: var(--bot_background);">
+                    <div class="d-flex gap-1">
+                        <p class="m-0 p-1" style="font-weight: bold;">
+                            Therapy Bot
+                        </p>
+                    </div>
+
+                    <div class="dropdown ms-auto">
+                        <div class="dropdown-toggle p-1 text-center" id="model-type-dropdown-therapy" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            GPT-3
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="model-type-dropdown-therapy">
+                            <li><div id="gpt-3-dropdown-item-therapy" class="dropdown-item active">GPT-3</div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body" style="background: var(--card-body-background);">
+                    <div class="d-flex">
+                        <h5 class="card-title">Prompt Designs</h5>
+                        <h5 class="ms-auto collapse-icon-btn fs-5" data-bs-toggle="collapse" data-bs-target="#prompt-design-therapy" aria-expanded="false" aria-controls="prompt-design-therapy" style="cursor: pointer;"><i class="bi bi-chevron-down"></i></h5>
+                    </div>
+                    <div class="card-text collapse mt-2" id="prompt-design-therapy">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Prompt</span>
+                            <textarea class="form-control" aria-label="Prompt" id="prompt" rows="6"></textarea>
+                        </div>
+
+                        <button type="button" id="add-example" class="panel-btn d-flex w-100 align-items-center justify-content-center p-2 rounded-3 d-none">
+                            <h5 class="m-0 fs-5">Add Example</h5>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-mb-6">
+            <div class="card">
+                <div class="card-header d-flex" style="background: var(--user_background);">
+                    <div class="d-flex gap-1">
+                        <p class="m-0 p-1" style="font-weight: bold;">
+                            User Bot
+                        </p>
+                    </div>
+
+                    <div class="dropdown ms-auto">
+                        <div class="dropdown-toggle p-1 text-center" id="model-type-dropdown-user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            GPT-3
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="model-type-dropdown-user">
+                            <li><div id="gpt-3-dropdown-item-user" class="dropdown-item active">GPT-3</div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body" style="background: var(--card-body-background);">
+                    <div class="d-flex">
+                        <h5 class="card-title">Prompt Designs</h5>
+                        <h5 class="ms-auto collapse-icon-btn fs-5" data-bs-toggle="collapse" data-bs-target="#prompt-design-user" aria-expanded="false" aria-controls="prompt-design-user" style="cursor: pointer;"><i class="bi bi-chevron-down"></i></h5>
+                    </div>
+                    <div class="card-text collapse mt-2" id="prompt-design-user">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Prompt</span>
+                            <textarea class="form-control" aria-label="Prompt" id="prompt" rows="6"></textarea>
+                        </div>
+
+                        <button type="button" id="add-example" class="panel-btn d-flex w-100 align-items-center justify-content-center p-2 rounded-3 d-none">
+                            <h5 class="m-0 fs-5">Add Example</h5>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock contents %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
+<script>
+    var BotToBotConversation = function() {
+        this.formModel = document.getElementById(`form-model`),
+        this.formPrompt = document.getElementById(`form-prompt`),
+        this.formSubmit = document.getElementById(`form-submit`),
+        this.prompt = document.getElementById(`prompt`),
+        this.predictSubmit = document.getElementById(`predict-submit`),
+    };
+
+    BotToBotConversation.prototype = {
+        ini: function() {
+            this._prepareAPI();
+            this._prepareFrontEnd();
+            this._addEventListner();
+        },
+        _prepareFrontEnd: function() {
+            this.prompt.innerHTML = this.formPrompt.value;
+
+        },
+        _prepareAPI: function() {
+            var that = this;
+
+            this.syncValueChange = function(items) {
+                let curr = this;
+
+                items.forEach(item => {
+                    item.value = curr.value;
+                });
+            }
+        },
+        _addEventListner: function() {
+            var that = this;
+
+            this.prompt.addEventListener(
+                "input", 
+                that.syncValueChange.bind(that.prompt, [that.formPrompt])
+            );
+        }
+    };
+
+    window.onload = function() {
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        })
+        new BotToBotConversation().ini();
+    };
+</script>
+{% endblock js_files %}

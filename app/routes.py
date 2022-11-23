@@ -137,6 +137,11 @@ def main():
     return render_template("/pages/main.html")
 
 
+@app.route('/bot_to_bot')
+def bot_to_bot():
+    return render_template("/pages/bot_to_bot.html")
+
+
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():
     chat_log = session.get('chat_log')
@@ -186,7 +191,7 @@ def start_conversation():
         return redirect(url_for('start_conversation'))
     
     return render_template(
-        '/dialogue/conversation_card.html', 
+        '/pages/convo.html', 
         user=convo.get_user(), 
         bot=convo.get_chatbot(), 
         warning=convo.WARNING, 

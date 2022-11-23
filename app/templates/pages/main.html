@@ -54,5 +54,9 @@ ACAI
     document.getElementById("conversation-page-btn").onclick = function() {
         location.href = `{{ url_for('start_conversation') }}`;
     }
+
+    document.getElementById("bot-to-bot-page-btn").onclick = function() {
+        location.href = `{{ url_for('bot_to_bot') }}`;
+    }
 </script>
 {% endblock js_files %}

@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block title %}
-Qualtrics Dialogues
+Chatbot Conversation
 {% endblock title %}
 
 {% block css_files %}
@@ -9,11 +9,21 @@ Qualtrics Dialogues
 {% endblock css_files %}
 
 {% block contents %}
-<div id='message-card' class="card" style="height: 100vh; weight: 100vw;">
-    {% include 'dialogue/includes/message_card.html' %}
-</div>
-<div id='end-card' class="d-none card" style="height: 100vh; weight: 100vw; background-color: var(--confirmation_dialog_back);">
-    {% include 'dialogue/includes/conversation_end_notice.html' %}
+
+{% include 'pages/includes/navbar.html' %}
+
+{% include 'pages/includes/breadcrumb.html' %}
+
+<h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
+
+<div class="container p-0" style="margin-top: 2vh;">
+    <div id='message-card' class="convo__card card mx-auto">
+        {% include 'dialogue/includes/message_card.html' %}
+    </div>
+
+    <div id='end-card' class="d-none convo__card card mx-auto" style="background-color: var(--confirmation_dialog_back);">
+        {% include 'dialogue/includes/conversation_end_notice.html' %}
+    </div>
 </div>
 
 {% include 'dialogue/includes/confirmation_dialog.html' %}
@@ -23,11 +33,12 @@ Qualtrics Dialogues
 {% block js_files %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/emojipicker.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/scrollToLastChatBox.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/showToast.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/showTooltip.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
+
 <script>
 
     var endButton = document.getElementById("end-button");
@@ -39,21 +50,11 @@ Qualtrics Dialogues
     endButton.addEventListener('click', function () {
         messageCard.classList.add("d-none");
         endCard.classList.remove("d-none");
-
-        fetch(`/end`)
-            .then(function (response) {
-                return response.text();
-            }).then(function (text) {
-                console.log('GET response text:');
-                console.log(text); 
-            });
     });
 
     backButton.addEventListener('click', function () {
         endCard.classList.add("d-none");
         messageCard.classList.remove("d-none");
-
-        location.reload(true);
     });
 
 </script>
