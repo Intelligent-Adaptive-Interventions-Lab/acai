@@ -14,6 +14,8 @@ Dialogues
 
 {% include 'pages/includes/breadcrumb.html' %}
 
+<h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
+
 <div class="container p-0" style="margin-top: 2vh;">
     <div id='message-card' class="convo__card card mx-auto">
         {% include 'dialogue/includes/message_card.html' %}
@@ -30,6 +32,7 @@ Dialogues
 
 {% block js_files %}
 <script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
 <script>
 
     new EmojiPicker({
