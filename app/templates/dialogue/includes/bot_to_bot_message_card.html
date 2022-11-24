@@ -1,0 +1,180 @@
+<div class="card-header bg-transparent">
+    <div class="navbar navbar-expand p-0">
+        <ul class="navbar-nav me-auto align-items-center">
+            <li class="nav-item">
+                <a href="#!" class="nav-link p-0">
+                    <div class="bot__icon position-relative">
+                        <div class="img-fluid rounded-circle avatar bot__avatar"></div>
+                        <span id="bot-new-message" class="position-absolute bottom-0 end-0 badge border border-light rounded-circle bg-danger bg-gradient p-1">
+                            <span class="visually-hidden">unread messages</span>
+                        </span>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item" style="max-width: 48vw;">
+                <a href="#!" class="nav-link bot__name">{{ bot }}</a>
+                {% if conversation %}
+                    {% with first_convo=conversation.0 %}
+                        {% if (first_convo) and (first_convo.from == bot) and (first_convo.to == warning) %}
+                            <a href="#!" class="nav-link bot__description">
+                                <span class="d-inline-block text-truncate" style="max-width: 100%;">
+                                    {{ first_convo.message }}
+                                </span>
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="modal" data-bs-target="#confirmation"></button>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="card-body chat__box">
+    {% set slice_dict = namespace(switch=false, start=0) %}
+    {% set finish_convo = namespace(end=false) %}
+    {% for convo in conversation %}
+        {% if (convo.from == bot) and (convo.to == warning) %}
+            {% include 'dialogue/includes/warning_chat_box.html' %}
+            {% set slice_dict.start = loop.index %}
+            {% set slice_dict.switch = false %}
+        {% else %}
+            {% if (convo.from == bot) and (convo.to == end) %}
+                {% include 'dialogue/includes/end_chat_box.html' %}
+                {% set slice_dict.start = loop.index %}
+                {% set slice_dict.switch = false %}
+                {% set finish_convo.end = true %}
+            {% else %}
+                {% if (convo.from == bot) and (convo.to == notification) %}
+                    {% include 'dialogue/includes/noti_chat_box.html' %}
+                    {% set slice_dict.start = loop.index %}
+                    {% set slice_dict.switch = false %}
+                {% else %}
+                    {% if loop.nextitem %}
+                        {% with next_conv=loop.nextitem %}
+                            {% set slice_dict.switch = ((next_conv.from != convo.from) or (next_conv.to != convo.to)) %}
+                        {% endwith %}
+                    {% else %}
+                        {% set slice_dict.switch = true %}
+                    {% endif %}
+
+                    {% if slice_dict.switch is true %}
+                        {% if (convo.from == bot) and (convo.to == user) %}
+                            <div class="convo__box d-flex align-items-start mb-2 me-4">
+                                <div class="d-none d-sm-flex bot__icon">
+                                    <div class="img-fluid rounded-circle avatar bot__avatar"></div>
+                                </div>
+                            
+                                <div class="ps-0 ps-sm-2">
+                                    {% for bot_convo in conversation[slice_dict.start:loop.index] %}
+                                        {% include 'dialogue/includes/bot_chat_box.html' %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            {% if (convo.from == user) and (convo.to == bot) %}
+                                <div class="convo__box d-flex align-items-start text-end justify-content-end mb-2 ms-4">
+                                    <div class="pe-0 pe-sm-2">
+
+                                        {% for user_convo in conversation[slice_dict.start:loop.index] %}
+                                            {% include 'dialogue/includes/user_chat_box.html' %}
+                                        {% endfor %}
+                                    </div>
+                    
+                                    <div class="d-none d-sm-flex user__icon">
+                                        <div class="img-fluid rounded-circle avatar user__avatar"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% set slice_dict.start = loop.index %}
+                        {% set slice_dict.switch = false %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}            
+    {% endfor %}
+
+    {% if finish_convo.end is false %}
+        <div id="temp-user-box" class="d-none convo__box d-flex align-items-start text-end justify-content-end mb-2 ms-4">
+            <div class="pe-0 pe-sm-2">
+                <div>
+                    <div id="temp-user-msg" class="card card-text user__dialog text-start d-inline-block p-2 px-3 m-1">
+                        
+                        {% if conversation %}
+                            {% with first_convo=conversation.0 %}
+                                <div class="send__time text-start">
+                                    {% if (first_convo) and (first_convo.send_time) %}
+                                        {{ first_convo.send_time.strftime("%I:%M%p") }}
+                                    {% endif %}
+                                </div>
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-none d-sm-flex user__icon">
+                <div class="img-fluid rounded-circle avatar user__avatar"></div>
+            </div>
+        </div>
+    {% endif %}  
+</div>
+<div class="card-footer bg-transparent bottom-0 m-0">
+    <div class="row">
+        <div class="input-group">
+            <div class="col-md-3 col-12">
+                <div class="row">
+                    <div class="input-group-text bg-transparent border-0 col-md-3 col-5 ps-3 ps-md-1 ps-lg-2">
+                        <button
+                            id="turn-identity"
+                            type="button" 
+                            class="btn bot__disabled user__disabled response__box position-relative"
+                        >
+                            <div id="turn-identity-text" class="mx-auto text-truncate" style="width: 19vw;">Coach</div>
+                            <span id="user-new-message" class="d-none position-absolute top-0 start-100 translate-middle p-1 bg-danger bg-gradient border border-light rounded-circle">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="input-group-text bg-transparent justify-content-end border-0 col-7 ps-1 d-flex d-md-none">
+                        <button class="btn bg-transparent emoji response__box">
+                            <i class="bi bi-emoji-smile"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id='all-form' class="col-12 col-md-9">
+                <div class="row">
+                    <div class="align-self-center col-9 pe-0">
+                        <textarea id="textarea-message" type="textbox" class="send__box form-control border-0" style="resize: none;" placeholder="Write a message..." rows="1"></textarea>
+                    </div>
+                    <div class="col-3">
+                        <div class="row">
+                            <div class="input-group-text bg-transparent border-0 ps-0 col-4 pe-2 ps-lg-3 d-none d-md-block">
+                                <button class="btn bg-transparent emoji">
+                                    <i class="bi bi-emoji-smile"></i>
+                                </button>
+                            </div>
+                            <div class="input-group-text bg-transparent border-0 ps-1 col-12 col-md-8 ps-lg-3">
+                                <button id="btn-submit" class="btn send response__box" type="submit">
+                                    <div class="d-none d-md-block">
+                                        Send
+                                        <i class="bi bi-send"></i>
+                                    </div>
+                                    <div class="d-block d-md-none">
+                                        <i class="bi bi-send"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

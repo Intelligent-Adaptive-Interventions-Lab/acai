@@ -1,9 +1,6 @@
 from flask import Flask
 
 
-import yaml
-
-
 app = Flask(__name__)
 app.config.update(
     DEBUG=True,

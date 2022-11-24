@@ -1,7 +1,7 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
-from app.forms import ChatForm
-from app.conversation import GPTConversation, init_prompt
+from app.forms import ChatForm, BotToBotChatForm
+from app.conversation import CustomGPTConversation, GPTConversation, init_prompt
 
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
@@ -132,14 +132,162 @@ conversation = [
 ]
 
 
+def _delete_session_variable(variable: str) -> None:
+    try:
+        del session[variable]
+    except KeyError:
+        pass
+
 @app.route('/')
 def main():
     return render_template("/pages/main.html")
 
 
-@app.route('/bot_to_bot')
+@app.route('/bot_to_bot', methods=['GET', 'POST'])
 def bot_to_bot():
-    return render_template("/pages/bot_to_bot.html")
+    form = BotToBotChatForm(turn="User")
+
+    bot = CustomGPTConversation(
+        user="HUMAN", 
+        chatbot="AI", 
+        chat_log=session.get('bot_chat_log', form.bot_prompt.data),
+        prompt=form.bot_prompt.data,
+        default_start="I am an AI created by OpenAI. How are you doing today?"
+    )
+    user = CustomGPTConversation(
+        user="HUMAN", 
+        chatbot="AI", 
+        chat_log=session.get('user_chat_log', form.user_prompt.data),
+        prompt=form.user_prompt.data,
+        default_start="Hello, who are you?"
+    )
+
+    if form.validate_on_submit():
+        message = form.message.data
+        turn = form.turn.data
+
+        # Check current turn of the conversation
+        if turn == 'User':
+            print("User Turn")
+            # Bot turn
+            # Start with user message
+            # Check if providing message manually
+            if message != '':
+                # [USER] Add answer (self) message to chat log
+                user_chat_log = user.append_interaction_to_chat_log(answer=message)
+
+                # [BOT] Generate message to chat log
+                answer = bot.ask(question=message)
+
+                # [BOT] Add message back to chat log
+                bot_chat_log = bot.append_interaction_to_chat_log(question=message, answer=answer)
+            else:
+                print("auto")
+                # [USER] Get last message for question
+                question = user.get_last_message()
+                print("question: {}".format(question))
+
+                if question == '':
+                    bot_chat_log = bot.append_interaction_to_chat_log(question=user.default_start)
+                    user_chat_log = user.append_interaction_to_chat_log(answer=user.default_start)
+                else:
+                    answer = bot.ask()
+                    bot_chat_log = bot.append_interaction_to_chat_log(question=question, answer=answer)
+                    user_chat_log = user.append_interaction_to_chat_log(question=answer)
+
+
+                # [BOT] Generate message to chat log
+                # answer = bot.ask(question=question)
+                # print("answer: {}".format(answer))
+
+                # [BOT] Add message back to chat log
+                # bot_chat_log = bot.append_interaction_to_chat_log(question=question, answer=answer)
+
+                # [USER] Add question (opposite) message to chat log
+                # user_chat_log = user.append_interaction_to_chat_log(question=answer)
+
+
+                print("-----")
+                print(bot_chat_log)
+                print("-----")
+                print(user_chat_log)
+                print("-----")
+
+            form.turn.default = 'Bot'
+        else:
+            print("Bot Turn")
+            # User turn
+            # Start with bot message
+            # Check if providing message manually
+            if message != '':
+                # [BOT] Add answer (self) message to chat log
+                bot_chat_log = bot.append_interaction_to_chat_log(answer=message)
+
+                # [USER] Generate message to chat log
+                answer = user.ask(question=message)
+
+                # [USER] Add message back to chat log
+                user_chat_log = user.append_interaction_to_chat_log(question=message, answer=answer)
+            else:
+                print("auto")
+                # [BOT] Get last message for question
+                question = bot.get_last_message()
+                print("question: {}".format(question))
+
+                if question == '':
+                    user_chat_log = user.append_interaction_to_chat_log(question=bot.default_start)
+                    bot_chat_log = bot.append_interaction_to_chat_log(answer=bot.default_start)
+                else:
+                    answer = user.ask()
+                    user_chat_log = user.append_interaction_to_chat_log(question=question, answer=answer)
+                    bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
+
+                # [USER] Generate message to chat log
+                # answer = user.ask(question=question)
+                # print("answer: {}".format(answer))
+
+                # # [USER] Add message back to chat log
+                # user_chat_log = user.append_interaction_to_chat_log(question=question, answer=answer)
+
+                # # [BOT] Add question (opposite) message to chat log
+                # bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
+
+            form.turn.default = 'User'
+
+        # Sync both USER and BOT chat logs
+        user.sync_chat_log(user_chat_log)
+        bot.sync_chat_log(bot_chat_log)
+
+        session['user_chat_log'] = user_chat_log
+        session['bot_chat_log'] = bot_chat_log
+        form.process()
+
+        print("USER: {}".format(user.chat_log))
+        print()
+        print("BOT: {}".format(bot.chat_log))
+
+        # Render conversation from BOT
+        return render_template(
+            "/pages/bot_to_bot.html",
+            user=bot.get_user(), 
+            bot=bot.get_chatbot(), 
+            warning=bot.WARNING, 
+            end=bot.END,
+            notification=bot.NOTI,
+            conversation=bot.get_conversation(test=False),
+            form=form
+        )
+
+    return render_template(
+        "/pages/bot_to_bot.html",
+        user=bot.get_user(), 
+        bot=bot.get_chatbot(), 
+        warning=bot.WARNING, 
+        end=bot.END,
+        notification=bot.NOTI,
+        conversation=bot.get_conversation(test=False),
+        form=form
+    )
 
 
 @app.route('/conversation', methods=['GET', 'POST'])
@@ -307,11 +455,10 @@ def chatweb():
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
-    session['chat_log'] = None
-    session['start'] = None
-    session['end'] = None
-    session['arm_no'] = None
-    session["start"] = None
+    delete_variables = ['chat_log', 'start', 'end', 'arm_no', 'bot_chat_log', 'user_chat_log']
+    for variable in delete_variables:
+        _delete_session_variable(variable)
+
     return "cleared!"
 
 
@@ -363,4 +510,3 @@ def select_arm():
         arm_no = 16
     session['arm_no'] = arm_no
     return redirect(url_for('start_qualtrics_conversation'))
-
