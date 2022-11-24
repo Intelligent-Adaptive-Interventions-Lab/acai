@@ -316,34 +316,31 @@ class CustomGPTConversation(GPTConversation):
 
         if not question and not answer:
             return self.chat_log
-        
+
         if question and answer:
             # Construct single turn conversation after performing asking
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
-        
+
         if question:
             # Construct question before performing asking
             return f"{self.chat_log}{self.restart_sequence}{question}".strip()
-        
+
         # Construct answer after performing asking
         return f"{self.chat_log}{self.start_sequence} {answer}".strip()
-    
+
     def sync_chat_log(self, chat_log: str) -> None:
         self.chat_log = chat_log
-    
+
     def get_last_message(self) -> str:
-        # Get last message from the bot (self) in the chat log
-        print("chat log: {}".format(self.chat_log))
+        # Get last message from the user (opposite) in the chat log
         separate_bot_message = self.chat_log.rsplit(self.start_sequence, 1)
-        print("separate_bot_message: {}".format(separate_bot_message))
 
         if len(separate_bot_message) > 1:
-            last_turn_msg = separate_bot_message[-1].split(self.restart_sequence)[0]
-            print("last_turn_msg: {}".format(last_turn_msg))
+            last_turn_msg = separate_bot_message[-1].rsplit(self.restart_sequence, 1)[-1]
             return last_turn_msg
 
         return ''
-    
+
     def ask(self, question: str=None) -> str:
         if not question:
             prompt_text = f"{self.chat_log}{self.start_sequence}"
@@ -365,11 +362,8 @@ class CustomGPTConversation(GPTConversation):
         start_text = self.prompt
 
         chat_log_clean = self.chat_log.split(start_text)[1]
-        print("chat_log_clean: {}".format(chat_log_clean))
-
 
         dialogs = chat_log_clean.split(self.restart_sequence)
-        print("dialogs: {}".format(dialogs))
 
         converation = []
 
@@ -381,9 +375,8 @@ class CustomGPTConversation(GPTConversation):
                 "send_time": None
             })
 
-        for i in range(1, len(dialogs)):
-            messages = dialogs[i].split(self.start_sequence)
-            print("messages: {}".format(messages))
+        for dialog_msg in dialogs:
+            messages = dialog_msg.split(self.start_sequence)
 
             for msg_idx, msg in enumerate(messages):
                 if msg_idx == 0:
