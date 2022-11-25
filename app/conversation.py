@@ -9,7 +9,7 @@ import yaml
 
 with open('./app/static/secret.yaml') as file:
     secret_keys = yaml.load(file, Loader=yaml.FullLoader)
-openai.api_key = secret_keys
+openai.api_key = secret_keys["openai"]
 completion = openai.Completion()
 
 MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
