@@ -9,6 +9,11 @@ Dialogues
 {% endblock css_files %}
 
 {% block contents %}
+
+{% include 'pages/includes/navbar.html' %}
+
+{% include 'pages/includes/breadcrumb.html' %}
+
 <div class="container p-0" style="margin-top: 2vh;">
     <div id='message-card' class="convo__card card mx-auto">
         {% include 'dialogue/includes/message_card.html' %}

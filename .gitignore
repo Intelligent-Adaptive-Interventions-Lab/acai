@@ -169,3 +169,6 @@ node_modules/
 # Testing
 test/
 database.db
+
+# YAML
+app/static/secret.yaml
