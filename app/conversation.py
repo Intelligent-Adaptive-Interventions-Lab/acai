@@ -1,6 +1,6 @@
 from app import app
 from random import choice
-from typing import Dict
+from typing import Dict, Optional
 
 
 import openai
@@ -266,6 +266,117 @@ class GPTConversation(Conversation):
 
         for i in range(1, len(dialogs)):
             messages = dialogs[i].split(self.start_sequence)
+
+            for msg_idx, msg in enumerate(messages):
+                if msg_idx == 0:
+                    from_idt = self.user_name
+                    to_idt = self.chatbot_name
+                else:
+                    to_idt = self.user_name
+                    from_idt = self.chatbot_name
+
+                convo = []
+                for text in msg.split("\n"):
+                    if len(text) != 0:
+                        convo.append({
+                            "from": from_idt,
+                            "to": to_idt,
+                            "message": text.strip(),
+                            "send_time": None
+                        })
+                converation.extend(convo)
+
+        if end:
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.END,
+                "message": "This conversation is ended. Your username is the secret key, which you have to paste in the previous survey window.",
+                "send_time": None
+            })
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.END,
+                "message": "To copy the secret key (i.e. username), you can click the blue button on the bottom left of your screen.",
+                "send_time": None
+            })
+
+        return converation
+
+
+class CustomGPTConversation(GPTConversation):
+    def __init__(self, user: str, chatbot: str, chat_log: str, prompt: str, default_start: str) -> None:
+        super().__init__(user, chatbot, chat_log)
+
+        self.default_start = default_start
+        self.prompt = prompt
+
+    def append_interaction_to_chat_log(self, question: str=None, answer: str=None) -> str:
+        # restart_sequence/question: user message (opposite) 
+        # start_sequence/answer: bot message (self)
+
+        if not question and not answer:
+            return self.chat_log
+
+        if question and answer:
+            # Construct single turn conversation after performing asking
+            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+
+        if question:
+            # Construct question before performing asking
+            return f"{self.chat_log}{self.restart_sequence}{question}".strip()
+
+        # Construct answer after performing asking
+        return f"{self.chat_log}{self.start_sequence} {answer}".strip()
+
+    def sync_chat_log(self, chat_log: str) -> None:
+        self.chat_log = chat_log
+
+    def get_last_message(self) -> str:
+        # Get last message from the user (opposite) in the chat log
+        separate_bot_message = self.chat_log.rsplit(self.start_sequence, 1)
+
+        if len(separate_bot_message) > 1:
+            last_turn_msg = separate_bot_message[-1].rsplit(self.restart_sequence, 1)[-1]
+            return last_turn_msg
+
+        return ''
+
+    def ask(self, question: str=None) -> str:
+        if not question:
+            prompt_text = f"{self.chat_log}{self.start_sequence}"
+        else:
+            prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
+
+        response = openai.Completion.create(
+            prompt=prompt_text,
+            stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
+            **self.CONFIGS
+        )
+
+        story = response['choices'][0]['text']
+        answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
+
+        return answer
+
+    def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
+        start_text = self.prompt
+
+        chat_log_clean = self.chat_log.split(start_text)[1]
+
+        dialogs = chat_log_clean.split(self.restart_sequence)
+
+        converation = []
+
+        if test:
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.WARNING,
+                "message": self.prompt,
+                "send_time": None
+            })
+
+        for dialog_msg in dialogs:
+            messages = dialog_msg.split(self.start_sequence)
 
             for msg_idx, msg in enumerate(messages):
                 if msg_idx == 0:

@@ -120,6 +120,16 @@ textarea:focus {
     color: var(--user_clipboard);
 }
 
+.btn.user__disabled {
+    background-color: var(--user_background);
+    font-weight: bold;
+}
+
+.btn.bot__disabled {
+    background-color: var(--bot_background);
+    font-weight: bold;
+}
+
 .btn.user__id {
     border: 1px solid var(--user_id);
     color: var(--user_id);

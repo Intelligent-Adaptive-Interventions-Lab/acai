@@ -1,0 +1,246 @@
+{% extends '_base.html' %}
+
+{% block title %}
+Bot-To-Bot Conversation
+{% endblock title %}
+
+{% block css_files %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/dialogue.css') }}">
+{% endblock css_files %}
+
+{% block contents %}
+
+{% include 'pages/includes/navbar.html' %}
+
+{% include 'pages/includes/breadcrumb.html' %}
+
+<form class="container-fluid" style="height: 80vh; width: 90vw;" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="d-flex flex-column w-100 gap-3 mt-3 mb-3">
+        <h5 id="page-id" class="m-0 fs-3 d-none">Bot-To-Bot Conversation</h5>
+    </div>
+
+    <div class="row gy-3">
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header d-flex" style="background: var(--bot_background);">
+                    <div class="d-flex gap-1">
+                        <p class="m-0 p-1" style="font-weight: bold;">
+                            Coach
+                        </p>
+                    </div>
+
+                    <div class="dropdown ms-auto">
+                        <div class="dropdown-toggle p-1 text-center" id="model-type-dropdown-bot" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            GPT-3
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="model-type-dropdown-bot">
+                            <li><div id="gpt-3-dropdown-item-bot" class="dropdown-item active">GPT-3</div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body" style="background: var(--card-body-background);">
+                    <div class="d-flex">
+                        <h5 class="card-title">Prompt Designs</h5>
+                        <h5 class="ms-auto collapse-icon-btn fs-5" data-bs-toggle="collapse" data-bs-target="#prompt-design-bot" aria-expanded="false" aria-controls="prompt-design-bot" style="cursor: pointer;"><i class="bi bi-chevron-down"></i></h5>
+                    </div>
+                    <div class="card-text collapse mt-2" id="prompt-design-bot">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Prompt</span>
+                            <textarea class="form-control" aria-label="Bot Prompt" id="bot-prompt" rows="6"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header d-flex" style="background: var(--user_background);">
+                    <div class="d-flex gap-1">
+                        <p class="m-0 p-1" style="font-weight: bold;">
+                            Participant
+                        </p>
+                    </div>
+
+                    <div class="dropdown ms-auto">
+                        <div class="dropdown-toggle p-1 text-center" id="model-type-dropdown-user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            GPT-3
+                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="model-type-dropdown-user">
+                            <li><div id="gpt-3-dropdown-item-user" class="dropdown-item active">GPT-3</div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body" style="background: var(--card-body-background);">
+                    <div class="d-flex">
+                        <h5 class="card-title">Prompt Designs</h5>
+                        <h5 class="ms-auto collapse-icon-btn fs-5" data-bs-toggle="collapse" data-bs-target="#prompt-design-user" aria-expanded="false" aria-controls="prompt-design-user" style="cursor: pointer;"><i class="bi bi-chevron-down"></i></h5>
+                    </div>
+                    <div class="card-text collapse mt-2" id="prompt-design-user">
+                        <div class="input-group mb-2">
+                            <span class="input-group-text">Prompt</span>
+                            <textarea class="form-control" aria-label="User Prompt" id="user-prompt" rows="6"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid p-0" style="margin-top: 2vh;">
+        <div id='message-card' class="convo__card card mx-auto">
+            {% include 'dialogue/includes/bot_to_bot_message_card.html' %}
+        </div>
+    
+        <div id='end-card' class="d-none convo__card card mx-auto" style="background-color: var(--confirmation_dialog_back);">
+            {% include 'dialogue/includes/conversation_end_notice.html' %}
+        </div>
+    </div>
+
+    {{ form.bot_prompt(hidden='true', id='form-bot-prompt') }}
+    {{ form.user_prompt(hidden='true', id='form-user-prompt') }}
+    {{ form.turn(hidden='true', id='form-turn') }}
+    {{ form.message(hidden='true', id='form-message') }}
+    {{ form.submit(hidden='true', id='form-submit') }}
+
+</form>
+
+
+
+{% endblock contents %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/emojipicker.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/scrollToLastChatBox.js') }}"></script>
+
+<script>
+    var BotToBotConversation = function() {
+        this.formBotPrompt = document.getElementById(`form-bot-prompt`),
+        this.formUserPrompt = document.getElementById(`form-user-prompt`),
+        this.formTurn = document.getElementById(`form-turn`),
+        this.formMessage = document.getElementById(`form-message`),
+        this.formSubmit = document.getElementById(`form-submit`),
+        this.botPrompt = document.getElementById(`bot-prompt`),
+        this.userPrompt = document.getElementById(`user-prompt`),
+        this.turnIdentity = document.getElementById(`turn-identity`),
+        this.turnIdentityText = document.getElementById(`turn-identity-text`),
+        this.btnSubmit = document.getElementById("btn-submit")
+    };
+
+    BotToBotConversation.prototype = {
+        ini: function() {
+            this._prepareAPI();
+            this._prepareFrontEnd();
+            this._addEventListner();
+        },
+        _prepareFrontEnd: function() {
+            this.botPrompt.innerHTML = this.formBotPrompt.value;
+            this.userPrompt.innerHTML = this.formUserPrompt.value;
+            this.formMessage.value = '';
+
+            if (this.formTurn.value === "Bot") {
+                this.switchToBot();
+            } else {
+                this.switchToUser();
+            }
+        },
+        _prepareAPI: function() {
+            var that = this;
+
+            this.syncValueChange = function(items) {
+                let curr = this;
+
+                items.forEach(item => {
+                    item.value = curr.value;
+                });
+            }
+
+            this.switchToBot = function() {
+                that.turnIdentity.classList.remove("user__disabled");
+                that.turnIdentity.classList.add("bot__disabled");
+
+                that.turnIdentityText.innerHTML = "Coach";
+            }
+
+            this.switchToUser = function() {
+                that.turnIdentity.classList.add("user__disabled");
+                that.turnIdentity.classList.remove("bot__disabled");
+
+                that.turnIdentityText.innerHTML = "Participant";
+            }
+        },
+        _addEventListner: function() {
+            var that = this,
+                textareaMessage = document.getElementById("textarea-message");
+
+            this.botPrompt.addEventListener(
+                "input",
+                that.syncValueChange.bind(that.botPrompt, [that.formBotPrompt])
+            );
+
+            this.userPrompt.addEventListener(
+                "input",
+                that.syncValueChange.bind(that.userPrompt, [that.formUserPrompt])
+            );
+
+            this.turnIdentity.addEventListener(
+                "click",
+                function() {
+                    if (that.formTurn.value === "Bot") {
+                        that.switchToUser();
+                        that.formTurn.value = "User";
+                    } else {
+                        that.switchToBot();
+                        that.formTurn.value = "Bot";
+                    }
+                }
+            )
+
+            this.btnSubmit.addEventListener(
+                'click', 
+                function handleClick(event) {
+                    event.preventDefault();
+
+                    console.log(`event listening`);
+                
+                    let formMessage = document.getElementById("form-message");
+                    let botNewMessage = document.getElementById("bot-new-message");
+                    let userNewMessage = document.getElementById("user-new-message");
+                
+                    that.formMessage.value = textareaMessage.value;
+                    that.formSubmit.click();
+                    textareaMessage.value = '';
+                    
+                    userNewMessage.classList.remove("d-none");
+                    botNewMessage.classList.add("d-none");
+            
+                    if (textareaMessage.value) {
+                        let tempUserBox = document.getElementById("temp-user-box");
+                        let tempUserMsg = document.getElementById("temp-user-msg");
+                        tempUserMsg.insertAdjacentText('afterbegin', that.formMessage.value);
+                        tempUserBox.classList.remove("d-none");
+                
+                        let chatBoxes = document.querySelectorAll('.convo__box'); 
+                        if (chatBoxes.length > 1) {
+                            let secondLastChatBox = chatBoxes[chatBoxes.length-2];
+                            secondLastChatBox.scrollIntoView(alignToTop=false);
+                        }
+                        let lastChatBox = chatBoxes[chatBoxes.length-1];  
+                        lastChatBox.scrollIntoView({behavior: "smooth", block: "start"});
+                    }
+                }
+            );
+        }
+    };
+
+    window.onload = function() {
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        })
+        new BotToBotConversation().ini();
+    };
+</script>
+{% endblock js_files %}
