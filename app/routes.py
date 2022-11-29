@@ -154,6 +154,9 @@ def bot_to_bot():
         prompt=form.bot_prompt.data,
         default_start="I am an AI created by OpenAI. How are you doing today?"
     )
+    bot.prompt = bot.get_prompt()
+    form.bot_prompt.default = bot.get_prompt()
+    
     user = CustomGPTConversation(
         user="HUMAN", 
         chatbot="AI", 
@@ -161,6 +164,8 @@ def bot_to_bot():
         prompt=form.user_prompt.data,
         default_start="Hello, who are you?"
     )
+    user.prompt = user.get_prompt()
+    form.user_prompt.default = user.get_prompt()
 
     if form.validate_on_submit():
         print("============== START ==============")
