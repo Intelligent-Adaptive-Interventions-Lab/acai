@@ -197,7 +197,7 @@ def bot_to_bot():
                 # [USER] Add answer (self) message to chat log
                 user_chat_log = user.append_interaction_to_chat_log(answer=answer)
 
-            form.turn.default = 'Bot'
+                form.turn.default = 'Bot'
         else:
             # BOT turn
             # Check if providing message manually
@@ -227,7 +227,7 @@ def bot_to_bot():
                 # [BOT] Add answer (self) message to chat log
                 bot_chat_log = bot.append_interaction_to_chat_log(answer=answer)
 
-            form.turn.default = 'User'
+                form.turn.default = 'User'
 
         # Sync both USER and BOT chat logs
         user.sync_chat_log(user_chat_log)

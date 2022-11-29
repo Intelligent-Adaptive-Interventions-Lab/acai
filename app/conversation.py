@@ -333,11 +333,11 @@ class CustomGPTConversation(GPTConversation):
 
     def get_last_message(self) -> str:
         # Get last message from the user (opposite) in the chat log
-        separate_bot_message = self.chat_log.rsplit(self.start_sequence, 1)
+        separate_bot_message = self.chat_log.rsplit(self.restart_sequence, 1)
 
         if len(separate_bot_message) > 1:
-            last_turn_msg = separate_bot_message[-1].rsplit(self.restart_sequence, 1)[-1]
-            return last_turn_msg
+            last_turn_msg = separate_bot_message[-1].rsplit(self.start_sequence, 1)[0]
+            return last_turn_msg.strip()
 
         return ''
 
