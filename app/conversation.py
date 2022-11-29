@@ -330,6 +330,9 @@ class CustomGPTConversation(GPTConversation):
 
     def sync_chat_log(self, chat_log: str) -> None:
         self.chat_log = chat_log
+    
+    def get_prompt(self) -> str:
+        return self.chat_log.split(self.restart_sequence, 1)[0].split(self.start_sequence, 1)[0]
 
     def get_last_message(self) -> str:
         # Get last message from the user (opposite) in the chat log
