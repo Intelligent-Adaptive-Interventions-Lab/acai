@@ -319,14 +319,17 @@ class CustomGPTConversation(GPTConversation):
 
         if question and answer:
             # Construct single turn conversation after performing asking
-            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+            self.chat_log = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+            return self.chat_log
 
         if question:
             # Construct question before performing asking
-            return f"{self.chat_log}{self.restart_sequence}{question}".strip()
+            self.chat_log = f"{self.chat_log}{self.restart_sequence}{question}".strip()
+            return self.chat_log
 
         # Construct answer after performing asking
-        return f"{self.chat_log}{self.start_sequence} {answer}".strip()
+        self.chat_log = f"{self.chat_log}{self.start_sequence} {answer}".strip()
+        return self.chat_log
 
     def sync_chat_log(self, chat_log: str) -> None:
         self.chat_log = chat_log

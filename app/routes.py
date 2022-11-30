@@ -145,7 +145,7 @@ def main():
 
 @app.route('/bot_to_bot', methods=['GET', 'POST'])
 def bot_to_bot():
-    form = BotToBotChatForm(turn="User")
+    form = BotToBotChatForm(turn="Bot")
 
     bot = CustomGPTConversation(
         user="HUMAN", 
@@ -178,13 +178,18 @@ def bot_to_bot():
             # Check if providing message manually
             if message != '':
                 # [USER] Add answer (self) message to chat log
-                user_chat_log = user.append_interaction_to_chat_log(answer=message)
+                user.append_interaction_to_chat_log(answer=message)
 
                 # [BOT] Generate message to chat log
                 answer = bot.ask(question=message)
 
                 # [BOT] Add message back to chat log
                 bot_chat_log = bot.append_interaction_to_chat_log(question=message, answer=answer)
+                
+                # [USER] Add question (opposite) message to chat log
+                user_chat_log = user.append_interaction_to_chat_log(question=answer)
+                
+                form.turn.default = 'User'
             else:
                 # [USER] Get last message for question
                 question = user.get_last_message()
@@ -208,13 +213,18 @@ def bot_to_bot():
             # Check if providing message manually
             if message != '':
                 # [BOT] Add answer (self) message to chat log
-                bot_chat_log = bot.append_interaction_to_chat_log(answer=message)
+                bot.append_interaction_to_chat_log(answer=message)
 
                 # [USER] Generate message to chat log
                 answer = user.ask(question=message)
 
                 # [USER] Add message back to chat log
                 user_chat_log = user.append_interaction_to_chat_log(question=message, answer=answer)
+                
+                # [BOT] Add question (opposite) message to chat log
+                bot_chat_log = user.append_interaction_to_chat_log(question=answer)
+                
+                form.turn.default = 'Bot'
             else:
                 # [BOT] Get last message for question
                 question = bot.get_last_message()
