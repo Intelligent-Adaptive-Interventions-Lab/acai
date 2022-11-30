@@ -3,7 +3,6 @@ from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm
 from app.conversation import GPTConversation, init_prompt
 
-
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import datetime, timezone

@@ -2,18 +2,20 @@ from app import app
 from random import choice
 from typing import Dict
 
-
 import openai
 import yaml
 
 
+# get openai api key
 with open('./app/static/secret.yaml') as file:
     secret_keys = yaml.load(file, Loader=yaml.FullLoader)
 openai.api_key = secret_keys
 completion = openai.Completion()
 
-MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
+# starting message
+MESSAGE_START = "Hello! My name is Alex Miller, I am a local counselor collaborating with the University of Toronto"
 
+# choose arm behaviour
 def _init_prompt_behavior(arm_no: int=0, random: bool=False) -> Dict:
     arm_default = {
         "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach has strong interpersonal skills.",
@@ -39,7 +41,7 @@ def _init_prompt_behavior(arm_no: int=0, random: bool=False) -> Dict:
         return arm_2
     return arm_default
 
-
+# choose arm identity
 def _init_prompt_identity(arm_no: int=0, random: bool=False) -> Dict:
     arm_default = {
         "prompt": "The following is a conversation with a coach. The coach asks open-ended reflection questions and helps the Human develop coping skills. The coach has strong interpersonal skills.",
@@ -65,7 +67,7 @@ def _init_prompt_identity(arm_no: int=0, random: bool=False) -> Dict:
         return arm_2
     return arm_default
 
-
+# choose arm field
 def _init_prompt_field(arm_no: int=0, random: bool=False) -> Dict:
     arms = [
         # arm 0 
@@ -191,7 +193,7 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
 
 class Conversation:
     CONVO_START = MESSAGE_START
-    BOT_START = "Hello. I am an AI agent designed to help you manage your mood and mental health. How can I help you?"
+    BOT_START = MESSAGE_START
     USER = "Human"
     CHATBOT = "AI"
     WARNING = "Warning"
@@ -223,13 +225,12 @@ class GPTConversation(Conversation):
 
     def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
         super().__init__(user, chatbot, chat_log)
-
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
     def ask(self, question: str) -> str:
         prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
-        response = openai.Completion.create(
+        response = completion.create(
             prompt=prompt_text,
             stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
             **self.CONFIGS
