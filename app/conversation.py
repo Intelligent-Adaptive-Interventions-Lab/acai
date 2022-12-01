@@ -480,7 +480,7 @@ class CustomGPTConversation(GPTConversation):
 
 
 class AutoScriptConversation(Conversation):
-    def __init__(self, user: str, chatbot: str, dialogue_path: str) -> None:
+    def __init__(self, user: str, chatbot: str, dialogue_path: str, dialogue_answers: Optional[Dict]) -> None:
         super().__init__(user, chatbot)
 
         self.start_sequence = f"\n{self.CHATBOT}:"
@@ -489,24 +489,26 @@ class AutoScriptConversation(Conversation):
         with open(f'./app/static/dialogues/{dialogue_path}.json') as file:
             dialogues = json.load(file)
 
-        self.dialogue = DialogCollection(dialogues)
+        self.dialogue = DialogCollection(dialogues, answers=dialogue_answers)
 
     def sync_chat_log(self, chat_log: str, dialogue_id: str) -> Tuple[str, str]:
         if dialogue_id and chat_log:
-            self.dialogue.set_curr_id(dialogue_id)
+            curr_id = dialogue_id
+            self.dialogue.set_curr_id(curr_id)
             self.chat_log = chat_log
         else:
-            _, messages = self.dialogue.start()
+            curr_id, messages = self.dialogue.move_to_next(show_current=True)
             self.chat_log = "".join([f"{self.start_sequence} {message}" for message in messages])
 
-        return self.dialogue.get_curr_id(), self.chat_log
+        return curr_id, self.chat_log
 
     def give_answer(self, answer: str=None) -> Tuple[str, str]:
 
         if answer:
             self.chat_log += f"{self.restart_sequence}{answer}"
+            self.dialogue.add_answer(answer)
 
-        curr_id, messages = self.dialogue.move_to_next_question(answer)
+        curr_id, messages = self.dialogue.move_to_next(show_current=False)
 
         for message in messages:
             self.chat_log += f"{self.start_sequence} {message}"
@@ -514,7 +516,6 @@ class AutoScriptConversation(Conversation):
         return curr_id, self.chat_log
 
     def get_conversation(self) -> Dict:
-        print(f"CHAT LOG: {self.chat_log}")
         dialogs = self.chat_log.split(self.restart_sequence)
 
         converation = []

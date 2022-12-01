@@ -146,13 +146,15 @@ def main():
 def mindfulness_conversation():
     chat_log = session.get('mindfulness_chat_log', None)
     dialogue_id = session.get('mindfulness_dialogue_id', None)
+    dialogue_answers = session.get('mindfulness_dialogue_answers', {})
 
     convo = AutoScriptConversation(
         user="HUMAN",
         chatbot="AI",
-        dialogue_path="mindfulness"
+        dialogue_path="mindfulness",
+        dialogue_answers=dialogue_answers
     )
-    
+
     dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
     session["mindfulness_chat_log"] = chat_log
     session["mindfulness_dialogue_id"] = dialogue_id
@@ -160,15 +162,18 @@ def mindfulness_conversation():
     form = ChatForm()
     if form.validate_on_submit():
         message = form.message.data
+        dialogue_answers[dialogue_id] = message
+        session["mindfulness_dialogue_answers"] = dialogue_answers
+
         dialogue_id, chat_log = convo.give_answer(answer=message)
         session["mindfulness_chat_log"] = chat_log
         session["mindfulness_dialogue_id"] = dialogue_id
 
         return render_template(
-            '/pages/convo.html', 
-            user=convo.get_user(), 
-            bot=convo.get_chatbot(), 
-            warning=convo.WARNING, 
+            '/pages/convo.html',
+            user=convo.get_user(),
+            bot=convo.get_chatbot(),
+            warning=convo.WARNING,
             end=convo.END,
             notification=convo.NOTI,
             conversation=convo.get_conversation(),
@@ -486,7 +491,17 @@ def chatweb():
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
-    delete_variables = ['chat_log', 'start', 'end', 'arm_no', 'bot_chat_log', 'user_chat_log', 'mindfulness_chat_log', 'mindfulness_dialogue_id']
+    delete_variables = [
+        'chat_log',
+        'start',
+        'end',
+        'arm_no',
+        'bot_chat_log',
+        'user_chat_log',
+        'mindfulness_chat_log',
+        'mindfulness_dialogue_id',
+        'mindfulness_dialogue_answers'
+    ]
     for variable in delete_variables:
         _delete_session_variable(variable)
 
