@@ -181,8 +181,67 @@ def _init_prompt_field(arm_no: int=0, random: bool=False) -> Dict:
     return arms[0]
 
 
+def _init_prompt_mindfulness(arm_no: int=0, random: bool=False) -> Dict:
+    arms = [
+        # arm 0 
+        {
+            "prompt": "The following is a conversation with a mindfulness instructor. The mindfulness instructor facilitates knowledge of mindfulness. The mindfulness instructor is trustworthy, is an active listener, and is empathetic. The mindfulness instructor offers supportive and helpful suggestions, with no expectation of reciprocity.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 1
+        {
+            "prompt": "The following is a conversation with a friend. The friend asks open-ended reflection questions and helps the Human develop mindfulness skills.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 2
+        {
+            "prompt": "The following is a conversation with a mindfulness instructor. The mindfulness instructor asks open-ended reflection questions and helps the Human develop mindfulness skills. The mindfulness instructor offers supportive and helpful suggestions, with no expectation of reciprocity.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 3
+        {
+            "prompt": "The following is a conversation with a mindfulness instructor. The mindfulness instructor asks open-ended reflection questions and helps the Human develop mindfulness skills.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 4
+        {
+            "prompt": "The following is a conversation with a mindfulness instructor. The mindfulness instructor facilitates knowledge of mindfulness. The mindfulness instructor is trustworthy, is an active listener, and is empathetic.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 5
+        {
+            "prompt": "The following is a conversation with a friend. The friend facilitates knowledge of mindfulness. The friend is trustworthy, is an active listener, and is empathetic. The friend offers supportive and helpful suggestions, with no expectation of reciprocity.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 6
+        {
+            "prompt": "The following is a conversation with a friend. The friend facilitates knowledge of mindfulness. The friend is trustworthy, is an active listener, and is empathetic.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        },
+        # arm 7
+        {
+            "prompt": "The following is a conversation with a friend. The friend asks open-ended reflection questions and helps the Human develop mindfulness skills. The friend offers supportive and helpful suggestions, with no expectation of reciprocity.",
+            "message_start": MESSAGE_START,
+            "chatbot": "AI"
+        }
+    ]
+    
+    if random:
+        return choice(arms)
+    if arm_no < len(arms):
+        return arms[arm_no]
+    return arms[0]
+
+
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
-    return _init_prompt_field(arm_no, random)
+    return _init_prompt_mindfulness(arm_no, random)
 
 
 class Conversation:
