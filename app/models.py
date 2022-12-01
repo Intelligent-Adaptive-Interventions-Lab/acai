@@ -77,7 +77,7 @@ ChatbotQuestion(question='Thank you very much, [Name]! It’s been a pleasure ch
 
 
 questions_mindfulness = [
-    ChatbotQuestion(question='nan', id='BAP20000', criteria=[NextIDCriteria('any', '', 'BAP20002')]),
+ChatbotQuestion(question='nan', id='BAP20000', criteria=[NextIDCriteria('any', '', 'BAP20002')]),
 ChatbotQuestion(question='Good morning, [Name]!', id='BAP20001', criteria=[NextIDCriteria('any', '', 'BAP20002')]),
 ChatbotQuestion(question='For the next 15 minutes, I\'ll talk to you and get to know you better. Let\'s get started!', id='BAP20002', criteria=[NextIDCriteria('any', '', 'BAP20002')]),
 ChatbotQuestion(question='How happy did you feel today?', id='BAP20003', criteria=[NextIDCriteria('any', '', 'BAP20002')]),
