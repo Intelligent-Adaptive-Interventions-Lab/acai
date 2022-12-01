@@ -125,3 +125,8 @@ def get_chatbot_question_by_id(id: str) -> ChatbotQuestion:
     for q in questions_motivational:
         if q.id == id:
             return q
+        
+def get_chatbot_question_by_msg(msg: str) -> ChatbotQuestion:
+    for q in questions_motivational:
+        if q.question == msg:
+            return q

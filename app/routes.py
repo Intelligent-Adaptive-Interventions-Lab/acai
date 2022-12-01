@@ -2,6 +2,7 @@ from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm
 from app.conversation import GPTConversation, init_prompt, MotivationalConversation
+from app.questions import get_chatbot_question_by_id, get_chatbot_question_by_msg
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 from twilio.twiml.messaging_response import MessagingResponse
@@ -138,24 +139,38 @@ def main():
 @app.route('/motivational', methods=['GET', 'POST'])
 def start_motivational():
     chat_log = session.get('chat_log')
-
+    
     if chat_log is None:
-        arm_no = session.get("arm_no")
-        if arm_no is None:
-            select_prompt = init_prompt(random=True)
-        else:
-            select_prompt = init_prompt(arm_no=arm_no)
-        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
-        session["chatbot"] = select_prompt["chatbot"]
+    # start with first prompt
+        initial_prompt = get_chatbot_question_by_id("BAP20001")
+        session["chat_log"] = initial_prompt.question
+        session["chatbot"] = "AI"
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        prev_q_id = "BAP20001"
 
     convo = MotivationalConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
+    
+    if chat_log is not None:
+    # get chatbot question id based on what the last typed message by the chatbot is
+        past_msgs = convo.get_conversation()
+        last_msg= "Hello [Name]! My name is Alex Miller, I am a local counselor collaborating with the University of Toronto"
+        if (past_msgs[-1]["from"] == session.get("chatbot")):
+            
+                # prev_q = get_chatbot_question_by_msg("Hello [Name]! My name is Alex Miller, I am a local counselor collaborating with the University of Toronto")
+            prev_msg = past_msgs[-1]["message"]
+        prev_q = get_chatbot_question_by_msg(prev_msg)
+        if (prev_q is None):
+            prev_q_id = "BAP20001"
+        else:
+            prev_q_id = prev_q.id
+        
 
     form = ChatForm()
     if form.validate_on_submit():    
         user_message = form.message.data
-        answer = convo.ask(prev_q_id="BAP20003", question=user_message)
+        # chatbot's next "answer" (or prompt) will be determined based on what the user answer to the previous question is
+        answer = convo.ask(prev_q_id=prev_q_id, question=user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
         session["chat_log"] = chat_log
         
@@ -181,7 +196,7 @@ def start_motivational():
                 print("The SQLite connection is closed")
         except sqlite3.Error as error:
             print("Failed to insert data into sqlite table", error)
-        return redirect(url_for('start_conversation'))
+        return redirect(url_for('start_motivational'))
     
     return render_template(
         '/dialogue/motivational_card.html', 
@@ -190,7 +205,7 @@ def start_motivational():
         warning=convo.WARNING, 
         end=convo.END,
         notification=convo.NOTI,
-        conversation=convo.get_conversation(test=True),
+        conversation=convo.get_conversation(),
         form=form
     )
 

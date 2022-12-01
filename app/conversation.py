@@ -69,6 +69,8 @@ def _init_prompt_identity(arm_no: int=0, random: bool=False) -> Dict:
         return arm_2
     return arm_default
 
+
+
 # choose arm intent
 def _init_prompt_field(arm_no: int=0, random: bool=False) -> Dict:
     arms = [
@@ -243,13 +245,13 @@ class GPTConversation(Conversation):
         story = response['choices'][0]['text']
         answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
 
-        return answer.question
+        return answer
 
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
-        chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[0]
         dialogs = chat_log_clean.split(self.restart_sequence)
 
         converation = []
@@ -326,7 +328,7 @@ class MotivationalConversation(Conversation):
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
-        chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[0]
         dialogs = chat_log_clean.split(self.restart_sequence)
 
         converation = []
@@ -346,6 +348,7 @@ class MotivationalConversation(Conversation):
             "send_time": None
         })
 
+        # all dialogs
         for i in range(1, len(dialogs)):
             messages = dialogs[i].split(self.start_sequence)
 
