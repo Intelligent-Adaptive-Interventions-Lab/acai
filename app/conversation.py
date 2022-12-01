@@ -9,7 +9,7 @@ import yaml
 # get openai api key
 with open('./app/static/secret.yaml') as file:
     secret_keys = yaml.load(file, Loader=yaml.FullLoader)
-openai.api_key = secret_keys
+openai.api_key = secret_keys["openai"]
 completion = openai.Completion()
 
 # starting message

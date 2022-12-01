@@ -162,7 +162,7 @@ def start_conversation():
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
         session["chat_log"] = chat_log
-
+        sqliteConnection = None
         try:
             sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
@@ -240,7 +240,7 @@ def start_qualtrics_conversation():
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
         session['chat_log'] = chat_log
-        
+        sqliteConnection = None
         try:
             sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
