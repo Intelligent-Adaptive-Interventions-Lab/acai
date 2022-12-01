@@ -1,7 +1,7 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm, BotToBotChatForm
-from app.conversation import CustomGPTConversation, GPTConversation, init_prompt
+from app.conversation import AutoScriptConversation, CustomGPTConversation, GPTConversation, init_prompt
 
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
@@ -142,6 +142,49 @@ def _delete_session_variable(variable: str) -> None:
 def main():
     return render_template("/pages/main.html")
 
+@app.route('/mindfulness_conversation', methods=['GET', 'POST'])
+def mindfulness_conversation():
+    chat_log = session.get('mindfulness_chat_log', None)
+    dialogue_id = session.get('mindfulness_dialogue_id', None)
+
+    convo = AutoScriptConversation(
+        user="HUMAN",
+        chatbot="AI",
+        dialogue_path="mindfulness"
+    )
+    
+    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
+    session["mindfulness_chat_log"] = chat_log
+    session["mindfulness_dialogue_id"] = dialogue_id
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        message = form.message.data
+        dialogue_id, chat_log = convo.give_answer(answer=message)
+        session["mindfulness_chat_log"] = chat_log
+        session["mindfulness_dialogue_id"] = dialogue_id
+
+        return render_template(
+            '/pages/convo.html', 
+            user=convo.get_user(), 
+            bot=convo.get_chatbot(), 
+            warning=convo.WARNING, 
+            end=convo.END,
+            notification=convo.NOTI,
+            conversation=convo.get_conversation(),
+            form=form
+        )
+
+    return render_template(
+        '/pages/convo.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
+        form=form
+    )
 
 @app.route('/bot_to_bot', methods=['GET', 'POST'])
 def bot_to_bot():
@@ -443,7 +486,7 @@ def chatweb():
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
-    delete_variables = ['chat_log', 'start', 'end', 'arm_no', 'bot_chat_log', 'user_chat_log']
+    delete_variables = ['chat_log', 'start', 'end', 'arm_no', 'bot_chat_log', 'user_chat_log', 'mindfulness_chat_log', 'mindfulness_dialogue_id']
     for variable in delete_variables:
         _delete_session_variable(variable)
 

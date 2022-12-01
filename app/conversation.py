@@ -1,16 +1,12 @@
 from app import app
+from app.dialogue import DialogCollection
 from random import choice
-from typing import Dict, Optional
-
+from typing import Tuple, Dict, Optional
 
 import openai
 import yaml
+import json
 
-
-with open('./app/static/secret.yaml') as file:
-    secret_keys = yaml.load(file, Loader=yaml.FullLoader)
-openai.api_key = secret_keys["openai"]
-completion = openai.Completion()
 
 MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
 
@@ -198,11 +194,10 @@ class Conversation:
     END = "End"
     NOTI = "Notification"
 
-    def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
+    def __init__(self, user: str, chatbot: str, chat_log: str=None) -> None:
         self.user_name = user
         self.chatbot_name = chatbot
         self.chat_log = chat_log
-        self.prompt = chat_log.split(self.CONVO_START)[0]
 
     def get_user(self) -> str:
         return self.user_name
@@ -224,8 +219,13 @@ class GPTConversation(Conversation):
     def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
         super().__init__(user, chatbot, chat_log)
 
+        self.prompt = chat_log.split(self.CONVO_START)[0]
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
+
+        with open('./app/static/secret.yaml') as file:
+            secret_keys = yaml.load(file, Loader=yaml.FullLoader)
+        openai.api_key = secret_keys["openai"]
 
     def ask(self, question: str) -> str:
         prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
@@ -416,5 +416,70 @@ class CustomGPTConversation(GPTConversation):
                 "message": "To copy the secret key (i.e. username), you can click the blue button on the bottom left of your screen.",
                 "send_time": None
             })
+
+        return converation
+
+
+class AutoScriptConversation(Conversation):
+    def __init__(self, user: str, chatbot: str, dialogue_path: str) -> None:
+        super().__init__(user, chatbot)
+
+        self.start_sequence = f"\n{self.CHATBOT}:"
+        self.restart_sequence = f"\n\n{self.USER}: "
+
+        with open(f'./app/static/dialogues/{dialogue_path}.json') as file:
+            dialogues = json.load(file)
+
+        self.dialogue = DialogCollection(dialogues)
+
+    def sync_chat_log(self, chat_log: str, dialogue_id: str) -> Tuple[str, str]:
+        if dialogue_id and chat_log:
+            self.dialogue.set_curr_id(dialogue_id)
+            self.chat_log = chat_log
+        else:
+            _, messages = self.dialogue.start()
+            self.chat_log = "".join([f"{self.start_sequence} {message}" for message in messages])
+
+        return self.dialogue.get_curr_id(), self.chat_log
+
+    def give_answer(self, answer: str=None) -> Tuple[str, str]:
+
+        if answer:
+            self.chat_log += f"{self.restart_sequence}{answer}"
+
+        curr_id, messages = self.dialogue.move_to_next_question(answer)
+
+        for message in messages:
+            self.chat_log += f"{self.start_sequence} {message}"
+
+        return curr_id, self.chat_log
+
+    def get_conversation(self) -> Dict:
+        print(f"CHAT LOG: {self.chat_log}")
+        dialogs = self.chat_log.split(self.restart_sequence)
+
+        converation = []
+
+        for dialog_msg in dialogs:
+            messages = dialog_msg.split(self.start_sequence)
+
+            for msg_idx, msg in enumerate(messages):
+                if msg_idx == 0:
+                    from_idt = self.user_name
+                    to_idt = self.chatbot_name
+                else:
+                    to_idt = self.user_name
+                    from_idt = self.chatbot_name
+
+                convo = []
+                for text in msg.split("\n"):
+                    if len(text) != 0:
+                        convo.append({
+                            "from": from_idt,
+                            "to": to_idt,
+                            "message": text.strip(),
+                            "send_time": None
+                        })
+                converation.extend(convo)
 
         return converation
