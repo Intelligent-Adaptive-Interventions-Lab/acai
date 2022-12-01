@@ -321,8 +321,10 @@ class MotivationalConversation(Conversation):
     def ask(self, prev_q_id: str, question: str) -> str:
         """Based on user input (what user 'asks'), returns another response (ChatbotQuestion text)."""
         prev_q = get_chatbot_question_by_id(prev_q_id)
-        answer = get_chatbot_question_by_id(prev_q.get_nextid(question))
-        return answer.question
+        next_q_id = prev_q.get_nextid(question)
+        if (next_q_id == "invalid answer"):
+            return prev_q.question
+        return get_chatbot_question_by_id(next_q_id).question
 
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()

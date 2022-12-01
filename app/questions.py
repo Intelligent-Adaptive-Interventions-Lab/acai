@@ -37,7 +37,7 @@ questions_motivational = [
                     id='BAP20008b', criteria=[NextIDCriteria('any', '', 'BAP20009')], has_ans=True),
     
     ChatbotQuestion(question='What might you do to increase how you already show kindness and caring? In your current day-to-day life, what are one or two things you could do to help others?',
-                    id='BAP20009', criteria=[NextIDCriteria('any', '', 'BAP20010')], has_ans=True),
+                    id='BAP20009', criteria=[NextIDCriteria('any', '', 'BAP20010a')], has_ans=True),
     
     ChatbotQuestion(question='Some ideas might involve being friendly to strangers, donating something you don\'t use, or buying food for a homeless person. Are any of these things you would be willing to try in your dat-to-day life?',
                     id='BAP2009b', criteria=[NextIDCriteria('eqs', 'yes', 'BAP20010a'), NextIDCriteria('eqs', 'no', 'BAP20009c')], has_ans=True),
@@ -46,25 +46,26 @@ questions_motivational = [
                     id='BAP20009c', criteria=[NextIDCriteria('any', '', 'BAP20010b')], has_ans=False),  # TODO: go to next option randomly
     
     ChatbotQuestion(question='That’s great! Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things you just said that you could do to help others, which one suits you the best? What might be your if-then plan?',
-                    id='BAP20010a', criteria=[NextIDCriteria('any', '', 'BAP20011b')], has_ans=True),
+                    id='BAP20010a', criteria=[NextIDCriteria('containslist', 'if,then', 'BAP20011a'), NextIDCriteria('any', '', 'BAP20011b')], has_ans=True),
     
     ChatbotQuestion(question='Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things one could do to help others we just discussed, which one suits you the best? What might be your if-then plan?',
-                    id='BAP20010b', criteria=[NextIDCriteria('any', '', 'BAP20011a')], has_ans=True),
+                    id='BAP20010b', criteria=[NextIDCriteria('containslist', 'if,then', 'BAP20011a'),NextIDCriteria('any', '', 'BAP20011b')], has_ans=True),
     
     ChatbotQuestion(question='That sounds great! What might be some obstacles when implementing this plan, if any? What might be a way that you could deal with them?',
                     id='BAP20011a', criteria=[NextIDCriteria('any', '', 'BAP20012')], has_ans=True),
     
     ChatbotQuestion(question='It is important to create a plan that reminds you what to do when something specific happens. For example, if I wanted to be more friendly to strangers, I\'d say something like "*if* I make eye contact with a stranger, *then* I will smile at them". What might be your if-then plan?',
-                    id='BAP20011b', criteria=[NextIDCriteria('any', '', 'BAP20011b')], has_ans=True),
+                    id='BAP20011b', criteria=[NextIDCriteria('containslist', 'if,then', 'BAP20011a'), NextIDCriteria('any', '', 'BAP20011b')], has_ans=True),
     
     ChatbotQuestion(question='Thinking of obstacles can be a little intimidating, but those feelings are completely normal. Remember that being more kind and caring can help you with [MaxValue]!', id='BAP20012', criteria=[
-                    NextIDCriteria('any', '', 'BAP200013')], has_ans=False),
+                    NextIDCriteria('any', '', 'BAP20013')], has_ans=False),
     
     ChatbotQuestion(question='To close off, I was wondering if you could summarize what we’ve talked about? What stands out to you regarding your values, the behaviors you plan to implement to act with kindness and caring, and the way you plan to overcome any potential obstacles?',
-                    id='BAP20013', criteria=[NextIDCriteria('any', '', 'BAP200014')], has_ans=True),
+                    id='BAP20013', criteria=[NextIDCriteria('any', '', 'BAP20014')], has_ans=True),
     
+    # TODO: What to do after last question
     ChatbotQuestion(question='Thank you very much, [Name]! It’s been a pleasure chatting with you today. I hope you found this conversation useful, and I wish you all the best with your plan to achieve your goals!', id='BAP20014', criteria=[
-                    NextIDCriteria('any', '', 'BAP20002')], has_ans=False),
+                    NextIDCriteria('any', '', 'BAP20014')], has_ans=False),
 
 
 ]

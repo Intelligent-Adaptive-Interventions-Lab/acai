@@ -154,12 +154,11 @@ def start_motivational():
     if chat_log is not None:
     # get chatbot question id based on what the last typed message by the chatbot is
         past_msgs = convo.get_conversation()
-        last_msg= "Hello [Name]! My name is Alex Miller, I am a local counselor collaborating with the University of Toronto"
-        if (past_msgs[-1]["from"] == session.get("chatbot")):
-            
-                # prev_q = get_chatbot_question_by_msg("Hello [Name]! My name is Alex Miller, I am a local counselor collaborating with the University of Toronto")
+        if (past_msgs[-1]["from"] == session.get("chatbot")):       
             prev_msg = past_msgs[-1]["message"]
         prev_q = get_chatbot_question_by_msg(prev_msg)
+        
+        # if no previous question found, use first prompt
         if (prev_q is None):
             prev_q_id = "BAP20001"
         else:

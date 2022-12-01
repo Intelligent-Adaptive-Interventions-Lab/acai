@@ -53,6 +53,14 @@ class ChatbotQuestion:
             elif (c.compared_method == "less"):
                 if (user_answer < c.compared_value):
                     return c.nextid
+            elif (c.compared_method == "containslist"):
+                clist = c.compared_value.split(",")
+                containsall = True
+                for i in clist:
+                    if (i not in user_answer):
+                        containsall = False
+                if containsall:
+                    return c.nextid
             # go to the same id no matter what the answer is
             elif (c.compared_method == "any"):
                 return c.nextid
