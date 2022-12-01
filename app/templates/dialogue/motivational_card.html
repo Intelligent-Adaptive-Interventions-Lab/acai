@@ -1,0 +1,178 @@
+{% extends '_base.html' %}
+
+{% block title %}
+Dialogues
+{% endblock title %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/dialogue.css') }}">
+{% endblock css_files %}
+
+{% block contents %}
+
+{% include 'pages/includes/navbar.html' %}
+
+{% include 'pages/includes/breadcrumb.html' %}
+
+<div class="container p-0" style="margin-top: 2vh;">
+    <div id='message-card' class="convo__card card mx-auto">
+        {% include 'dialogue/includes/message_card.html' %}
+    </div>
+
+    <div id='end-card' class="d-none convo__card card mx-auto" style="background-color: var(--confirmation_dialog_back);">
+        {% include 'dialogue/includes/conversation_end_notice.html' %}
+    </div>
+</div>
+
+{% include 'dialogue/includes/confirmation_dialog.html' %}
+
+{% endblock contents %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+<script>
+
+    new EmojiPicker({
+        trigger: [
+            {
+                selector: '.emoji',
+                insertInto: ['.send__box'] // '.selector' can be used without array
+            }
+        ],
+        closeButton: true,
+        //specialButtons: green
+    });
+
+</script>
+
+<script>
+
+    let chatBoxes = document.querySelectorAll('.convo__box'); 
+    if (chatBoxes.length > 1) {
+        let secondLastChatBox = chatBoxes[chatBoxes.length-2];
+        secondLastChatBox.scrollIntoView(alignToTop=false);
+    }
+    let lastChatBox = chatBoxes[chatBoxes.length-1];  
+    lastChatBox.scrollIntoView({behavior: "smooth", block: "start"});
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
+<script>
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+
+    var options = {
+        trigger: 'hover focus click',
+        title: "<p id='copy-before' class='p-0 m-0'>Copy user name</p> <p id='copy-later' class='d-none p-0 m-0'>User name copied!</p>",
+    };
+
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, options);
+    });
+
+    tooltipTriggerList.forEach(tooltipTrigger => {
+        tooltipList.forEach(tooltip => {
+            tooltipTrigger.addEventListener('shown.bs.tooltip', function () {
+                // do something...
+                setTimeout(() => {
+                    tooltip.hide();
+                }, 1500);
+            });
+
+            tooltipTrigger.addEventListener('click', function () {
+               var copy_before = document.getElementById('copy-before');
+               var copy_later = document.getElementById('copy-later');
+
+               copy_before.classList.add("d-none");
+               copy_later.classList.remove("d-none");
+            });
+
+            tooltipTrigger.addEventListener('hover', function () {
+                var copy_before = document.getElementById('copy-before');
+                var copy_later = document.getElementById('copy-later');
+ 
+                copy_before.classList.remove("d-none");
+                copy_later.classList.add("d-none");
+             });
+        });
+    });
+
+    var clipboard = new ClipboardJS('.user__clipboard');
+
+    clipboard.on('success', function (e) {
+      console.info('Action:', e.action);
+      console.info('Text:', e.text);
+      console.info('Trigger:', e.trigger);
+    
+      e.clearSelection();
+    });
+    
+    clipboard.on('error', function (e) {
+      console.error('Action:', e.action);
+      console.error('Trigger:', e.trigger);
+    });
+
+</script>
+
+<script>
+
+    let btnSubmit = document.getElementById("btn-submit");
+    let formSubmit = document.getElementById("form-submit");
+
+    let textareaMessage = document.getElementById("textarea-message");
+
+    // FIXME: get next message on click, depending on user answer for this message
+    btnSubmit.addEventListener('click', function handleClick(event) {
+        event.preventDefault();
+
+        let formMessage = document.getElementById("form-message");
+        let botNewMessage = document.getElementById("bot-new-message");
+        let userNewMessage = document.getElementById("user-new-message");
+
+        if (textareaMessage.value) {
+            formMessage.value = textareaMessage.value;
+            formSubmit.click();
+            textareaMessage.value = '';
+
+            userNewMessage.classList.remove("d-none");
+            botNewMessage.classList.add("d-none");
+
+            let tempUserBox = document.getElementById("temp-user-box");
+            let tempUserMsg = document.getElementById("temp-user-msg");
+            tempUserMsg.insertAdjacentText('afterbegin', formMessage.value);
+            tempUserBox.classList.remove("d-none");
+
+            let chatBoxes = document.querySelectorAll('.convo__box'); 
+            if (chatBoxes.length > 1) {
+                let secondLastChatBox = chatBoxes[chatBoxes.length-2];
+                secondLastChatBox.scrollIntoView(alignToTop=false);
+            }
+            let lastChatBox = chatBoxes[chatBoxes.length-1];  
+            lastChatBox.scrollIntoView({behavior: "smooth", block: "start"});
+
+        };
+        formMessage.value = '';
+    });
+</script>
+
+<script>
+
+    var endButton = document.getElementById("end-button");
+    var backButton = document.getElementById("back-button");
+
+    var messageCard = document.getElementById('message-card');
+    var endCard = document.getElementById('end-card');
+
+    endButton.addEventListener('click', function () {
+        messageCard.classList.add("d-none");
+        endCard.classList.remove("d-none");
+    });
+
+    backButton.addEventListener('click', function () {
+        endCard.classList.add("d-none");
+        messageCard.classList.remove("d-none");
+    });
+
+</script>
+{% endblock js_files %}

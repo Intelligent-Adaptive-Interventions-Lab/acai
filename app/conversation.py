@@ -1,6 +1,8 @@
 from app import app
 from random import choice
 from typing import Dict
+from .models import *
+from .questions import *
 
 import openai
 import yaml
@@ -230,7 +232,8 @@ class GPTConversation(Conversation):
         self.restart_sequence = f"\n\n{self.USER}: "
 
     def ask(self, question: str) -> str:
-        prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
+        # -- Here, the response is the openai. Instead, choose response based on prompt text.
+        prompt_text = f"{question}{self.start_sequence}"
         response = openai.Completion.create(
             prompt=prompt_text,
             stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
@@ -240,7 +243,84 @@ class GPTConversation(Conversation):
         story = response['choices'][0]['text']
         answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
 
-        return answer
+        return answer.question
+
+    def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
+            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+
+    def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
+        chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        dialogs = chat_log_clean.split(self.restart_sequence)
+
+        converation = []
+
+        if test:
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.WARNING,
+                "message": self.prompt,
+                "send_time": None
+            })
+
+        converation.append({
+            "from": self.chatbot_name,
+            "to": self.user_name,
+            "message": self.BOT_START,
+            "send_time": None
+        })
+
+        for i in range(1, len(dialogs)):
+            messages = dialogs[i].split(self.start_sequence)
+
+            for msg_idx, msg in enumerate(messages):
+                if msg_idx == 0:
+                    from_idt = self.user_name
+                    to_idt = self.chatbot_name
+                else:
+                    to_idt = self.user_name
+                    from_idt = self.chatbot_name
+
+                convo = []
+                for text in msg.split("\n"):
+                    if len(text) != 0:
+                        convo.append({
+                            "from": from_idt,
+                            "to": to_idt,
+                            "message": text.strip(),
+                            "send_time": None
+                        })
+                converation.extend(convo)
+
+        if end:
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.END,
+                "message": "This conversation is ended. Your username is the secret key, which you have to paste in the previous survey window.",
+                "send_time": None
+            })
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.END,
+                "message": "To copy the secret key (i.e. username), you can click the blue button on the bottom left of your screen.",
+                "send_time": None
+            })
+
+        return converation
+
+
+class MotivationalConversation(Conversation):
+
+    def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
+        super().__init__(user, chatbot, chat_log)
+
+        self.start_sequence = f"\n{self.CHATBOT}:"
+        self.restart_sequence = f"\n\n{self.USER}: "
+
+    def ask(self, prev_q_id: str, question: str) -> str:
+        """Based on user input (what user 'asks'), returns another response (ChatbotQuestion text)."""
+        prev_q = get_chatbot_question_by_id(prev_q_id)
+        answer = get_chatbot_question_by_id(prev_q.get_nextid(question))
+        return answer.question
 
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()

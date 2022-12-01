@@ -1,7 +1,7 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm
-from app.conversation import GPTConversation, init_prompt
+from app.conversation import GPTConversation, init_prompt, MotivationalConversation
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 from twilio.twiml.messaging_response import MessagingResponse
@@ -135,9 +135,64 @@ conversation = [
 def main():
     return render_template("/pages/main.html")
 
-@app.route('/motivdemo_conversation', methods=['GET', 'POST'])
-def start_motivdemo_conversation():
+@app.route('/motivational', methods=['GET', 'POST'])
+def start_motivational():
     chat_log = session.get('chat_log')
+
+    if chat_log is None:
+        arm_no = session.get("arm_no")
+        if arm_no is None:
+            select_prompt = init_prompt(random=True)
+        else:
+            select_prompt = init_prompt(arm_no=arm_no)
+        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
+        session["chatbot"] = select_prompt["chatbot"]
+        session["user"] = request.remote_addr
+        session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+    convo = MotivationalConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
+
+    form = ChatForm()
+    if form.validate_on_submit():    
+        user_message = form.message.data
+        answer = convo.ask(prev_q_id="BAP20003", question=user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+        session["chat_log"] = chat_log
+        
+        # Save to database file
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"],session["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+            
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        return redirect(url_for('start_conversation'))
+    
+    return render_template(
+        '/dialogue/motivational_card.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(test=True),
+        form=form
+    )
 
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():

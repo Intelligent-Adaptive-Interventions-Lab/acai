@@ -21,6 +21,17 @@ ACAI
         <span class="m-0 fs-5 text-muted">Navigation to each chatbot task.</span>
 
         <div class="row g-2 g-lg-3">
+            <button id="motivational-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
+                <div class="d-flex gap-3">
+                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
+                        <i class="bi bi-chat-dots" style="width: 44px; height: 44px; font-size: 38px;"></i>
+                    </h5>
+                    <div class="d-flex flex-column align-items-start justify-content-center">
+                        <h5 class="card-title text-start fs-5">Motivational Chatbot Conversation</h5>
+                        <p class="card-text text-start text-muted fs-6">Start conversation with Motivational GPT-3 chatbot.</p>
+                    </div>
+                </div>
+            </button>
             <button id="conversation-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
                 <div class="d-flex gap-3">
                     <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
@@ -53,6 +64,10 @@ ACAI
 <script>
     document.getElementById("conversation-page-btn").onclick = function() {
         location.href = `{{ url_for('start_conversation') }}`;
+    }
+
+    document.getElementById("motivational-page-btn").onclick = function() {
+        location.href = `{{ url_for('start_motivational') }}`;
     }
 </script>
 {% endblock js_files %}
