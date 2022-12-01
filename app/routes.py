@@ -135,6 +135,9 @@ conversation = [
 def main():
     return render_template("/pages/main.html")
 
+@app.route('/motivdemo_conversation', methods=['GET', 'POST'])
+def start_motivdemo_conversation():
+    chat_log = session.get('chat_log')
 
 @app.route('/conversation', methods=['GET', 'POST'])
 def start_conversation():
@@ -174,13 +177,16 @@ def start_conversation():
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
             cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
+            
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+            
+
+
         
         return redirect(url_for('start_conversation'))
     

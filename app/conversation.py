@@ -67,7 +67,7 @@ def _init_prompt_identity(arm_no: int=0, random: bool=False) -> Dict:
         return arm_2
     return arm_default
 
-# choose arm field
+# choose arm intent
 def _init_prompt_field(arm_no: int=0, random: bool=False) -> Dict:
     arms = [
         # arm 0 
@@ -225,12 +225,13 @@ class GPTConversation(Conversation):
 
     def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
         super().__init__(user, chatbot, chat_log)
+
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
     def ask(self, question: str) -> str:
         prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
-        response = completion.create(
+        response = openai.Completion.create(
             prompt=prompt_text,
             stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
             **self.CONFIGS
