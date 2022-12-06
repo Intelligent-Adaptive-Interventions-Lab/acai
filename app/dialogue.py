@@ -207,15 +207,15 @@ class DialogCollection:
             conditions = jumpto_cond.get("conditions")
             next_id = jumpto_cond.get("to")
 
-            print(f"CONDITIONS: {conditions}")
-            print(f"NEXT ID: {next_id}")
+            # print(f"CONDITIONS: {conditions}")
+            # print(f"NEXT ID: {next_id}")
 
             if not conditions or not curr_dialogue.get_answer():
                 self.curr_id = next_id
                 _, next_messages = self.move_to_question()
                 return self.curr_id, messages + next_messages
 
-            condition_pass = False
+            condition_pass = True
             for selected_condition in conditions:
 
                 target = selected_condition.get("target", self.curr_id)
@@ -229,10 +229,11 @@ class DialogCollection:
                     self.curr_id = target_dialogue.get_id()
                     return self.curr_id, messages + ["Oops... I lost our previous conversation..."] + target_dialogue.get_message()
 
-                print(f"TARGET ANSWER: {target_answer}")
-                print(f"CONDITION: {condition}")
+                # print(f"TARGET ANSWER: {target_answer}")
+                # print(f"CONDITION: {condition}")
 
-                condition_pass |= target_dialogue.get_answer().check_answer(target_answer, condition)
+                # print(f"ANSWER: {target_dialogue.get_answer().check_answer(target_answer, condition)}")
+                condition_pass &= target_dialogue.get_answer().check_answer(target_answer, condition)
 
             if condition_pass:
                 self.curr_id = next_id
@@ -271,7 +272,7 @@ if __name__ == "__main__":
 
     print(dialog_collection.move_to_next(show_current=True)) 
 
-    print(dialog_collection.add_answer("5")) # BAP20003
+    print(dialog_collection.add_answer("1")) # BAP20003
     print(dialog_collection.move_to_next(show_current=False))
 
     print(dialog_collection.add_answer("1")) # BAP20004
@@ -286,7 +287,7 @@ if __name__ == "__main__":
     print(dialog_collection.add_answer("1")) # BAP20007
     print(dialog_collection.move_to_next(show_current=False))
 
-    print(dialog_collection.add_answer("breath")) # BAP20011
+    print(dialog_collection.add_answer(" I am breathing")) # BAP20011
     print(dialog_collection.move_to_next(show_current=False))
 
     print(dialog_collection.answers)
