@@ -378,6 +378,39 @@
         ]
     },
     {
+        "dialogue_id": "BAP20016a",
+        "bot_message": "Ok! Let's practice Leaves on the Stream together. [Leaves on the Stream video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20016b",
+        "bot_message": "Ok! Let's practice Ball in the Pool together. [Ball in the Pool video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20016c",
+        "bot_message": "Ok! Let's practice Sensory Awareness together. [Sensory Awareness video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
         "dialogue_id": "BAP20017",
         "bot_message": "How much did you like today's video?",
         "answer": {
