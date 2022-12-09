@@ -142,6 +142,56 @@ def _delete_session_variable(variable: str) -> None:
 def main():
     return render_template("/pages/main.html")
 
+@app.route('/motivational_interview', methods=['GET', 'POST'])
+def motivational_interview_conversation():
+    chat_log = session.get('motivational_interview_chat_log', None)
+    dialogue_id = session.get('motivational_interview_dialogue_id', None)
+    dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
+
+    convo = AutoScriptConversation(
+        user="HUMAN",
+        chatbot="AI",
+        dialogue_path="motivational_interview",
+        dialogue_answers=dialogue_answers
+    )
+
+    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
+    session["motivational_interview_chat_log"] = chat_log
+    session["motivational_interview_dialogue_id"] = dialogue_id
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        message = form.message.data
+        dialogue_answers[dialogue_id] = message
+        session["motivational_interview_dialogue_answers"] = dialogue_answers
+
+        dialogue_id, chat_log = convo.give_answer(answer=message)
+        session["motivational_interview_chat_log"] = chat_log
+        session["motivational_interview_dialogue_id"] = dialogue_id
+
+        return render_template(
+            '/pages/convo.html',
+            user=convo.get_user(),
+            bot=convo.get_chatbot(),
+            warning=convo.WARNING,
+            end=convo.END,
+            notification=convo.NOTI,
+            conversation=convo.get_conversation(),
+            form=form
+        )
+
+    return render_template(
+        '/pages/convo.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
+        form=form
+    )
+
+
 @app.route('/mindfulness_conversation', methods=['GET', 'POST'])
 def mindfulness_conversation():
     chat_log = session.get('mindfulness_chat_log', None)
@@ -500,7 +550,10 @@ def clear_session():
         'user_chat_log',
         'mindfulness_chat_log',
         'mindfulness_dialogue_id',
-        'mindfulness_dialogue_answers'
+        'mindfulness_dialogue_answers',
+        'motivational_interview_chat_log',
+        'motivational_interview_id',
+        'motivational_interview_answers',
     ]
     for variable in delete_variables:
         _delete_session_variable(variable)

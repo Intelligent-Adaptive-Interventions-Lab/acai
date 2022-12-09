@@ -70,7 +70,10 @@ class Answer:
 
         if self.type == "free-text":
 
-            if self.format_answer(answer) != "":
+            ans = self.format_answer(answer)
+            if ans == "":
+                return False, self.description
+            if (not self.choices) or (ans in self.choices):
                 return True, None
             return False, self.description
 

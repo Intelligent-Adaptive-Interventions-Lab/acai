@@ -71,7 +71,7 @@
         "bot_message": "Thank you for sharing that. Would you be interested in hearing a little bit about the research or what we know about kindness behaviors?",
         "answer": {
             "type": "free-text",
-            "choices": [],
+            "choices": ["yes", "no"],
             "description": "Please indicate 'Yes' or 'No' below."
         },
         "jump_to": [
@@ -168,7 +168,7 @@
         "bot_message": "Some ideas might involve being friendly to strangers, donating something you don't use, or buying food for a homeless person. Are any of these things you would be willing to try in your dat-to-day life?",
         "answer": {
             "type": "free-text",
-            "choices": [],
+            "choices": ["yes", "no"],
             "description": "Please indicate 'Yes' or 'No' below."
         },
         "jump_to": [
@@ -296,7 +296,7 @@
         ]
     },
     {
-        "dialogue_id": "BAP200012",
+        "dialogue_id": "BAP20012",
         "bot_message": "Thinking of obstacles can be a little intimidating, but those feelings are completely normal. Remember that being more kind and caring can help you with [MaxValue]!",
         "answer": null,
         "jump_to": [
@@ -322,7 +322,7 @@
         ]
     },
     {
-        "dialogue_id": "BAP200014",
+        "dialogue_id": "BAP20014",
         "bot_message": "Thank you very much! It’s been a pleasure chatting with you today. I hope you found this conversation useful, and I wish you all the best with your plan to achieve your goals!",
         "answer": null,
         "jump_to": null

@@ -54,6 +54,17 @@ ACAI
                     </div>
                 </div>
             </button>
+            <button id="motivational-interview-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
+                <div class="d-flex gap-3">
+                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
+                        <i class="bi bi-balloon-heart" style="width: 44px; height: 44px; font-size: 38px;"></i>
+                    </h5>
+                    <div class="d-flex flex-column align-items-start justify-content-center">
+                        <h5 class="card-title text-start fs-5">Motivational Interview Conversation</h5>
+                        <p class="card-text text-start text-muted fs-6">Motivational Interview conversations with an auto-script.</p>
+                    </div>
+                </div>
+            </button>
         </div>
     </div>
 </div>
@@ -73,5 +84,10 @@ ACAI
     document.getElementById("mindfulness-page-btn").onclick = function() {
         location.href = `{{ url_for('mindfulness_conversation') }}`;
     }
+
+    document.getElementById("motivational-interview-page-btn").onclick = function() {
+        location.href = `{{ url_for('motivational_interview_conversation') }}`;
+    }
+
 </script>
 {% endblock js_files %}
