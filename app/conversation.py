@@ -515,7 +515,7 @@ class AutoScriptConversation(Conversation):
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open(f'./app/static/dialogues/{dialogue_path}.json', 'r+', encoding="utf-8") as file:
+        with open(f'./app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
             dialogues = json.load(file)
 
         self.dialogue = DialogCollection(dialogues, answers=dialogue_answers)
