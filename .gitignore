@@ -171,6 +171,7 @@ node_modules/
 
 # Testing
 test/
+temp/
 database.db
 
 # YAML

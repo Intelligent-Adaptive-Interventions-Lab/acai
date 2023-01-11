@@ -241,7 +241,27 @@ def _init_prompt_mindfulness(arm_no: int=0, random: bool=False) -> Dict:
 
 
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
-    return _init_prompt_mindfulness(arm_no, random)
+    return _init_prompt_field(arm_no, random)
+
+
+def init_reflection_bot() -> Dict:
+    reflection = {
+        "prompt": "The following is a conversation with a Mindfulness instructor. The instructor asks open-ended reflection questions to the Human to solidify the Human's understanding of Mindfulness. The instructor has a sense of humour, is fair, and empathetic.",
+        "message_start": "\n\nHuman: Hello, who are you?\nAI: Hello. I am an AI agent designed to act as your Mindfulness instructor. I am here to help you reflect on your learnings. How can I help you?",
+        "chatbot": "AI"
+    }
+
+    return reflection
+
+
+def init_information_bot() -> Dict:
+    information = {
+        "prompt": "The following is a conversation with a Mindfulness instructor. The instructor teaches and provides information about different mindfulness activities to the Human. The instructor explains different activities clearly and provides examples wherever possible. The instructor has a sense of humour, is fair, and empathetic. ",
+        "message_start": "\n\nHuman: Hello, who are you?\nAI: Hello. I am an AI agent designed to act as your Mindfulness instructor. I can answer any questions you might have related to Mindfulness. How can I help you?",
+        "chatbot": "AI"
+    }
+
+    return information
 
 
 class Conversation:
@@ -275,8 +295,14 @@ class GPTConversation(Conversation):
         "presence_penalty": 0.6,
     }
 
-    def __init__(self, user: str, chatbot: str, chat_log: str) -> None:
+    def __init__(self, user: str, chatbot: str, chat_log: str, bot_start: str=None, convo_start: str=None) -> None:
         super().__init__(user, chatbot, chat_log)
+
+        if bot_start:
+            self.BOT_START = bot_start
+
+        if convo_start:
+            self.CONVO_START = convo_start
 
         self.prompt = chat_log.split(self.CONVO_START)[0]
         self.start_sequence = f"\n{self.CHATBOT}:"
@@ -303,6 +329,9 @@ class GPTConversation(Conversation):
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
+        print("chat_log: ", self.chat_log)
+        print("split: ", "".join([self.prompt, self.CONVO_START]))
+        print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
         dialogs = chat_log_clean.split(self.restart_sequence)
 
