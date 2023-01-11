@@ -1,7 +1,14 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
-from app.forms import ChatForm
-from app.conversation import GPTConversation, init_prompt
+from app.forms import ChatForm, BotToBotChatForm
+from app.conversation import (
+    AutoScriptConversation,
+    CustomGPTConversation,
+    GPTConversation,
+    init_prompt,
+    init_reflection_bot,
+    init_information_bot
+)
 
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
@@ -132,9 +139,248 @@ conversation = [
 ]
 
 
+def _delete_session_variable(variable: str) -> None:
+    try:
+        del session[variable]
+    except KeyError:
+        pass
+
 @app.route('/')
 def main():
     return render_template("/pages/main.html")
+
+@app.route('/motivational_interview', methods=['GET', 'POST'])
+def motivational_interview_conversation():
+    chat_log = session.get('motivational_interview_chat_log', None)
+    dialogue_id = session.get('motivational_interview_dialogue_id', None)
+    dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
+
+    convo = AutoScriptConversation(
+        user="HUMAN",
+        chatbot="AI",
+        dialogue_path="motivational_interview",
+        dialogue_answers=dialogue_answers
+    )
+
+    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
+    session["motivational_interview_chat_log"] = chat_log
+    session["motivational_interview_dialogue_id"] = dialogue_id
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        message = form.message.data
+        dialogue_answers[dialogue_id] = message
+        session["motivational_interview_dialogue_answers"] = dialogue_answers
+
+        dialogue_id, chat_log = convo.give_answer(answer=message)
+        session["motivational_interview_chat_log"] = chat_log
+        session["motivational_interview_dialogue_id"] = dialogue_id
+
+        return render_template(
+            '/pages/convo.html',
+            user=convo.get_user(),
+            bot=convo.get_chatbot(),
+            warning=convo.WARNING,
+            end=convo.END,
+            notification=convo.NOTI,
+            conversation=convo.get_conversation(),
+            form=form
+        )
+
+    return render_template(
+        '/pages/convo.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
+        form=form
+    )
+
+
+@app.route('/mindfulness_conversation', methods=['GET', 'POST'])
+def mindfulness_conversation():
+    chat_log = session.get('mindfulness_chat_log', None)
+    dialogue_id = session.get('mindfulness_dialogue_id', None)
+    dialogue_answers = session.get('mindfulness_dialogue_answers', {})
+
+    convo = AutoScriptConversation(
+        user="HUMAN",
+        chatbot="AI",
+        dialogue_path="mindfulness",
+        dialogue_answers=dialogue_answers
+    )
+
+    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
+    session["mindfulness_chat_log"] = chat_log
+    session["mindfulness_dialogue_id"] = dialogue_id
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        message = form.message.data
+        dialogue_answers[dialogue_id] = message
+        session["mindfulness_dialogue_answers"] = dialogue_answers
+
+        dialogue_id, chat_log = convo.give_answer(answer=message)
+        session["mindfulness_chat_log"] = chat_log
+        session["mindfulness_dialogue_id"] = dialogue_id
+
+        return render_template(
+            '/pages/convo.html',
+            user=convo.get_user(),
+            bot=convo.get_chatbot(),
+            warning=convo.WARNING,
+            end=convo.END,
+            notification=convo.NOTI,
+            conversation=convo.get_conversation(),
+            form=form
+        )
+
+    return render_template(
+        '/pages/convo.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
+        form=form
+    )
+
+@app.route('/bot_to_bot', methods=['GET', 'POST'])
+def bot_to_bot():
+    form = BotToBotChatForm(turn="Bot")
+
+    bot = CustomGPTConversation(
+        user="HUMAN", 
+        chatbot="AI", 
+        chat_log=session.get('bot_chat_log', form.bot_prompt.data),
+        prompt=form.bot_prompt.data,
+        default_start="I am an AI created by OpenAI. How are you doing today?"
+    )
+    bot.prompt = bot.get_prompt()
+    form.bot_prompt.default = bot.get_prompt()
+    
+    user = CustomGPTConversation(
+        user="HUMAN", 
+        chatbot="AI", 
+        chat_log=session.get('user_chat_log', form.user_prompt.data),
+        prompt=form.user_prompt.data,
+        default_start="Hello, who are you?"
+    )
+    user.prompt = user.get_prompt()
+    form.user_prompt.default = user.get_prompt()
+
+    if form.validate_on_submit():
+        print("============== START ==============")
+        message = form.message.data
+        turn = form.turn.data
+
+        # Check current turn of the conversation
+        if turn == 'User':
+            # USER turn
+            # Check if providing message manually
+            if message != '':
+                # [USER] Add answer (self) message to chat log
+                user.append_interaction_to_chat_log(answer=message)
+
+                # [BOT] Generate message to chat log
+                answer = bot.ask(question=message)
+
+                # [BOT] Add message back to chat log
+                bot_chat_log = bot.append_interaction_to_chat_log(question=message, answer=answer)
+                
+                # [USER] Add question (opposite) message to chat log
+                user_chat_log = user.append_interaction_to_chat_log(question=answer)
+                
+                form.turn.default = 'User'
+            else:
+                # [USER] Get last message for question
+                question = user.get_last_message()
+
+                if question == '':
+                    # [USER] If no starting message is given, use the default start
+                    answer = user.default_start
+                else:
+                    # [USER] Ask to get answer
+                    answer = user.ask()
+
+                # [BOT] Add question (opposite) message to chat log
+                bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
+
+                # [USER] Add answer (self) message to chat log
+                user_chat_log = user.append_interaction_to_chat_log(answer=answer)
+
+                form.turn.default = 'Bot'
+        else:
+            # BOT turn
+            # Check if providing message manually
+            if message != '':
+                # [BOT] Add answer (self) message to chat log
+                bot.append_interaction_to_chat_log(answer=message)
+
+                # [USER] Generate message to chat log
+                answer = user.ask(question=message)
+
+                # [USER] Add message back to chat log
+                user_chat_log = user.append_interaction_to_chat_log(question=message, answer=answer)
+                
+                # [BOT] Add question (opposite) message to chat log
+                bot_chat_log = user.append_interaction_to_chat_log(question=answer)
+                
+                form.turn.default = 'Bot'
+            else:
+                # [BOT] Get last message for question
+                question = bot.get_last_message()
+
+                if question == '':
+                    # [BOT] If no starting message is given, use the default start
+                    answer = bot.default_start
+                else:
+                    # [BOT] Ask to get answer
+                    answer = bot.ask()
+
+                # [USER] Add question (opposite) message to chat log
+                user_chat_log = user.append_interaction_to_chat_log(question=answer)
+
+                # [BOT] Add answer (self) message to chat log
+                bot_chat_log = bot.append_interaction_to_chat_log(answer=answer)
+
+                form.turn.default = 'User'
+
+        # Sync both USER and BOT chat logs
+        user.sync_chat_log(user_chat_log)
+        bot.sync_chat_log(bot_chat_log)
+
+        # Update Session
+        session['user_chat_log'] = user_chat_log
+        session['bot_chat_log'] = bot_chat_log
+        form.process()
+
+        print("============== END ==============")
+        # Render conversation from BOT
+        return render_template(
+            "/pages/bot_to_bot.html",
+            user=bot.get_user(), 
+            bot=bot.get_chatbot(), 
+            warning=bot.WARNING, 
+            end=bot.END,
+            notification=bot.NOTI,
+            conversation=bot.get_conversation(test=False),
+            form=form
+        )
+
+    return render_template(
+        "/pages/bot_to_bot.html",
+        user=bot.get_user(), 
+        bot=bot.get_chatbot(), 
+        warning=bot.WARNING, 
+        end=bot.END,
+        notification=bot.NOTI,
+        conversation=bot.get_conversation(test=False),
+        form=form
+    )
 
 
 @app.route('/conversation', methods=['GET', 'POST'])
@@ -186,7 +432,7 @@ def start_conversation():
         return redirect(url_for('start_conversation'))
     
     return render_template(
-        '/dialogue/conversation_card.html', 
+        '/pages/convo.html', 
         user=convo.get_user(), 
         bot=convo.get_chatbot(), 
         warning=convo.WARNING, 
@@ -302,11 +548,25 @@ def chatweb():
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
-    session['chat_log'] = None
-    session['start'] = None
-    session['end'] = None
-    session['arm_no'] = None
-    session["start"] = None
+    delete_variables = [
+        'chat_log',
+        'start',
+        'end',
+        'arm_no',
+        'bot_chat_log',
+        'user_chat_log',
+        'mindfulness_chat_log',
+        'mindfulness_dialogue_id',
+        'mindfulness_dialogue_answers',
+        'motivational_interview_chat_log',
+        'motivational_interview_id',
+        'motivational_interview_answers',
+        'info_bot',
+        'reflection_bot'
+    ]
+    for variable in delete_variables:
+        _delete_session_variable(variable)
+
     return "cleared!"
 
 
@@ -359,3 +619,175 @@ def select_arm():
     session['arm_no'] = arm_no
     return redirect(url_for('start_qualtrics_conversation'))
 
+
+@app.route('/qualtrics_specific', methods=['GET'])
+def start_coversation_without_arm():
+    pass
+
+
+@app.route('/info_bot', methods=['GET', 'POST'])
+def info_bot():
+    info_bot = session.get("info_bot", None)
+    if not info_bot:
+        select_prompt = init_information_bot()
+        info_bot = {
+            "chat_log": select_prompt["prompt"] + select_prompt["message_start"],
+            "convo_start": select_prompt["message_start"],
+            "bot_start": "Hello. I am an AI agent designed to act as your Mindfulness instructor. I can answer any questions you might have related to Mindfulness. How can I help you?",
+            "chatbot": select_prompt["chatbot"],
+            "user": request.remote_addr,
+            "start": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        }
+
+    convo = GPTConversation(
+        user=info_bot.get("user"), 
+        chatbot=info_bot.get("chatbot"), 
+        chat_log=info_bot.get("chat_log"),
+        bot_start=info_bot.get("bot_start"),
+        convo_start=info_bot.get("convo_start")
+    )
+
+    start = info_bot.get('start')
+    if start is None:
+        info_bot["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+    stop = info_bot.get('stop')
+    if stop is None:
+        info_bot["stop"] = 5*60
+
+    now = datetime.now()
+    difference = now - datetime.strptime(info_bot.get('start'), "%m/%d/%Y, %H:%M:%S")
+    difference_seconds = difference.total_seconds()
+
+    end = info_bot.get('end')
+    if end is None or not end:
+        info_bot["end"] = (difference_seconds >= info_bot.get('stop'))
+
+    form = ChatForm()
+    if form.validate_on_submit() and not info_bot.get('end'):
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        info_bot['chat_log'] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (info_bot["user"], info_bot["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+        
+        session["info_bot"] = info_bot
+        return redirect(url_for('start_qualtrics_conversation'))
+
+    session["info_bot"] = info_bot
+    return render_template(
+        '/dialogue/qualtrics_card.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(end=info_bot.get('end')),
+        form=form
+    )
+
+
+@app.route('/reflect_bot', methods=['GET', 'POST'])
+def reflect_bot():
+    reflection_bot = session.get("reflection_bot", None)
+    if not reflection_bot:
+        select_prompt = init_reflection_bot()
+        reflection_bot = {
+            "chat_log": select_prompt["prompt"] + select_prompt["message_start"],
+            "convo_start": select_prompt["message_start"],
+            "bot_start": "Hello. I am an AI agent designed to act as your Mindfulness instructor. I am here to help you reflect on your learnings. How can I help you?",
+            "chatbot": select_prompt["chatbot"],
+            "user": request.remote_addr,
+            "start": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        }
+
+    convo = GPTConversation(
+        user=reflection_bot.get("user"), 
+        chatbot=reflection_bot.get("chatbot"), 
+        chat_log=reflection_bot.get("chat_log"),
+        bot_start=reflection_bot.get("bot_start"),
+        convo_start=reflection_bot.get("convo_start")
+    )
+
+    start = reflection_bot.get('start')
+    if start is None:
+        reflection_bot["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+    stop = reflection_bot.get('stop')
+    if stop is None:
+        reflection_bot["stop"] = 5*60
+
+    now = datetime.now()
+    difference = now - datetime.strptime(reflection_bot.get('start'), "%m/%d/%Y, %H:%M:%S")
+    difference_seconds = difference.total_seconds()
+
+    end = reflection_bot.get('end')
+    if end is None or not end:
+        reflection_bot["end"] = (difference_seconds >= reflection_bot.get('stop'))
+
+    form = ChatForm()
+    if form.validate_on_submit() and not reflection_bot.get('end'):
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        reflection_bot['chat_log'] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (reflection_bot["user"], reflection_bot["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+
+        session["reflection_bot"] = reflection_bot
+        return redirect(url_for('start_qualtrics_conversation'))
+
+    session["reflection_bot"] = reflection_bot
+    return render_template(
+        '/dialogue/qualtrics_card.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(end=reflection_bot.get('end')),
+        form=form
+    )

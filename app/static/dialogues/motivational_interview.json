@@ -1,0 +1,330 @@
+[
+    {
+        "dialogue_id": "BAP20001",
+        "bot_message": "Hello! My name is Alex Miller, I am a local counselor collaborating with the University of Toronto!",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20002"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20002",
+        "bot_message": "I understand that the researchers are recruiting people who have expressed some degree of interest in becoming more kind and caring towards others. I was hoping to spend some time with you today and chat about the reasons you are here as well as the kinds of things that you might want to do in the future around becoming more kind and caring.",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20003"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20003",
+        "bot_message": "To start off, could you briefly tell me what led you to participate in this study and elaborate on how important becoming more kind and caring is for you?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20004"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20004",
+        "bot_message": "I would also like to learn a little bit about your personal values. Just so I understand you a bit better, could you order the following least of values from 1 (most important) to 4 (least importan) and explain why (1) and (2) are the most important? Here are the values: relationships, personal growth, community, health",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20005"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20005",
+        "bot_message": "Tell me a little about the ways in which you see being more kind and caring as beneficial towards [TopValue]?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20006"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20006",
+        "bot_message": "Thank you for sharing that. Would you be interested in hearing a little bit about the research or what we know about kindness behaviors?",
+        "answer": {
+            "type": "free-text",
+            "choices": ["yes", "no"],
+            "description": "Please indicate 'Yes' or 'No' below."
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "eqt": "yes"
+                        }
+                    }
+                ],
+                "to": "BAP20007"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "eqt": "no"
+                        }
+                    }
+                ],
+                "to": "BAP20008b"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20007",
+        "bot_message": "You might already know this, or be aware of it, but… [info goes here]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20008a"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20008a",
+        "bot_message": "With this information in mind, I was wondering if it would be ok to switch gears a little bit and focus on what you already do regarding being kind and caring as well as other things you might want to try in the future.. What do you already do regarding being kind and caring? How (if at all) do you think doing these things impacts others?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20009"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20008b",
+        "bot_message": "In this case, I wonder if it would be ok to switch gears a little bit and focus on what you already do regarding being kind and caring as well as other things you might want to try in the future.. What do you already do regarding being kind and caring? How (if at all) do you think doing these things impacts others?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20009"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20009",
+        "bot_message": "What might you do to increase how you already show kindness and caring? In your current day-to-day life, what are one or two things you could do to help others?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below. Write 'None' if you cannot think of anything."
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["none"]
+                        }
+                    }
+                ],
+                "to": "BAP20009b"
+            },
+            {
+                "conditions": null,
+                "to": "BAP20010a"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20009b",
+        "bot_message": "Some ideas might involve being friendly to strangers, donating something you don't use, or buying food for a homeless person. Are any of these things you would be willing to try in your dat-to-day life?",
+        "answer": {
+            "type": "free-text",
+            "choices": ["yes", "no"],
+            "description": "Please indicate 'Yes' or 'No' below."
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "eqt": "yes"
+                        }
+                    }
+                ],
+                "to": "BAP20010a"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "eqt": "no"
+                        }
+                    }
+                ],
+                "to": "BAP20009c"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20009c",
+        "bot_message": "Other options involve being patient with strangers, and expressing love or appreciation to friends and family.",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20010b"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20010a",
+        "bot_message": "That’s great! Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things you just said that you could do to help others, which one suits you the best? What might be your if-then plan?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below in the format of 'If I ...., then I will ....'"
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["if", "then", "when"]
+                        }
+                    }
+                ],
+                "to": "BAP20011a"
+            },
+            {
+                "conditions": null,
+                "to": "BAP20011b"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20010b",
+        "bot_message": "Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things one could do to help others we just discussed, which one suits you the best? What might be your if-then plan?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below in the format of 'If I ...., then I will ....'"
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["if", "then", "when"]
+                        }
+                    }
+                ],
+                "to": "BAP20011a"
+            },
+            {
+                "conditions": null,
+                "to": "BAP20011b"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20011a",
+        "bot_message": "That sounds great! What might be some obstacles when implementing this plan, if any? What might be a way that you could deal with them?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20012"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20011b",
+        "bot_message": "It is important to create a plan that reminds you what to do when something specific happens. For example, if I wanted to be more friendly to strangers, I'd say something like 'If I make eye contact with a stranger, then I will smile at them'. What might be your if-then plan?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below in the format of 'If I ...., then I will ....'"
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["if", "then", "when"]
+                        }
+                    }
+                ],
+                "to": "BAP20011a"
+            },
+            {
+                "conditions": null,
+                "to": "BAP20011b"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20012",
+        "bot_message": "Thinking of obstacles can be a little intimidating, but those feelings are completely normal. Remember that being more kind and caring can help you with [MaxValue]!",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20013"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20013",
+        "bot_message": "To close off, I was wondering if you could summarize what we’ve talked about? What stands out to you regarding your values, the behaviors you plan to implement to act with kindness and caring, and the way you plan to overcome any potential obstacles?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please write your answer below."
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20014"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20014",
+        "bot_message": "Thank you very much! It’s been a pleasure chatting with you today. I hope you found this conversation useful, and I wish you all the best with your plan to achieve your goals!",
+        "answer": null,
+        "jump_to": null
+    }
+]

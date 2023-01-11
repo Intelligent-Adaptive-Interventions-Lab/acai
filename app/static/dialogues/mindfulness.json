@@ -1,0 +1,434 @@
+[
+    {
+        "dialogue_id": "BAP20001",
+        "bot_message": "Good morning!",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20002"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20002",
+        "bot_message": "For the next 15 minutes, I'll talk to you and get to know you better. Let's get started!",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20003"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20003",
+        "bot_message": "How happy did you feel today?",
+        "answer": {
+            "type": "likert",
+            "choices": [1, 2, 3, 4, 5, 6, 7],
+            "description": "Please give me an rating in a 7-point Likert scale: 1 (very upset), 7 (very happy)"
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20004"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20004",
+        "bot_message": "How stressed did you feel today?",
+        "answer": {
+            "type": "likert",
+            "choices": [1, 2, 3, 4, 5, 6, 7],
+            "description": "Please give me an rating in a 7-point Likert scale: 1 (not stressed), 7 (extremely stressed)"
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20005"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20005",
+        "bot_message": "How satisfied or content did your life feel today?",
+        "answer": {
+            "type": "likert",
+            "choices": [1, 2, 3, 4, 5, 6, 7],
+            "description": "Please give me an rating in a 7-point Likert scale: 1 (not satisfied), 7 (extremely satisfied)"
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20006"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20006",
+        "bot_message": "Right now, to what extent are you aware of your thoughts and emotions?",
+        "answer": {
+            "type": "likert",
+            "choices": [1, 2, 3, 4, 5, 6, 7],
+            "description": "Please give me an rating in a 7-point Likert scale: 1 (not aware at all) to 7 (aware of all thoughts)"
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20007"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20007",
+        "bot_message": "Right now, to what extent do you wish you could change how you feel?",
+        "answer": {
+            "type": "likert",
+            "choices": [1, 2, 3, 4, 5, 6, 7],
+            "description": "Please give me an rating in a 7-point Likert scale: 1 (not at all) to 7 (want to change all)"
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "target": "BAP20004",
+                        "condition": {
+                            "lt": 5
+                        }
+                    },
+                    {
+                        "target": "BAP20006",
+                        "condition": {
+                            "gt": 4
+                        }
+                    },
+                    {
+                        "target": "BAP20007",
+                        "condition": {
+                            "lt": 5
+                        }
+                    }
+                ],
+                "to": "BAP20013"
+            },
+            {
+                "conditions": [
+                    {
+                        "target": "BAP20004",
+                        "condition": {
+                            "lt": 5
+                        }
+                    },
+                    {
+                        "target": "BAP20006",
+                        "condition": {
+                            "lt": 5
+                        }
+                    },
+                    {
+                        "target": "BAP20007",
+                        "condition": {
+                            "gt": 4
+                        }
+                    }
+                ],
+                "to": "BAP20015"
+            },
+            {
+                "conditions": [
+                    {
+                        "target": "BAP20004",
+                        "condition": {
+                            "lt": 5
+                        }
+                    },
+                    {
+                        "target": "BAP20006",
+                        "condition": {
+                            "lt": 5
+                        }
+                    }
+                ],
+                "to": "BAP20011"
+            },
+            {
+                "conditions": [
+                    {
+                        "target": "BAP20004",
+                        "condition": {
+                            "gt": 4
+                        }
+                    }
+                ],
+                "to": "BAP20008"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20008",
+        "bot_message": "I'm sorry to hear that you felt stressed out today. For the next 10 minutes, let's practice mindful breathing together to help you calm down, focusing more on your breath and relaxation.",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20010"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20010",
+        "bot_message": "Mindful Breathing video",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20011",
+        "bot_message": "Based on your score, it seems that our awareness activities might be helpful. Which activity sounds more interesting to you? Mindful Breathing, Body Scan, or Mindful Eating?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please give me one of the following choices: 'mindful breathing', 'body scan', or 'mindful eating'."
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["mindful breathing", "breath"]
+                        }
+                    }
+                ],
+                "to": "BAP20012a"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["body scan", "body", "scan"]
+                        }
+                    }
+                ],
+                "to": "BAP20012b"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["mindful eating", "eat"]
+                        }
+                    }
+                ],
+                "to": "BAP20012c"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20012a",
+        "bot_message": "Ok! Let's practice Mindful Breathing together. [Mindful breathing video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20012b",
+        "bot_message": "Ok! Let's practice Body Scan together. [Body Scan video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20012c",
+        "bot_message": "Ok! Let's practice Mindful Eating together. [Mindful Eating video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20013",
+        "bot_message": "Based on your score, it seems that our reappraisal activities might be helpful. Which activity sounds more interesting to you? Yes to Life, Gratitude, or Loving and Kindness?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please give me one of the following choices: 'yes to life', 'gratitude', or 'loving and kindness'."
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["yes to life", "yes", "life"]
+                        }
+                    }
+                ],
+                "to": "BAP20014a"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["gratitude"]
+                        }
+                    }
+                ],
+                "to": "BAP20014b"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["loving and kindness", "love", "loving", "kind"]
+                        }
+                    }
+                ],
+                "to": "BAP20014c"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20014a",
+        "bot_message": "Ok! Let's practice Yes to Life together. [Yes to Life video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20014b",
+        "bot_message": "Ok! Let's practice Gratitude together. [Gratitude video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20014c",
+        "bot_message": "Ok! Let's practice Loving and Kindness together. [Loving and Kindness video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20015",
+        "bot_message": "Based on your score, it seems that our acceptance activities might be helpful. Which activity sounds more interesting to you? Sensory Awareness, Leaves on the Stream, or Ball in a Pool?",
+        "answer": {
+            "type": "free-text",
+            "choices": [],
+            "description": "Please give me one of the following choices: 'leaves on the stream', 'ball in the pool', or 'sensory awareness'."
+        },
+        "jump_to": [
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["leaves on the stream", "leaves", "stream"]
+                        }
+                    }
+                ],
+                "to": "BAP20016a"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["ball in the pool", "ball", "pool"]
+                        }
+                    }
+                ],
+                "to": "BAP20016b"
+            },
+            {
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains": ["sensory awareness", "sensory", "awareness"]
+                        }
+                    }
+                ],
+                "to": "BAP20016c"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20016a",
+        "bot_message": "Ok! Let's practice Leaves on the Stream together. [Leaves on the Stream video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20016b",
+        "bot_message": "Ok! Let's practice Ball in the Pool together. [Ball in the Pool video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20016c",
+        "bot_message": "Ok! Let's practice Sensory Awareness together. [Sensory Awareness video]",
+        "answer": null,
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20017"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20017",
+        "bot_message": "How much did you like today's video?",
+        "answer": {
+            "type": "likert",
+            "choices": [1, 2, 3, 4, 5, 6, 7],
+            "description": "Please give me an rating in a 7-point Likert scale: 1 (Terrible) to 7 (Excellent)"
+        },
+        "jump_to": [
+            {
+                "conditions": null,
+                "to": "BAP20018"
+            }
+        ]
+    },
+    {
+        "dialogue_id": "BAP20018",
+        "bot_message": "Thank you for chatting with me today!",
+        "answer": null,
+        "jump_to": null
+    }
+]

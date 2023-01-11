@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Custom
+.DS_Store
+
 # C extensions
 *.so
 
@@ -168,6 +171,7 @@ node_modules/
 
 # Testing
 test/
+temp/
 database.db
 
 # YAML
