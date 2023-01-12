@@ -694,7 +694,7 @@ def info_bot():
                 print("The SQLite connection is closed")
         
         session["info_bot"] = info_bot
-        return redirect(url_for('start_qualtrics_conversation'))
+        return redirect(url_for('info_bot'))
 
     session["info_bot"] = info_bot
     return render_template(
@@ -778,7 +778,7 @@ def reflect_bot():
                 print("The SQLite connection is closed")
 
         session["reflection_bot"] = reflection_bot
-        return redirect(url_for('start_qualtrics_conversation'))
+        return redirect(url_for('reflect_bot'))
 
     session["reflection_bot"] = reflection_bot
     return render_template(
