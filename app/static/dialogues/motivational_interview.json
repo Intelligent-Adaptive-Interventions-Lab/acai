@@ -27,7 +27,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {
@@ -42,7 +42,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {
@@ -57,7 +57,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {
@@ -114,7 +114,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {
@@ -129,7 +129,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {
@@ -144,7 +144,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below. Write 'None' if you cannot think of anything."
+            "description": " Write 'None' if you cannot think of anything."
         },
         "jump_to": [
             {
@@ -261,7 +261,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {
@@ -312,7 +312,7 @@
         "answer": {
             "type": "free-text",
             "choices": [],
-            "description": "Please write your answer below."
+            "description": null
         },
         "jump_to": [
             {

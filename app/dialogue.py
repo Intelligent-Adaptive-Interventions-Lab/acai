@@ -134,7 +134,7 @@ class Dialog:
     def get_message(self) -> List[str]:
 
         messages = [self.message]
-        if self.answer:
+        if self.answer and self.answer.get_description():
             messages.append(self.answer.get_description())
 
         return messages

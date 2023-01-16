@@ -156,8 +156,8 @@ def motivational_interview_conversation():
     dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
 
     convo = AutoScriptConversation(
-        user="HUMAN",
-        chatbot="AI",
+        user="Human",
+        chatbot="Alex",
         dialogue_path="motivational_interview",
         dialogue_answers=dialogue_answers
     )
@@ -177,7 +177,7 @@ def motivational_interview_conversation():
         session["motivational_interview_dialogue_id"] = dialogue_id
 
         return render_template(
-            '/pages/convo.html',
+            '/pages/convo_motivational_interview.html',
             user=convo.get_user(),
             bot=convo.get_chatbot(),
             warning=convo.WARNING,
@@ -188,7 +188,7 @@ def motivational_interview_conversation():
         )
 
     return render_template(
-        '/pages/convo.html', 
+        '/pages/convo_motivational_interview.html', 
         user=convo.get_user(), 
         bot=convo.get_chatbot(), 
         warning=convo.WARNING, 
