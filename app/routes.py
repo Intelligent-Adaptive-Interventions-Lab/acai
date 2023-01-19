@@ -273,7 +273,7 @@ def bot_to_bot():
     form.user_prompt.default = user.get_prompt()
 
     if form.validate_on_submit():
-        print("============== START ==============")
+        # print("============== START ==============")
         message = form.message.data
         turn = form.turn.data
 
@@ -290,10 +290,10 @@ def bot_to_bot():
 
                 # [BOT] Add message back to chat log
                 bot_chat_log = bot.append_interaction_to_chat_log(question=message, answer=answer)
-                
+
                 # [USER] Add question (opposite) message to chat log
                 user_chat_log = user.append_interaction_to_chat_log(question=answer)
-                
+
                 form.turn.default = 'User'
             else:
                 # [USER] Get last message for question
@@ -325,10 +325,10 @@ def bot_to_bot():
 
                 # [USER] Add message back to chat log
                 user_chat_log = user.append_interaction_to_chat_log(question=message, answer=answer)
-                
+
                 # [BOT] Add question (opposite) message to chat log
-                bot_chat_log = user.append_interaction_to_chat_log(question=answer)
-                
+                bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
+
                 form.turn.default = 'Bot'
             else:
                 # [BOT] Get last message for question
@@ -358,7 +358,7 @@ def bot_to_bot():
         session['bot_chat_log'] = bot_chat_log
         form.process()
 
-        print("============== END ==============")
+        # print("============== END ==============")
         # Render conversation from BOT
         return render_template(
             "/pages/bot_to_bot.html",
