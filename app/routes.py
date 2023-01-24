@@ -358,6 +358,29 @@ def bot_to_bot():
         session['bot_chat_log'] = bot_chat_log
         form.process()
 
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
+            count = cursor.execute(sqlite_insert_query, param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+
         # print("============== END ==============")
         # Render conversation from BOT
         return render_template(
