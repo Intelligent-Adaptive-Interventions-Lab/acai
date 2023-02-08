@@ -538,6 +538,7 @@ class AutoScriptConversation(Conversation):
             self.dialogue.add_answer(answer)
 
         curr_id, messages = self.dialogue.move_to_next(show_current=False)
+        
 
         for message in messages:
             self.chat_log += f"{self.start_sequence} {message}"

@@ -1,6 +1,11 @@
 from typing import List, Dict, Optional, Tuple
-
+import openai
+import os
+import re
 import json
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.organization = "org-FYH4qiS0WzXH7l0pCbezhmat"
 
 class Answer:
     """
@@ -11,7 +16,7 @@ class Answer:
     CHOICES = "choices"
     DESC = "description"
 
-    def __init__(self, answer_information: Dict=None) -> None:
+    def __init__(self, question: str, answer_information: Dict=None) -> None:
 
         if not answer_information:
             return
@@ -19,6 +24,7 @@ class Answer:
         self.type = answer_information.get(self.TYPE, None)
         self.choices = answer_information.get(self.CHOICES, None)
         self.description = answer_information.get(self.DESC, None)
+        self.question = question
 
     def __str__(self) -> str:
 
@@ -27,6 +33,7 @@ class Answer:
     def check_answer(self, answer: str=None, condition: Dict={}) -> bool:
         if not condition or not answer:
             return True
+
 
         if self.type == "likert":
             avaliable_choices = self.get_choices()
@@ -71,11 +78,47 @@ class Answer:
         if self.type == "free-text":
 
             ans = self.format_answer(answer)
+
             if ans == "":
-                return False, self.description
-            if (not self.choices) or (ans in self.choices):
-                return True, None
-            return False, self.description
+                return False, 'Your answer cannot be empty.'
+
+            if self.choices:
+                if ans in self.choices:
+                    return True, None
+                else:
+                    return False, 'Please answer according to the choices.'
+
+            try:
+                is_english_query = openai.Completion.create(
+                    model="text-davinci-003",
+                    prompt=f"Is the text english? Yes or No?\n\nText: {ans}\n\nAnswer:",
+                    temperature=0
+                )['choices'][0]['text'].lower().strip()
+
+                if "no" in is_english_query:
+                    print('NOT ENGLISH')
+                    return False, f"Please write in english. Here is the message again.\n\n{self.question}"
+
+                # print(self)
+                is_relevant_answer_query = openai.Completion.create(
+                    model="text-davinci-003",
+                    prompt=f"Give a rating for the answer out of 10 in terms of how well it answers the question and follows its instructions. Rate strictly. Give the rating then explain why in a caring tone."
+                    f"\n\nQuestion: {self.question}\n\nAnswer: {ans}\n\nResult: ",
+                    temperature=0,
+                    max_tokens=100
+                )['choices'][0]['text'].strip()
+                print(is_relevant_answer_query)
+
+                result = re.search("([0-9]).*10([\s\S]*)", is_relevant_answer_query)
+                rating = result.group(1)
+                response = result.group(2).strip()
+
+                if (int(rating) < 8):
+                    return False, response
+            except Exception as e:
+                print(e)
+
+            # return False, f"Here is the message again.\n\n{self.question}"
 
         return True, None
 
@@ -119,7 +162,7 @@ class Dialog:
         self.jumpto = dialogue_information.get(self.JUMPTO, None)
 
         if dialogue_information.get(self.ANSWER, None):
-            self.answer = Answer(dialogue_information.get(self.ANSWER, None))
+            self.answer = Answer(self.message, dialogue_information.get(self.ANSWER, None))
         else:
             self.answer = None
 
@@ -200,7 +243,7 @@ class DialogCollection:
             curr_answer = self.answers.get(self.curr_id, None)
             is_valid, answer_description = curr_dialogue.validate_answer(curr_answer)
             if not is_valid:
-                return self.curr_id, ["I don't understand your answer.", answer_description]
+                return self.curr_id, filter(lambda x: x!=None, ["I don't understand your answer.", answer_description])
 
         jumpto_conditions = curr_dialogue.get_jumpto()
         if not jumpto_conditions:
