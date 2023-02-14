@@ -46,7 +46,13 @@
         },
         "jump_to": [
             {
-                "conditions": null,
+                "conditions": [
+                    {
+                        "condition": {
+                            "contains_all": ["relationships", "personal growth", "community", "health"]
+                        }
+                    }
+                ],
                 "to": "BAP20005"
             }
         ]
@@ -218,7 +224,7 @@
                 "conditions": [
                     {
                         "condition": {
-                            "contains": ["if", "then", "when"]
+                            "contains_all": ["if", "then"]
                         }
                     }
                 ],

@@ -60,6 +60,8 @@ class Answer:
                     check_pass &= isinstance(v, str) and self.format_answer(answer) == v
                 elif k == "contains":
                     check_pass &= isinstance(v, list) and any([text in self.format_answer(answer) for text in v])
+                elif k == "contains_all":
+                    check_pass &= isinstance(v, list) and all([text in self.format_answer(answer) for text in v])
 
             return check_pass
 
@@ -99,7 +101,6 @@ class Answer:
                     print('NOT ENGLISH')
                     return False, f"Please write in english. Here is the message again.\n\n{self.question}"
 
-                # print(self)
                 is_relevant_answer_query = openai.Completion.create(
                     model="text-davinci-003",
                     prompt=f"Give a rating for the answer out of 10 in terms of how well it answers the question and follows its instructions. Rate strictly. Give the rating then explain why in a caring tone."
@@ -107,6 +108,7 @@ class Answer:
                     temperature=0,
                     max_tokens=100
                 )['choices'][0]['text'].strip()
+
                 print(is_relevant_answer_query)
 
                 result = re.search("([0-9]).*10([\s\S]*)", is_relevant_answer_query)
@@ -236,14 +238,8 @@ class DialogCollection:
     def move_to_next(self, show_current: bool=False) -> Tuple[str, List[str]]:
         curr_dialogue = self.dialogues.get(self.curr_id)
 
-        if show_current:
-            messages = curr_dialogue.get_message()
-        else:
-            messages = []
-            curr_answer = self.answers.get(self.curr_id, None)
-            is_valid, answer_description = curr_dialogue.validate_answer(curr_answer)
-            if not is_valid:
-                return self.curr_id, filter(lambda x: x!=None, ["I don't understand your answer.", answer_description])
+        messages = []
+
 
         jumpto_conditions = curr_dialogue.get_jumpto()
         if not jumpto_conditions:
@@ -256,24 +252,14 @@ class DialogCollection:
             print(f"CONDITIONS: {conditions}")
             print(f"NEXT ID: {next_id}")
 
-            if not conditions or not curr_dialogue.get_answer():
-                self.curr_id = next_id
-                _, next_messages = self.move_to_question()
-                return self.curr_id, messages + next_messages
-
             condition_pass = True
-            for selected_condition in conditions:
+            for selected_condition in conditions or []:
 
                 target = selected_condition.get("target", self.curr_id)
                 condition = selected_condition.get("condition")
 
                 target_dialogue = self.dialogues.get(target)
                 target_answer = self.answers.get(target, None)
-
-                is_valid, _ = target_dialogue.validate_answer(target_answer)
-                if not is_valid:
-                    self.curr_id = target_dialogue.get_id()
-                    return self.curr_id, messages + ["Oops... I lost our previous conversation..."] + target_dialogue.get_message()
 
                 print(f"TARGET ANSWER: {target_answer}")
                 print(f"CONDITION: {condition}")
@@ -282,9 +268,23 @@ class DialogCollection:
                 condition_pass &= target_dialogue.get_answer().check_answer(target_answer, condition)
 
             if condition_pass:
+                if show_current:
+                    messages = curr_dialogue.get_message()
+                else:
+                    messages = []
+                    curr_answer = self.answers.get(self.curr_id, None)
+                    is_valid, answer_description = curr_dialogue.validate_answer(curr_answer)
+                    if (answer_description and not answer_description[0].isalpha()):
+                        answer_description = answer_description[1:]
+
+                    if not is_valid:
+                        return self.curr_id, filter(lambda x: x!=None, ["Please try again.", answer_description])
+
                 self.curr_id = next_id
                 _, next_messages = self.move_to_question()
                 return self.curr_id, messages + next_messages
+            else:
+                return self.curr_id, ["Your answer did not meet the requirements of the question."]
 
         return self.curr_id, messages
 
