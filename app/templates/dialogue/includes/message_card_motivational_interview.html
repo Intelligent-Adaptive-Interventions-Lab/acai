@@ -1,3 +1,6 @@
+{% include 'dialogue/includes/typing_animation_setup.html' %}}
+
+
 <div class="card-header bg-transparent">
     <div class="navbar navbar-expand p-0">
         <ul class="navbar-nav me-auto align-items-center">
@@ -69,8 +72,16 @@
                                 </div>
                             
                                 <div class="ps-0 ps-sm-2">
+
+                                    {% set outer_loop = loop %}
+                                    {% set done_render = 0 %}
                                     {% for bot_convo in conversation[slice_dict.start:loop.index] %}
-                                        {% include 'dialogue/includes/bot_chat_box.html' %}
+                                        {% if outer_loop.last and enable_typing_animation == 1%}
+                                            {% set idx = loop.index %}
+                                            {% include 'dialogue/includes/typing_animation.html' %}
+                                        {% else %}
+                                            {% include 'dialogue/includes/bot_chat_box.html' %}
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -78,7 +89,6 @@
                             {% if (convo.from == user) and (convo.to == bot) %}
                                 <div class="convo__box d-flex align-items-start text-end justify-content-end mb-2 ms-4">
                                     <div class="pe-0 pe-sm-2">
-
                                         {% for user_convo in conversation[slice_dict.start:loop.index] %}
                                             {% include 'dialogue/includes/user_chat_box.html' %}
                                         {% endfor %}

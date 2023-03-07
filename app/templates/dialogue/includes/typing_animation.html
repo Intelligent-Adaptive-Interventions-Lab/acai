@@ -1,0 +1,24 @@
+<div>
+    <div id="{{'card'+idx|string}}" class="card card-text bot__dialog text-start d-inline-block p-2 px-3 m-1">
+        <div class="receivedot" id="{{'id'+idx|string}}"><span class = "dots-cont"><span class="dot dot-1"></span> <span class="dot dot-2"></span> <span class="dot dot-3"></span> </span> </div>
+        <div class="send__time text-end">
+            {% if bot_convo.send_time %}
+            {{ bot_convo.send_time.strftime("%I:%M%p") }}
+            {% endif %}
+        </div>
+
+        <script type="text/javascript">
+            document.getElementById("{{'card'+idx|string}}").style.visibility = 'hidden';
+            document.getElementById("card1").style.visibility = 'visible'; 
+
+            var {{'id'+idx|string}} = 0;
+            setTimeout(() => {
+                document.getElementById("{{'id'+idx|string}}").innerHTML = "{{bot_convo.message}}";
+                document.getElementById("{{'card'+(idx+1)|string}}").style.visibility = 'visible'; 
+            }, Math.sqrt("{{bot_convo.message}}".length)*1000/15 + time + 500);
+
+            time += "{{bot_convo.message}}".length*1000/15 + 500
+            {{'id'+idx|string}} = 1;
+        </script>
+    </div>
+</div>

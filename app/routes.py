@@ -184,7 +184,8 @@ def motivational_interview_conversation():
             end=convo.END,
             notification=convo.NOTI,
             conversation=convo.get_conversation(),
-            form=form
+            form=form,
+            enable_typing_animation=1
         )
 
     return render_template(
@@ -195,7 +196,8 @@ def motivational_interview_conversation():
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(),
-        form=form
+        form=form,
+        enable_typing_animation=1
     )
 
 
