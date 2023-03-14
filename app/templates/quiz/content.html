@@ -1,0 +1,213 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    Quiz
+{% endblock title %}
+
+{% block css_files %}
+    <style>
+        #countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .img-fluid {
+            object-fit: none;
+            object-position: center;
+            width: 100%;
+            max-height: 250px;
+            filter: blur(5px);
+            /* Add blur filter to the image */
+            -webkit-filter: blur(5px);
+            transition: filter 0.5s ease;
+            /* Add transition for the filter */
+            -webkit-transition: filter 0.5s ease;
+        }
+
+        .info {
+            font-weight: bold;
+            font-size: medium;
+        }
+
+        .card-title {
+            font-weight: bold;
+        }
+
+        .ins {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        /* Add play button styles */
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            cursor: pointer;
+        }
+
+        .play-button svg {
+            width: 5rem;
+            height: 5rem;
+            fill: white;
+        }
+
+        .play-button:hover svg {
+            fill: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+{% endblock css_files %}
+
+{% block contents %}
+    <h1 class="text-left">LOGO</h1>
+    <div class="container mt-5">
+    <div class="card shadow-sm">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="card-title text-left mt-4">Exercise</h2>
+                <p class="card-text text-left mb-4">Read the following
+                    instructions:</p>
+            </div>
+            <div class="col-md-6">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <th scope="row"></th>
+                  <td>Charity</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <th scope="row"></th>
+                  <td>Self</td>
+                  <td>0</td>
+                </tr>
+              </tbody>
+          </table>
+          </div>
+            <div class="row align-items-center">
+                <!-- Add container for the image and question -->
+                <div class="col-md-6 position-relative">
+                    <div class="position-relative">
+                        <img src="{{ url_for('static', filename='img.png') }}"
+                             class="img-fluid rounded mx-auto d-block border border-2"
+                             alt="Exercise Image">
+                        <div class="play-button">
+                            <svg viewBox="0 0 20 20"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 4l10 6-10 6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="ins">
+                        <p>Note:</p>
+                    </div>
+                    <div class="card-text">
+                        <p> the three numbers are independent from each other!
+                            If your sum adds up to a
+                            number over 9, report only the smallest digit.</p>
+
+
+                        <p>For example, if you’re supposed to add 3 to 9, the
+                            answer is “12”, so you would
+                            report “2”.</p>
+
+
+                        <p>Thus:</p>
+
+                        <p>If you encounter a sequence like “3 2 9”, and you’re
+                            supposed to add 3 to each
+                            number, the answer would be “6 5 2”</p>
+                    </div>
+                </div>
+
+                <!-- Add container for the question and answer -->
+                <div id="exercise-content" style="display: none;">
+
+                    <div class="ins">
+                        What is the correct number?
+                    </div>
+                    <div class="list-group">
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="radio"
+                                   name="answer" value="1">
+                            First option
+                        </label>
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="radio"
+                                   name="answer" value="2">
+                            Second option
+                        </label>
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="radio"
+                                   name="answer" value="3">
+                            Third option
+                        </label>
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="radio"
+                                   name="answer" value="4">
+                            Fourth option
+                        </label>
+                    </div>
+                    <div class="d-flex justify-content-end m-2">
+                        <button type="button" class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal
+                            title</h5>
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        correct
+                    </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-end m-2">
+                            <button class="btn btn-primary" type="button">Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock contents %}
+
+{% block js_files %}
+    <script>
+
+        const blurImage = document.querySelector(".img-fluid");
+        const playButton = document.querySelector(".play-button");
+        const exerciseContent = document.querySelector("#exercise-content");
+        {#TODO: put video into and a if statment to check#}
+        playButton.addEventListener("click", () => {
+            blurImage.style.filter = "none";
+            playButton.style.display = "none";
+            exerciseContent.style.display = "block";
+        });
+
+    </script>
+{% endblock js_files %}
