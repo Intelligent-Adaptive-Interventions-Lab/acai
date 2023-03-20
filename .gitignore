@@ -6,6 +6,7 @@ __pycache__/
 # Custom
 .DS_Store
 
+
 # C extensions
 *.so
 

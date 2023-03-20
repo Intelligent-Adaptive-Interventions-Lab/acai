@@ -8,6 +8,7 @@
         </div>
 
         <script type="text/javascript">
+            var letters_per_second = 1000/15
             document.getElementById("{{'card'+idx|string}}").style.visibility = 'hidden';
             document.getElementById("card1").style.visibility = 'visible'; 
 
@@ -15,9 +16,9 @@
             setTimeout(() => {
                 document.getElementById("{{'id'+idx|string}}").innerHTML = "{{bot_convo.message}}";
                 document.getElementById("{{'card'+(idx+1)|string}}").style.visibility = 'visible'; 
-            }, Math.sqrt("{{bot_convo.message}}".length)*1000/15 + time + 500);
+            }, Math.sqrt("{{bot_convo.message}}".length)*letters_per_second + 500 + time);
 
-            time += "{{bot_convo.message}}".length*1000/15 + 500
+            time += Math.sqrt("{{bot_convo.message}}".length)*letters_per_second + 500
             {{'id'+idx|string}} = 1;
         </script>
     </div>

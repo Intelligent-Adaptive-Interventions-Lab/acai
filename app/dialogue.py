@@ -3,6 +3,7 @@ import openai
 import os
 import re
 import json
+import time
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 openai.organization = "org-FYH4qiS0WzXH7l0pCbezhmat"
@@ -11,6 +12,7 @@ class Answer:
     """
     This is an Answer Class contains awll of the answer choices and data.
     """
+    auxillary_data = {} ## used for tracking auxillary data given by the user, to be persisted across dialogues
     
     TYPE = "type"
     CHOICES = "choices"
@@ -25,6 +27,7 @@ class Answer:
         self.choices = answer_information.get(self.CHOICES, None)
         self.description = answer_information.get(self.DESC, None)
         self.question = question
+        self.quality_analysis_level = 2
 
     def __str__(self) -> str:
 
@@ -62,6 +65,18 @@ class Answer:
                     check_pass &= isinstance(v, list) and any([text in self.format_answer(answer) for text in v])
                 elif k == "contains_all":
                     check_pass &= isinstance(v, list) and all([text in self.format_answer(answer) for text in v])
+                elif k == "contains_one":
+                    check_pass &= (isinstance(v, list) or isinstance(v, dict)) and ([text in self.format_answer(answer) for text in v].count(True) == 1)
+
+                    if check_pass and isinstance(v, dict):
+                        for mapping in v.items():
+                            if mapping[0] in self.format_answer(answer):
+                                self.auxillary_data[mapping[1]] = mapping[0]
+                elif k == "save_as" and isinstance(v, str):
+                    self.auxillary_data[v] = answer 
+                elif k == "set_quality_analysis" and isinstance(v, int):
+                    self.quality_analysis_level = v
+
 
             return check_pass
 
@@ -91,32 +106,39 @@ class Answer:
                     return False, 'Please answer according to the choices.'
 
             try:
-                is_english_query = openai.Completion.create(
-                    model="text-davinci-003",
-                    prompt=f"Is the text english? Yes or No?\n\nText: {ans}\n\nAnswer:",
-                    temperature=0
-                )['choices'][0]['text'].lower().strip()
+                if self.quality_analysis_level >= 1:
+                    is_english_query = openai.Completion.create(
+                        model="text-davinci-003",
+                        prompt=f"Is the text english? Yes or No?\n\nText: {ans}\n\nAnswer:",
+                        temperature=0,
+                    )['choices'][0]['text'].lower().strip()
 
-                if "no" in is_english_query:
-                    print('NOT ENGLISH')
-                    return False, f"Please write in english. Here is the message again.\n\n{self.question}"
+                    if "no" in is_english_query:
+                        print('NOT ENGLISH')
+                        return False, f"Sorry, I don't understand."
 
-                is_relevant_answer_query = openai.Completion.create(
-                    model="text-davinci-003",
-                    prompt=f"Give a rating for the answer out of 10 in terms of how well it answers the question and follows its instructions. Rate strictly. Give the rating then explain why in a caring tone."
-                    f"\n\nQuestion: {self.question}\n\nAnswer: {ans}\n\nResult: ",
-                    temperature=0,
-                    max_tokens=100
-                )['choices'][0]['text'].strip()
+                if self.quality_analysis_level >= 2:
+                    variables = list(set(re.findall("\[\S*\]", self.question)))
+                    for var in variables:
+                        self.question = self.question.replace(var, Answer.auxillary_data[var])
 
-                print(is_relevant_answer_query)
+                    is_relevant_answer_query = openai.Completion.create(
+                        model="text-davinci-003",
+                        prompt=f"Give a rating for the answer out of 10 in terms of how well it answers the question and follows its instructions. Rate strictly. Give the rating then explain why in a caring tone."
+                        f"\n\nQuestion: {self.question}\n\nAnswer: {ans}\n\nResult: ",
+                        temperature=0,
+                        max_tokens=100
+                    )['choices'][0]['text'].strip()
 
-                result = re.search("([0-9]).*10([\s\S]*)", is_relevant_answer_query)
-                rating = result.group(1)
-                response = result.group(2).strip()
+                    print(is_relevant_answer_query)
 
-                if (int(rating) < 8):
-                    return False, response
+                    result = re.search("([0-9]).*10([\s\S]*)", is_relevant_answer_query)
+                    rating = result.group(1)
+                    response = result.group(2).strip()
+
+                    if (int(rating) < 8):
+                        return False, response
+
             except Exception as e:
                 print(e)
 
@@ -161,6 +183,7 @@ class Dialog:
 
         self.id = dialogue_information.get(self.ID, None)
         self.message = dialogue_information.get(self.MESSAGE, None)
+
         self.jumpto = dialogue_information.get(self.JUMPTO, None)
 
         if dialogue_information.get(self.ANSWER, None):
@@ -177,6 +200,9 @@ class Dialog:
         return self.id
 
     def get_message(self) -> List[str]:
+        variables = list(set(re.findall("\[\S*\]", self.message)))
+        for var in variables:
+            self.message = self.message.replace(var, Answer.auxillary_data[var])
 
         messages = [self.message]
         if self.answer and self.answer.get_description():
@@ -278,15 +304,16 @@ class DialogCollection:
                         answer_description = answer_description[1:]
 
                     if not is_valid:
-                        return self.curr_id, filter(lambda x: x!=None, ["Please try again.", answer_description])
+                        return self.curr_id, filter(lambda x: x!=None, [answer_description, "Please try again."])
 
                 self.curr_id = next_id
                 _, next_messages = self.move_to_question()
                 return self.curr_id, messages + next_messages
-            else:
-                return self.curr_id, ["Your answer did not meet the requirements of the question."]
+            # else:
+            #     return self.curr_id, ["Your answer did not meet the requirements of the question."]
 
-        return self.curr_id, messages
+        # return self.curr_id, messages
+        return self.curr_id, ["Your answer did not meet the requirements of the question."]
 
     def get_num_dialogues(self) -> int:
 
