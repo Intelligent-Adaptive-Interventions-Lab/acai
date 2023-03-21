@@ -14,9 +14,8 @@ from flask import Flask, request, session, jsonify, render_template, redirect, \
     url_for
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import datetime, timezone
-
 import sqlite3
-
+from app.quiz import Quiz
 # run_with_ngrok(app)
 
 USER = "Person"
@@ -146,12 +145,29 @@ def _delete_session_variable(variable: str) -> None:
 
 @app.route('/index')
 def index():
+    global q
+    q = Quiz()
     return render_template("/quiz/main.html")
 
 
 @app.route('/quiz_content')
 def quiz_content():
-    return render_template("/quiz/content.html")
+    global q
+    message = q.send_message()
+    score = q.get_score()
+    idx = message["correct_idx"]
+    number = message["number"]
+    choice = message["choices"]
+    return render_template("/quiz/content.html", difficulty=message["difficulty"],
+                           credit=message["reward"],
+                           number_1=number[0],
+                           number_2=number[1],
+                           number_3=number[2],
+                           score1=score["charity"],
+                           score2=score["self"],
+                           answer1=''.join(map(str, choice[0])),
+                           answer2=''.join(map(str, choice[1]))
+                           )
 
 
 @app.route('/')
@@ -209,7 +225,6 @@ def motivational_interview_conversation():
         conversation=convo.get_conversation(),
         form=form
     )
-
 
 @app.route('/mindfulness_conversation', methods=['GET', 'POST'])
 def mindfulness_conversation():
@@ -865,3 +880,4 @@ def reflect_bot():
         conversation=convo.get_conversation(end=reflection_bot.get('end')),
         form=form
     )
+

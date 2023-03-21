@@ -12,13 +12,13 @@
           </button>
           <button id="quiz-choice-2" type="button" class="btn btn-outline-danger flex-fill">
             <div class="d-flex flex-column">
-              <span class="prevent-select">Add 3</span>
-              <span class="prevent-select">5 Credit</span>
+              <span class="prevent-select" id="diff">Add {{ difficulty }}</span>
+              <span class="prevent-select" id="reward">{{ credit }} Credit</span>
             </div>
           </button>
         </div>
         <div class="carousel-caption d-block">
-          <h5 class="prevent-select">To Charity</h5>
+          <h5 class="prevent-select">To {{ reciever }}</h5>
           <p class="prevent-select">Choose one of two provided options to proceed.</p>
         </div>
       </div>
@@ -27,7 +27,7 @@
           <div class="d-flex flex-column justify-content-center align-items-center">
             <h5 class="prevent-select">To Charity</h5>
             <span id="carouselSubTitle" class="prevent-select"></span>
-            <span class="display-3 prevent-select">5</span>
+            <span class="display-3 prevent-select">{{ number_2 }}</span>
           </div>
         </div>
         <div class="carousel-caption d-block">
@@ -37,9 +37,9 @@
       <div class="carousel-item h-100" data-bs-interval="1500">
         <div class="d-flex justify-content-center align-items-center w-100 h-100">
           <div class="d-flex flex-column justify-content-center align-items-center">
-            <h5 class="prevent-select">To Charity</h5>
+            <h5 class="prevent-select">To {{ reciever }}</h5>
             <span id="carouselSubTitle" class="prevent-select"></span>
-            <span class="display-3 prevent-select">3</span>
+            <span class="display-3 prevent-select">{{ number_2 }}</span>
           </div>
         </div>
         <div class="carousel-caption dd-block">
@@ -49,9 +49,9 @@
       <div class="carousel-item h-100" data-bs-interval="1500">
         <div class="d-flex justify-content-center align-items-center w-100 h-100">
           <div class="d-flex flex-column justify-content-center align-items-center">
-            <h5 class="prevent-select">To Charity</h5>
+            <h5 class="prevent-select">To {{ reciever }}</h5>
             <span id="carouselSubTitle" class="prevent-select"></span>
-            <span class="display-3 prevent-select">9</span>
+            <span class="display-3 prevent-select">{{ number_3 }}</span>
           </div>
         </div>
         <div class="carousel-caption d-block">
