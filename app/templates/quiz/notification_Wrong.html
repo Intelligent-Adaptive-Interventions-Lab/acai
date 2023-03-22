@@ -1,12 +1,15 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
       <div class="modal-body">
-        correct
+        Wrong
       </div>
       <div class="modal-footer">
         <div class="d-flex justify-content-end m-2">
-          <button class="btn btn-primary" id="quiz-page-btn" type="button">
+          <button class="btn btn-primary" type="button">
             Next
           </button>
         </div>
@@ -14,10 +17,3 @@
     </div>
   </div>
 </div>
-
-    <script>
-        document.getElementById("quiz-page-btn").onclick = function () {
-            location.href = '{{ url_for('quiz_content') }}';
-        }
-
-    </script>

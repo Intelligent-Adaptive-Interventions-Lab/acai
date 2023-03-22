@@ -1,8 +1,7 @@
 import itertools
 import random
 
-#TODO:Make the seed dynamic
-random.seed(30)
+random.seed(random.randint(0,300))
 class Quiz:
     def __init__(self):
         self.index = 0
@@ -21,12 +20,18 @@ class Quiz:
         receiver = self.__get_receiver_type()
         self.score[receiver] += self.__get_reward()
 
-    def __generate_answers(self):
+    def __generate_answers(self, diff):
         index = random.randint(0, 1)
         answers = [random.sample(range(0, 9), 3), random.sample(range(0, 9), 3)]
         if answers[0] == answers[1]:
             answers[0] = random.sample(range(0, 9), 3)
-        return answers, index
+        org = list(answers[index])
+        for i in range(0,3):
+            org[i] += diff
+            if org[i] >= 10:
+                org[i] -= 10
+        org.reverse()
+        return answers, index, org
 
     def send_message(self):
         if self.index >= len(self.questions):
@@ -38,13 +43,13 @@ class Quiz:
         combination = list(itertools.product(self.receiver, self.reward, self.difficulty))
         random.shuffle(combination)
         for receiver, reward, difficulty in combination:
-            choice, index = self.__generate_answers()
+            choice, index, original = self.__generate_answers(difficulty)
             self.questions.append({"receiver": receiver,
                         "reward": reward,
                         "difficulty": difficulty,
                         "choices": choice,
                         "correct_idx": index,
-                        "number": [abs(x - difficulty) for x in choice[index]]
+                        "number": original
             })
 
     def get_message(self, correct):

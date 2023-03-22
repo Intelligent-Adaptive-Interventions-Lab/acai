@@ -1,21 +1,15 @@
 <div id="exercise-content" class="d-none">
+    <div class="ins">
+        What is the correct number?
+    </div>
+    <form method="post">
+            {{ form.selection(id='answer') }}
 
-  <div class="ins">
-    What is the correct number?
-  </div>
-  <div class="list-group">
-    <label class="list-group-item">
-      <input class="form-check-input me-1" type="radio" id="a1" name="answer" value="1">
-        {{ answer1 }}
-    </label>
-    <label class="list-group-item">
-      <input class="form-check-input me-1" type="radio" id="a2" name="answer" value="2">
-        {{ answer2 }}
-    </label>
-  </div>
-  <div class="d-flex justify-content-end m-2">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      Submit
-    </button>
-  </div>
+        <div class="d-flex justify-content-end m-2">
+            <button type="submit" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                Submit
+            </button>
+        </div>
+    </form>
 </div>

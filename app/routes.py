@@ -1,6 +1,6 @@
 from app import app
 from app.chatbot import ask, append_interaction_to_chat_log
-from app.forms import ChatForm, BotToBotChatForm
+from app.forms import ChatForm, BotToBotChatForm, EvaluationForm
 from app.conversation import (
     AutoScriptConversation,
     CustomGPTConversation,
@@ -149,24 +149,31 @@ def index():
     q = Quiz()
     return render_template("/quiz/main.html")
 
-
-@app.route('/quiz_content')
+@app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
     global q
     message = q.send_message()
     score = q.get_score()
-    idx = message["correct_idx"]
     number = message["number"]
     choice = message["choices"]
-    return render_template("/quiz/content.html", difficulty=message["difficulty"],
+    form = EvaluationForm()
+    form.selection.choices = [("0", ''.join(map(str,choice[0]))), ("1", ''.join(map(str, choice[1])))]
+    result = form.selection.data
+    if result:
+        if int(result) == message["correct_idx"]:
+            q.get_message(True)
+        else:
+            q.get_message(False)
+    return render_template("/quiz/content.html",
+                           reciever = message['receiver'],
+                           difficulty=message["difficulty"],
                            credit=message["reward"],
                            number_1=number[0],
                            number_2=number[1],
                            number_3=number[2],
                            score1=score["charity"],
                            score2=score["self"],
-                           answer1=''.join(map(str, choice[0])),
-                           answer2=''.join(map(str, choice[1]))
+                           form=form
                            )
 
 
