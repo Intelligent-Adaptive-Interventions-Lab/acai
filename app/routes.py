@@ -13,9 +13,10 @@ from app.conversation import (
 from flask import Flask, request, session, jsonify, render_template, redirect, \
     url_for
 from twilio.twiml.messaging_response import MessagingResponse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import sqlite3
 from app.quiz import Quiz
+
 # run_with_ngrok(app)
 
 USER = "Person"
@@ -147,25 +148,41 @@ def _delete_session_variable(variable: str) -> None:
 def index():
     global q
     q = Quiz()
+    duration = 10
+    end_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
+    session["end_time"] = end_time
+
     return render_template("/quiz/main.html")
+
 
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
     global q
     message = q.send_message()
     score = q.get_score()
-    number = message["number"]
+
     choice = message["choices"]
     form = EvaluationForm()
-    form.selection.choices = [("0", ''.join(map(str,choice[0]))), ("1", ''.join(map(str, choice[1])))]
+    idx = message["correct_idx"]
+    number = choice[int(idx)]
+    form.selection.choices = [("0", ''.join(map(str, choice[0]))),
+                              ("1", ''.join(map(str, choice[1])))]
     result = form.selection.data
+    # check if correct answer
+    #TODO: use this to log the user input
     if result:
-        if int(result) == message["correct_idx"]:
+        if int(result) == int(message["correct_idx"]):
             q.get_message(True)
         else:
             q.get_message(False)
+
+    # Get end time of timer
+    end_time = session["end_time"]
+    remaining_time = max(end_time - datetime.now(timezone.utc), timedelta(0))
+    remaining_seconds = remaining_time.seconds
+
     return render_template("/quiz/content.html",
-                           reciever = message['receiver'],
+                           reciever=message['receiver'],
                            difficulty=message["difficulty"],
                            credit=message["reward"],
                            number_1=number[0],
@@ -173,7 +190,9 @@ def quiz_content():
                            number_3=number[2],
                            score1=score["charity"],
                            score2=score["self"],
-                           form=form
+                           form=form,
+                           idx=idx,
+                           remaining_time=remaining_seconds
                            )
 
 
@@ -220,7 +239,7 @@ def motivational_interview_conversation():
             notification=convo.NOTI,
             conversation=convo.get_conversation(),
             form=form
-         )
+        )
 
     return render_template(
         '/pages/convo_motivational_interview.html',
@@ -232,6 +251,7 @@ def motivational_interview_conversation():
         conversation=convo.get_conversation(),
         form=form
     )
+
 
 @app.route('/mindfulness_conversation', methods=['GET', 'POST'])
 def mindfulness_conversation():
@@ -838,7 +858,7 @@ def reflect_bot():
     end = reflection_bot.get('end')
     if end is None or not end:
         reflection_bot["end"] = (
-                    difference_seconds >= reflection_bot.get('stop'))
+                difference_seconds >= reflection_bot.get('stop'))
 
     form = ChatForm()
     if form.validate_on_submit() and not reflection_bot.get('end'):
@@ -887,4 +907,3 @@ def reflect_bot():
         conversation=convo.get_conversation(end=reflection_bot.get('end')),
         form=form
     )
-
