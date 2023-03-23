@@ -509,7 +509,7 @@ class CustomGPTConversation(GPTConversation):
 
 
 class AutoScriptConversation(Conversation):
-    def __init__(self, user: str, chatbot: str, dialogue_path: str, dialogue_answers: Optional[Dict]) -> None:
+    def __init__(self, user: str, chatbot: str, dialogue_path: str, dialogue_answers: Optional[Dict], auxillary_data: {}={}) -> None:
         super().__init__(user, chatbot)
 
         self.start_sequence = f"\n{self.CHATBOT}:"
@@ -518,7 +518,7 @@ class AutoScriptConversation(Conversation):
         with open(f'./app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
             dialogues = json.load(file)
 
-        self.dialogue = DialogCollection(dialogues, answers=dialogue_answers)
+        self.dialogue = DialogCollection(dialogues, answers=dialogue_answers, auxillary_data=auxillary_data)
 
     def sync_chat_log(self, chat_log: str, dialogue_id: str) -> Tuple[str, str]:
         if dialogue_id and chat_log:

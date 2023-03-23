@@ -5,20 +5,18 @@ import re
 import json
 import time
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 openai.organization = "org-FYH4qiS0WzXH7l0pCbezhmat"
 
 class Answer:
     """
     This is an Answer Class contains awll of the answer choices and data.
     """
-    auxillary_data = {} ## used for tracking auxillary data given by the user, to be persisted across dialogues
     
     TYPE = "type"
     CHOICES = "choices"
     DESC = "description"
 
-    def __init__(self, question: str, answer_information: Dict=None) -> None:
+    def __init__(self, question: str, answer_information: Dict=None, auxillary_data: {}={}) -> None:
 
         if not answer_information:
             return
@@ -28,6 +26,8 @@ class Answer:
         self.description = answer_information.get(self.DESC, None)
         self.question = question
         self.quality_analysis_level = 2
+        self.default_quality_analysis_level = 2
+        self.auxillary_data = auxillary_data
 
     def __str__(self) -> str:
 
@@ -56,6 +56,8 @@ class Answer:
             return self.format_answer(answer) in avaliable_choices
 
         if self.type == "free-text":
+            self.quality_analysis_level = self.default_quality_analysis_level
+
             check_pass = True
             # conditions: ["eqt", "contains", "any"]
             for k, v in condition.items():
@@ -120,7 +122,7 @@ class Answer:
                 if self.quality_analysis_level >= 2:
                     variables = list(set(re.findall("\[\S*\]", self.question)))
                     for var in variables:
-                        self.question = self.question.replace(var, Answer.auxillary_data[var])
+                        self.question = self.question.replace(var, self.auxillary_data.get(var, "___"))
 
                     is_relevant_answer_query = openai.Completion.create(
                         model="text-davinci-003",
@@ -176,18 +178,19 @@ class Dialog:
     ANSWER = "answer"
     JUMPTO = "jump_to"
 
-    def __init__(self, dialogue_information: Dict) -> None:
+    def __init__(self, dialogue_information: Dict, auxillary_data: {}={}) -> None:
 
         if not dialogue_information.get(self.ID, None):
             return
 
+        self.auxillary_data = auxillary_data
         self.id = dialogue_information.get(self.ID, None)
         self.message = dialogue_information.get(self.MESSAGE, None)
 
         self.jumpto = dialogue_information.get(self.JUMPTO, None)
 
         if dialogue_information.get(self.ANSWER, None):
-            self.answer = Answer(self.message, dialogue_information.get(self.ANSWER, None))
+            self.answer = Answer(self.message, dialogue_information.get(self.ANSWER, None), auxillary_data=auxillary_data)
         else:
             self.answer = None
 
@@ -202,7 +205,7 @@ class Dialog:
     def get_message(self) -> List[str]:
         variables = list(set(re.findall("\[\S*\]", self.message)))
         for var in variables:
-            self.message = self.message.replace(var, Answer.auxillary_data[var])
+            self.message = self.message.replace(var, self.auxillary_data.get(var, "___"))
 
         messages = [self.message]
         if self.answer and self.answer.get_description():
@@ -230,13 +233,13 @@ class DialogCollection:
     This is a DialogCollection Class contains all Dialogs.
     """
 
-    def __init__(self, dialogues: List[Dict], answers: Dict={}) -> None:
-
+    def __init__(self, dialogues: List[Dict], answers: Dict={}, auxillary_data: {}={}) -> None:
+        self.auxillary_data = auxillary_data
         self.answers = answers
         self.dialogues = {}
 
         for d in dialogues:
-            self.dialogues[d.get("dialogue_id")] = Dialog(d)
+            self.dialogues[d.get("dialogue_id")] = Dialog(d, auxillary_data=auxillary_data)
 
         self.curr_id = dialogues[0].get("dialogue_id")
 
@@ -262,6 +265,7 @@ class DialogCollection:
         return self.curr_id, messages
 
     def move_to_next(self, show_current: bool=False) -> Tuple[str, List[str]]:
+
         curr_dialogue = self.dialogues.get(self.curr_id)
 
         messages = []

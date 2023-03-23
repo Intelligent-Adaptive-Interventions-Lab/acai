@@ -154,12 +154,14 @@ def motivational_interview_conversation():
     chat_log = session.get('motivational_interview_chat_log', None)
     dialogue_id = session.get('motivational_interview_dialogue_id', None)
     dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
+    auxillary_data = session.get('motivational_interview_auxillary_data', {})
 
     convo = AutoScriptConversation(
         user="Human",
         chatbot="Alex",
         dialogue_path="motivational_interview",
-        dialogue_answers=dialogue_answers
+        dialogue_answers=dialogue_answers,
+        auxillary_data=auxillary_data
     )
 
     dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
@@ -175,6 +177,7 @@ def motivational_interview_conversation():
         dialogue_id, chat_log = convo.give_answer(answer=message)
         session["motivational_interview_chat_log"] = chat_log
         session["motivational_interview_dialogue_id"] = dialogue_id
+        session["motivational_interview_auxillary_data"] = auxillary_data
 
         return render_template(
             '/pages/convo_motivational_interview.html',
