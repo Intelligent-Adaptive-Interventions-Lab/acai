@@ -40,8 +40,7 @@
       "answer":{
          "type":"free-text",
          "choices":[
-            "yes",
-            "no"
+
          ],
          "description":"Please let me know if I got your name right. Yes/No"
       },
@@ -50,6 +49,7 @@
             "conditions":[
                {
                   "condition":{
+                    "set_quality_analysis": 0,
                      "contains": ["yes"]
                   }
                }
@@ -60,6 +60,7 @@
             "conditions":[
                {
                   "condition":{
+                    "set_quality_analysis": 0,
                      "contains": ["no"]
                   }
                }
@@ -175,8 +176,7 @@
       "answer":{
          "type":"free-text",
          "choices":[
-            "yes",
-            "no"
+         
          ],
          "description":"Please indicate 'Yes' or 'No'."
       },
@@ -185,6 +185,7 @@
             "conditions":[
                {
                   "condition":{
+                    "set_quality_analysis": 0,
                      "contains": ["yes"]
                   }
                }
@@ -195,6 +196,7 @@
             "conditions":[
                {
                   "condition":{
+                    "set_quality_analysis": 0,
                      "contains": ["no"]
                   }
                }
@@ -302,8 +304,7 @@
       "answer":{
          "type":"free-text",
          "choices":[
-            "yes",
-            "no"
+
          ],
          "description":"Please indicate 'Yes' or 'No'."
       },

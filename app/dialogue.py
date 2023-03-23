@@ -111,8 +111,10 @@ class Answer:
                 if self.quality_analysis_level >= 1:
                     is_english_query = openai.Completion.create(
                         model="text-davinci-003",
-                        prompt=f"Is the text english? Yes or No?\n\nText: {ans}\n\nAnswer:",
+                        prompt=f"Is the text english? Yes or No?\n\nText:{ans}\n\nAnswer:",
                         temperature=0,
+                        max_tokens=15,
+                        request_timeout=3
                     )['choices'][0]['text'].lower().strip()
 
                     if "no" in is_english_query:
@@ -126,25 +128,24 @@ class Answer:
 
                     is_relevant_answer_query = openai.Completion.create(
                         model="text-davinci-003",
-                        prompt=f"Give a rating for the answer out of 10 in terms of how well it answers the question and follows its instructions. Rate strictly. Give the rating then explain why in a caring tone."
-                        f"\n\nQuestion: {self.question}\n\nAnswer: {ans}\n\nResult: ",
+                        prompt=f"Give a rating for the answer out of 5 in terms of how well it answers the question and follows its instructions. Give the rating then explain why in second-person with in a caring tone."
+                        f"\n\nQuestion: {self.question}\n\nAnswer: {ans}\n\nResult:",
                         temperature=0,
-                        max_tokens=100
+                        max_tokens=100,
+                        request_timeout=3
                     )['choices'][0]['text'].strip()
 
                     print(is_relevant_answer_query)
 
-                    result = re.search("([0-9]).*10([\s\S]*)", is_relevant_answer_query)
+                    result = re.search("([0-9]).*5([\s\S]*)", is_relevant_answer_query)
                     rating = result.group(1)
                     response = result.group(2).strip()
 
-                    if (int(rating) < 8):
+                    if (int(rating) < 3):
                         return False, response
 
             except Exception as e:
                 print(e)
-
-            # return False, f"Here is the message again.\n\n{self.question}"
 
         return True, None
 
@@ -308,16 +309,13 @@ class DialogCollection:
                         answer_description = answer_description[1:]
 
                     if not is_valid:
-                        return self.curr_id, filter(lambda x: x!=None, [answer_description, "Please try again."])
+                        return self.curr_id, filter(lambda x: x!=None, [answer_description, "Could you please try saying that in a different way?"])
 
                 self.curr_id = next_id
                 _, next_messages = self.move_to_question()
                 return self.curr_id, messages + next_messages
-            # else:
-            #     return self.curr_id, ["Your answer did not meet the requirements of the question."]
 
-        # return self.curr_id, messages
-        return self.curr_id, ["Your answer did not meet the requirements of the question."]
+        return self.curr_id, ["Sorry, your answer did not meet the requirements of the question."]
 
     def get_num_dialogues(self) -> int:
 
