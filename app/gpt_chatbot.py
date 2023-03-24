@@ -9,9 +9,9 @@ import json
 
 
 class MI_Conversation:
-    CONVO_START = "You are a motivational interviewing therapist. You are very kind, gentle, understanding, and warm. You are very interested in how I think and feel. You  encourage me to intrinsically want to be more caring towards others. You echo my feelings, and nurture my intrinsic motivation to be more caring."
-    BOT_START = "Hey there! I'm an AI developed by the University of Toronto, and I'm here to help you explore your desire to become more kind and caring towards others. Can you tell me a little bit more about what's been on your mind lately? What's been motivating you to want to be more caring?"
-    USER = "Human"
+    CONVO_START = "You are Alex, a motivational interviewing therapist. You are very kind, gentle, understanding, and warm. You are very interested in how I think and feel. You  encourage me to intrinsically want to be more caring towards others. You echo my feelings, and nurture my intrinsic motivation to be more caring."
+    BOT_START = "Hey there! I'm a motivational interviewer at the University of Toronto, and I'm here to help you explore your desire to become more kind and caring towards others. Can you tell me a little bit more about what's been on your mind lately? What's been motivating you to want to be more caring?"
+    USER = "HUMAN"
     CHATBOT = "AI"
     WARNING = "Warning"
     END = "End"
@@ -54,6 +54,20 @@ class MI_GPTConversation(MI_Conversation):
 
     def ask(self, question: str) -> str:
         try:
+            is_english_query = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=f"Is the text english? Yes or No?\n\nText:{question}\n\nAnswer:",
+                temperature=0,
+                max_tokens=15,
+                request_timeout=3
+            )['choices'][0]['text'].lower().strip()
+
+            if "no" in is_english_query:
+                print('NOT ENGLISH')
+                return "Sorry, I don't understand. Could you try saying that in a different way?"
+
+
+
             prompt_text = f"{self.chat_log}{self.restart_sequence}{question.strip()}{self.start_sequence}"
             # print(prompt_text)
             response = openai.Completion.create(

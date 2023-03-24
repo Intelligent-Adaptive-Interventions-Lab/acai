@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 import sqlite3
 import os, os.path
 import errno
+import uuid
 
 
 
@@ -173,9 +174,10 @@ def motivational_interview_conversation():
     dialogue_id = session.get('motivational_interview_dialogue_id', None)
     dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
     auxillary_data = session.get('motivational_interview_auxillary_data', {})
+    user = session.get('motivational_interview_user', "D-"+str(uuid.uuid1()))
 
     convo = AutoScriptConversation(
-        user="Human",
+        user=user,
         chatbot="Alex",
         dialogue_path="motivational_interview",
         dialogue_answers=dialogue_answers,
@@ -185,6 +187,7 @@ def motivational_interview_conversation():
     dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
     session["motivational_interview_chat_log"] = chat_log
     session["motivational_interview_dialogue_id"] = dialogue_id
+    session["motivational_interview_user"] = user
 
     form = ChatForm()
     if form.validate_on_submit():
@@ -196,6 +199,19 @@ def motivational_interview_conversation():
         session["motivational_interview_chat_log"] = chat_log
         session["motivational_interview_dialogue_id"] = dialogue_id
         session["motivational_interview_auxillary_data"] = auxillary_data
+
+
+        f = None
+        try:
+            path = f"{os.path.dirname(__file__)}/deterministic_mi_chatlogs/{user}.txt"
+            f = safe_open_w(path)
+            f.write(chat_log)
+            print(f"Saved chatlogs to {path}")
+        except Exception as e:
+            print(f"Failed to save chatlogs. {e}")
+        finally:
+            if f:
+                f.close()
 
         return render_template(
             '/pages/deterministic_convo_motivational_interview.html',
@@ -407,11 +423,14 @@ def bot_to_bot():
 
 @app.route('/mi_conversation', methods=['GET', 'POST'])
 def mi_conversation():
-    chat_log = session.get('mi_chat_log', MI_Conversation.CONVO_START)
+    chat_log = session.get('mi_chat_log', f"{MI_Conversation.CONVO_START}\n\n{MI_Conversation.CHATBOT}: {MI_Conversation.BOT_START}")
     chatbot = session.get('mi_chatbot', "Alex")
-    user = session.get('mi_user', request.remote_addr)
+    user = session.get('mi_user', "A-"+str(uuid.uuid1()))
 
     convo = MI_GPTConversation(user, chatbot, chat_log)
+
+    session['mi_user'] = user
+    session["mi_chatbot"] = chatbot
 
     form = ChatForm()
     if form.validate_on_submit():
@@ -419,14 +438,13 @@ def mi_conversation():
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
         session["mi_chat_log"] = chat_log
-        session["mi_chatbot"] = chatbot
-        session['mi_user'] = user
 
         f = None
         try:
-            f = safe_open_w(f"{os.path.dirname(__file__)}/mi_chatlogs/{user}.txt")
+            path = f"{os.path.dirname(__file__)}/adaptive_mi_chatlogs/{user}.txt"
+            f = safe_open_w(path)
             f.write(chat_log)
-            print(f"Saved chatlogs to {user}.txt")
+            print(f"Saved chatlogs to {path}")
         except Exception as e:
             print(f"Failed to save chatlogs. {e}")
         finally:
