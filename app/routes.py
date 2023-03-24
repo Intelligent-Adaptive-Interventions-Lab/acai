@@ -167,6 +167,7 @@ def quiz_content():
     number = choice[int(idx)]
     form.selection.choices = [("0", ''.join(map(str, choice[0]))),
                               ("1", ''.join(map(str, choice[1])))]
+    print(form.selection)
     result = form.selection.data
     # check if correct answer
     #TODO: use this to log the user input

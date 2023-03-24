@@ -162,6 +162,9 @@
             </div>
         </div>
     </div>
+    {% include "quiz/notification.html" %}
+    {% include "quiz/notification_Wrong.html" %}
+    {% include "quiz/notification_timeup.html" %}
 
 {% endblock contents %}
 
@@ -211,6 +214,7 @@
             var diff = parseInt({{ difficulty }});
             carousel.nextWhenVisible();
             carousel.cycle();
+
             if ({{ number_3 }} -diff < 0) {
                 num1.innerHTML = {{ number_3 }} -diff + 10;
             } else {
@@ -254,7 +258,7 @@
         var timerInterval = setInterval(function () {
             if (remainingTime <= 0) {
                 clearInterval(timerInterval);
-                ('timeout').modal(options);
+                ('#timeout').modal('show');
             } else {
                 var minutes = Math.floor(remainingTime / 60);
                 var seconds = remainingTime % 60;
@@ -263,6 +267,5 @@
                 remainingTime--;
             }
         }, 1000);
-
     </script>
 {% endblock js_files %}

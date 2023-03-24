@@ -3,20 +3,15 @@
         What is the correct number?
     </div>
     <form method="post">
-            {{ form.selection(id='answer') }}
-
+        {{ form.selection() }}
         <div class="d-flex justify-content-end m-2">
-            <button type="submit" class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal" id="subsmit">
+            <button type="submit" class="btn btn-primary">
                 Submit
             </button>
         </div>
     </form>
-    <div id="message">abc</div>
+    <div id="message">{{ idx }}</div>
 </div>
 
-<script>
-    {#var Button = document.getElementById('subsmit');#}
-    {#if(document.getElementById({{ idx }}).checked)#}
-</script>
+
 
