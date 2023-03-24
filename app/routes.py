@@ -9,6 +9,7 @@ from app.conversation import (
     init_reflection_bot,
     init_information_bot
 )
+from app.gpt_chatbot import MI_Conversation, MI_GPTConversation
 
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
@@ -17,6 +18,9 @@ from datetime import datetime, timezone
 
 
 import sqlite3
+import os, os.path
+import errno
+
 
 
 # run_with_ngrok(app)
@@ -138,6 +142,20 @@ conversation = [
     }
 ]
 
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
+def safe_open_w(path):
+    ''' Open "path" for writing, creating any parent directories as needed.
+    '''
+    mkdir_p(os.path.dirname(path))
+    return open(path, 'w')
+
 
 def _delete_session_variable(variable: str) -> None:
     try:
@@ -180,7 +198,7 @@ def motivational_interview_conversation():
         session["motivational_interview_auxillary_data"] = auxillary_data
 
         return render_template(
-            '/pages/convo_motivational_interview.html',
+            '/pages/deterministic_convo_motivational_interview.html',
             user=convo.get_user(),
             bot=convo.get_chatbot(),
             warning=convo.WARNING,
@@ -192,7 +210,7 @@ def motivational_interview_conversation():
         )
 
     return render_template(
-        '/pages/convo_motivational_interview.html', 
+        '/pages/deterministic_convo_motivational_interview.html', 
         user=convo.get_user(), 
         bot=convo.get_chatbot(), 
         warning=convo.WARNING, 
@@ -384,6 +402,47 @@ def bot_to_bot():
         end=bot.END,
         notification=bot.NOTI,
         conversation=bot.get_conversation(test=False),
+        form=form
+    )
+
+@app.route('/mi_conversation', methods=['GET', 'POST'])
+def mi_conversation():
+    chat_log = session.get('mi_chat_log', MI_Conversation.CONVO_START)
+    chatbot = session.get('mi_chatbot', "Alex")
+    user = session.get('mi_user', request.remote_addr)
+
+    convo = MI_GPTConversation(user, chatbot, chat_log)
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+        session["mi_chat_log"] = chat_log
+        session["mi_chatbot"] = chatbot
+        session['mi_user'] = user
+
+        f = None
+        try:
+            f = safe_open_w(f"{os.path.dirname(__file__)}/mi_chatlogs/{user}.txt")
+            f.write(chat_log)
+            print(f"Saved chatlogs to {user}.txt")
+        except Exception as e:
+            print(f"Failed to save chatlogs. {e}")
+        finally:
+            if f:
+                f.close()
+        
+        return redirect(url_for('mi_conversation'))
+    
+    return render_template(
+        '/pages/adaptive_convo_motivational_interview.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        # warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(test=True),
         form=form
     )
 

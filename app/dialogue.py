@@ -5,8 +5,6 @@ import re
 import json
 import time
 
-openai.organization = "org-FYH4qiS0WzXH7l0pCbezhmat"
-
 class Answer:
     """
     This is an Answer Class contains awll of the answer choices and data.

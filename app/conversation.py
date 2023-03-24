@@ -310,7 +310,7 @@ class GPTConversation(Conversation):
 
         with open('./app/static/secret.yaml') as file:
             secret_keys = yaml.load(file, Loader=yaml.FullLoader)
-        openai.api_key = secret_keys["openai"]
+            openai.api_key = secret_keys["openai"]
 
     def ask(self, question: str) -> str:
         prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
