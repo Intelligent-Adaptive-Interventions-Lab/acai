@@ -148,32 +148,42 @@ def _delete_session_variable(variable: str) -> None:
 def index():
     global q
     q = Quiz()
-    duration = 10
+    duration = 1800
     end_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
     session["end_time"] = end_time
 
     return render_template("/quiz/main.html")
-
+#Low
+#TODO: refactor the Quiz object into 2, one generate the quiz as dictionary, then
 
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
     global q
+    # Get new message
     message = q.send_message()
     score = q.get_score()
 
     choice = message["choices"]
-    form = EvaluationForm()
     idx = message["correct_idx"]
     number = choice[int(idx)]
+    # init the form
+    form = EvaluationForm()
+    # update the selection in the html
     form.selection.choices = [("0", ''.join(map(str, choice[0]))),
                               ("1", ''.join(map(str, choice[1])))]
-    print(form.selection)
-    result = form.selection.data
-    # check if correct answer
-    #TODO: use this to log the user input
-    if result:
+    #Highest
+    #TODO: Convert the reward into int and pass it into get_message
+    reward = request.get_data(as_text=True)
+    '''
+    Highest
+    TODO: use this to log the user input maybe link to database, get_message 
+    return recevier, reward, difficulty, answer. 
+    '''
+    if form.validate_on_submit():
+        result = form.selection.data
+        # check if correct answer
         if int(result) == int(message["correct_idx"]):
-            q.get_message(True)
+            q.get_message(True, reward)
         else:
             q.get_message(False)
 

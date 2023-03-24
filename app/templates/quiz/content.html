@@ -96,11 +96,13 @@
                         <table class="table table-bordered text-break border-dark text-center m-0">
                             <tr>
                                 <td class="align-middle">Charity</td>
-                                <td class="align-middle" id="s1"></td>
+                                <td class="align-middle"
+                                    id="s1">{{ score1 }}</td>
                             </tr>
                             <tr>
                                 <td class="align-middle">Self</td>
-                                <td class="align-middle" id="s2">0</td>
+                                <td class="align-middle"
+                                    id="s2">{{ score2 }}</td>
                             </tr>
                         </table>
                     </div>
@@ -205,6 +207,20 @@
             num1.innerHTML = {{ number_3 }};
             num2.innerHTML = {{ number_2 }};
             num3.innerHTML = {{ number_1 }};
+            fetch('{{ url_for('quiz_content') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({'level': 1}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
 
         highCreditBtn.addEventListener('click', () => {
@@ -214,11 +230,24 @@
             var diff = parseInt({{ difficulty }});
             carousel.nextWhenVisible();
             carousel.cycle();
-
+            fetch('{{ url_for('quiz_content') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({'level': diff}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
             if ({{ number_3 }} -diff < 0) {
                 num1.innerHTML = {{ number_3 }} -diff + 10;
             } else {
-                num1.innerHTML = {{ number_3 }} - diff;
+                num1.innerHTML = {{ number_3 }} -diff;
             }
             if ({{ number_2 }} -diff < 0) {
                 num2.innerHTML = {{ number_2 }} -diff + 10;
@@ -252,13 +281,30 @@
             carousel_idx++;
         });
 
+
+        var submits = document.getElementById('mcqsubmit');
+
+        submits.addEventListener("click", () => {
+            if (document.getElementById("selection-" + {{ idx }}).checked) {
+                var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                myModal.show();
+            } else {
+                var myModal = new bootstrap.Modal(document.getElementById('wrong'));
+                myModal.show();
+            }
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            myModal.show();
+        })
+
+
         var remainingTime = {{ remaining_time }};
         var timerElement = document.getElementById("timer");
         // Update the timer every second
         var timerInterval = setInterval(function () {
             if (remainingTime <= 0) {
                 clearInterval(timerInterval);
-                ('#timeout').modal('show');
+                var myModal = new bootstrap.Modal(document.getElementById('timeout'));
+                myModal.show();
             } else {
                 var minutes = Math.floor(remainingTime / 60);
                 var seconds = remainingTime % 60;

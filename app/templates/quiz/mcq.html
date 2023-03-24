@@ -3,9 +3,11 @@
         What is the correct number?
     </div>
     <form method="post">
+        {{ form.hidden_tag() }}
         {{ form.selection() }}
         <div class="d-flex justify-content-end m-2">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" id="mcqsubmit"
+                    onclick="displaymodal()">
                 Submit
             </button>
         </div>
