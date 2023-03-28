@@ -3,7 +3,6 @@ import random
 
 random.seed(random.randint(0, 300))
 
-
 class Quiz:
     def __init__(self):
         self.index = 0
@@ -68,7 +67,8 @@ class Quiz:
             i = abs(int(question["correct_idx"]) - 1)
             answer = question["choices"][i]
         self.index += 1
-        return recevier, reward, difficulty, answer
+        return self.index-1, recevier, difficulty, reward, answer, amount
+
 
     def __get_receiver_type(self):
         return self.questions[self.index]["receiver"]

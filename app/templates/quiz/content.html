@@ -87,7 +87,7 @@
             <div class="card-body">
                 <div class="d-flex w-100 my-2">
                     <div class="flex-grow-1 d-flex flex-column">
-                        <h2 class="card-title text-left mt-4">Exercise</h2>
+                        <h2 class="card-title text-left mt-4">Exercise, {{ page_num }}/31</h2>
                         <p class="card-text text-left mb-4">
                             Read the following instructions:
                         </p>
@@ -207,43 +207,17 @@
             num1.innerHTML = {{ number_3 }};
             num2.innerHTML = {{ number_2 }};
             num3.innerHTML = {{ number_1 }};
-            fetch('{{ url_for('quiz_content') }}', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({'level': 1}),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+
         })
 
         highCreditBtn.addEventListener('click', () => {
             [].forEach.call(carouselSubTitles, (subtitle) => {
                 subtitle.innerHTML = "+" + {{ difficulty }};
             });
-            var diff = parseInt({{ difficulty }});
+            diff = parseInt({{ difficulty }});
             carousel.nextWhenVisible();
             carousel.cycle();
-            fetch('{{ url_for('quiz_content') }}', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({'level': diff}),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+
             if ({{ number_3 }} -diff < 0) {
                 num1.innerHTML = {{ number_3 }} -diff + 10;
             } else {
@@ -285,15 +259,20 @@
         var submits = document.getElementById('mcqsubmit');
 
         submits.addEventListener("click", () => {
-            if (document.getElementById("selection-" + {{ idx }}).checked) {
-                var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                myModal.show();
-            } else {
-                var myModal = new bootstrap.Modal(document.getElementById('wrong'));
-                myModal.show();
-            }
-            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-            myModal.show();
+            fetch('{{ url_for('quiz_content') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({level: diff}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
 
 
