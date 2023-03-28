@@ -183,8 +183,8 @@ def quiz_content():
         temp = int(reward[-2])
         if temp != 0:
             session["t"].append(temp)
-            a = temp
-            print(temp)
+
+
 
     '''
     Highest
