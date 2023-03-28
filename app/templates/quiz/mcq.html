@@ -1,0 +1,15 @@
+<div id="exercise-content" class="d-none">
+    <div class="ins">
+        What is the correct number?
+    </div>
+    <form method="post">
+            {{ form.selection(id='answer') }}
+
+        <div class="d-flex justify-content-end m-2">
+            <button type="submit" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                Submit
+            </button>
+        </div>
+    </form>
+</div>

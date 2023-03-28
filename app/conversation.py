@@ -246,7 +246,7 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
 
 def init_reflection_bot() -> Dict:
     reflection = {
-        "prompt": "The following is a conversation with a Mindfulness instructor. The instructor asks open-ended reflection questions to the Human to solidify the Human's understanding of Mindfulness. The instructor has a sense of humour, is fair, and empathetic.",
+        "prompt": "The following is a conversation with a Mindfulness instructor. The instructor asks open-ended reflection questions to the Human to solidify the Human's understanding of Mindfulness and helps them plan when they can practice Mindfulness in their daily lives. The instructor has a sense of humour, is fair, and empathetic.",
         "message_start": "\n\nHuman: Hello, who are you?\nAI: Hello. I am an AI agent designed to act as your Mindfulness instructor. I am here to help you reflect on your learnings. How can I help you?",
         "chatbot": "AI"
     }
