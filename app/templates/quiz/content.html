@@ -1,218 +1,296 @@
 {% extends '_base.html' %}
 
 {% block title %}
-Quiz
+    Quiz
 {% endblock title %}
 
 {% block css_files %}
-<style>
-  #countdown {
-    font-size: 3rem;
-    font-weight: bold;
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-  }
+    <style>
+        #timer {
+            font-size: 3rem;
+            font-weight: bold;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
 
-  .img-fluid {
-    object-fit: none;
-    object-position: center;
-    width: 100%;
-    max-height: 250px;
-    filter: blur(5px);
-    /* Add blur filter to the image */
-    -webkit-filter: blur(5px);
-    transition: filter 0.5s ease;
-    /* Add transition for the filter */
-    -webkit-transition: filter 0.5s ease;
-  }
+        .img-fluid {
+            object-fit: none;
+            object-position: center;
+            width: 100%;
+            max-height: 250px;
+            filter: blur(5px);
+            /* Add blur filter to the image */
+            -webkit-filter: blur(5px);
+            transition: filter 0.5s ease;
+            /* Add transition for the filter */
+            -webkit-transition: filter 0.5s ease;
+        }
 
-  .info {
-    font-weight: bold;
-    font-size: medium;
-  }
+        .info {
+            font-weight: bold;
+            font-size: medium;
+        }
 
-  .card-title {
-    font-weight: bold;
-  }
+        .card-title {
+            font-weight: bold;
+        }
 
-  .ins {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-weight: bold;
-  }
+        .ins {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
 
-  /* Add play button styles */
-  .play-button {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    cursor: pointer;
-    text-align: center;
-  }
+        /* Add play button styles */
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            cursor: pointer;
+            text-align: center;
+        }
 
-  .play-button svg {
-    width: 5rem;
-    height: 5rem;
-    fill: white;
-  }
+        .play-button svg {
+            width: 5rem;
+            height: 5rem;
+            fill: white;
+        }
 
-  .play-button:hover svg {
-    fill: rgba(255, 255, 255, 0.7);
-  }
+        .play-button:hover svg {
+            fill: rgba(255, 255, 255, 0.7);
+        }
 
-  .prevent-select {
-    -webkit-user-select: none;
-    /* Safari */
-    -ms-user-select: none;
-    /* IE 10 and IE 11 */
-    user-select: none;
-    /* Standard syntax */
-  }
+        .prevent-select {
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE 10 and IE 11 */
+            user-select: none;
+            /* Standard syntax */
+        }
 
-  .blurry {
-    -webkit-filter: blur(10px);
-  }
-</style>
+        .blurry {
+            -webkit-filter: blur(10px);
+        }
+    </style>
 {% endblock css_files %}
 
 {% block contents %}
-<h1 class="text-left">LOGO</h1>
-<div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="d-flex w-100 my-2">
-        <div class="flex-grow-1 d-flex flex-column">
-          <h2 class="card-title text-left mt-4">Exercise</h2>
-          <p class="card-text text-left mb-4">
-            Read the following instructions:
-          </p>
-        </div>
+    <div id="timer"></div>
 
-        <div class="d-flex">
-          <table class="table table-bordered text-break border-dark text-center m-0">
-            <tr>
-              <td class="align-middle">Charity</td>
-              <td class="align-middle">0</td>
-            </tr>
-            <tr>
-              <td class="align-middle">Self</td>
-              <td class="align-middle">0</td>
-            </tr>
-          </table>
-        </div>
-      </div>
+    <h1 class="text-left">LOGO</h1>
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex w-100 my-2">
+                    <div class="flex-grow-1 d-flex flex-column">
+                        <h2 class="card-title text-left mt-4">Exercise, {{ page_num }}/31</h2>
+                        <p class="card-text text-left mb-4">
+                            Read the following instructions:
+                        </p>
+                    </div>
+                    <div class="d-flex">
+                        <table class="table table-bordered text-break border-dark text-center m-0">
+                            <tr>
+                                <td class="align-middle">Charity</td>
+                                <td class="align-middle"
+                                    id="s1">{{ score1 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="align-middle">Self</td>
+                                <td class="align-middle"
+                                    id="s2">{{ score2 }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
 
-      <div class="row align-items-center">
-        <!-- Add container for the image and question -->
-        <div class="col-md-6 position-relative">
-          <div class="position-relative rounded border border-2">
-            <div id="quizNumBox" class="mx-auto d-block" style="height: 350px;">
-              {% include 'quiz/display_quiz.html' %}
+                <div class="row align-items-center">
+                    <!-- Add container for the image and question -->
+                    <div class="col-md-6 position-relative">
+                        <div class="position-relative rounded border border-2">
+                            <div id="quizNumBox" class="mx-auto d-block"
+                                 style="height: 350px;">
+                                {% include 'quiz/display_quiz.html' %}
+                            </div>
+                            <div id="play-start" class="play-button">
+                                <i class="bi bi-play-fill display-3"></i>
+                            </div>
+                            <div id="play-end" class="play-button d-none">
+                                <span class="prevent-select fw-bold">Please answer the question below.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="ins">
+                            <p>
+                                Note:
+                            </p>
+                        </div>
+                        <div class="card-text">
+                            <p>
+                                the three numbers are independent from each
+                                other! If your sum adds up to a number over 9,
+                                report only
+                                the smallest digit.
+                            </p>
+
+                            <p>
+                                For example, if you're supposed to add 3 to 9,
+                                the answer is "12", so you would report "2".
+                            </p>
+
+                            <p>
+                                Thus:
+                            </p>
+
+                            <p>
+                                If you encounter a sequence like "3 2 9", and
+                                you're supposed to add 3 to each number, the
+                                answer would
+                                be "6 5 2"
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Add container for the question and answer -->
+                    {% include 'quiz/mcq.html' %}
+
+                </div>
             </div>
-            <div id="play-start" class="play-button">
-              <i class="bi bi-play-fill display-3"></i>
-            </div>
-            <div id="play-end" class="play-button d-none">
-              <span class="prevent-select fw-bold">Please answer the question below.</span>
-            </div>
-          </div>
         </div>
-
-        <div class="col-md-6">
-          <div class="ins">
-            <p>
-              Note:
-            </p>
-          </div>
-          <div class="card-text">
-            <p>
-              the three numbers are independent from each other! If your sum adds up to a number over 9, report only
-              the smallest digit.
-            </p>
-
-            <p>
-              For example, if you're supposed to add 3 to 9, the answer is "12", so you would report "2".
-            </p>
-
-            <p>
-              Thus:
-            </p>
-
-            <p>
-              If you encounter a sequence like "3 2 9", and you're supposed to add 3 to each number, the answer would
-              be "6 5 2"
-            </p>
-          </div>
-        </div>
-
-        <!-- Add container for the question and answer -->
-        {% include 'quiz/mcq.html' %}
-      </div>
     </div>
-  </div>
-</div>
-
-{% include 'quiz/notification.html' %}
+    {% include "quiz/notification.html" %}
+    {% include "quiz/notification_Wrong.html" %}
+    {% include "quiz/notification_timeup.html" %}
 
 {% endblock contents %}
 
 {% block js_files %}
-<script>
-  var carouselQuiz = document.querySelector('#carouselQuiz');
-  var carousel = new bootstrap.Carousel(carouselQuiz, {
-    interval: 1500,
-    ride: true,
-    wrap: false,
-    touch: false,
-    pause: 'hover'
-  });
+    <script>
+        var carouselQuiz = document.querySelector('#carouselQuiz');
+        var carousel = new bootstrap.Carousel(carouselQuiz, {
+            interval: 1500,
+            ride: true,
+            wrap: false,
+            touch: false,
+            pause: 'hover'
+        });
 
-  var carousel_idx = 0;
-  var playStart = document.getElementById("play-start");
-  var playEnd = document.getElementById("play-end");
-  var exerciseContent = document.getElementById("exercise-content");
-  var quizNumBox = document.getElementById('quizNumBox');
-  var lowCreditBtn = document.getElementById('quiz-choice-1');
-  var highCreditBtn = document.getElementById('quiz-choice-2');
-  var carouselSubTitles = document.querySelectorAll('#carouselSubTitle');
+        var carousel_idx = 0;
+        var playStart = document.getElementById("play-start");
+        var playEnd = document.getElementById("play-end");
+        var exerciseContent = document.getElementById("exercise-content");
+        var quizNumBox = document.getElementById('quizNumBox');
+        var lowCreditBtn = document.getElementById('quiz-choice-1');
+        var highCreditBtn = document.getElementById('quiz-choice-2');
+        var carouselSubTitles = document.querySelectorAll('#carouselSubTitle');
 
-  lowCreditBtn.addEventListener('click', () => {
-    [].forEach.call(carouselSubTitles, (subtitle) => {
-      subtitle.innerHTML = '+1';
-    });
-    carousel.nextWhenVisible();
-    carousel.cycle();
-  })
+        var num1 = document.getElementById("num1");
+        var num2 = document.getElementById("num2");
+        var num3 = document.getElementById("num3");
+        var diff = 1;
 
-  highCreditBtn.addEventListener('click', () => {
-    [].forEach.call(carouselSubTitles, (subtitle) => {
-      subtitle.innerHTML = '+3';
-    });
-    carousel.nextWhenVisible();
-    carousel.cycle();
-  });
+        var score1 = document.getElementById("s1");
+        var score2 = document.getElementById("s2");
 
-  playStart.addEventListener("click", () => {
-    playStart.classList.add("d-none");
-    carouselQuiz.classList.remove("d-none");
-    quizNumBox.classList.remove('blurry');
-    carousel.to(0);
-    carousel.pause();
-  });
+        lowCreditBtn.addEventListener('click', () => {
+            [].forEach.call(carouselSubTitles, (subtitle) => {
+                subtitle.innerHTML = '+1';
+            });
+            carousel.nextWhenVisible();
+            carousel.cycle();
+            num1.innerHTML = {{ number_3 }};
+            num2.innerHTML = {{ number_2 }};
+            num3.innerHTML = {{ number_1 }};
 
-  carouselQuiz.addEventListener('slid.bs.carousel', function (e) {
-    if (carousel_idx === 2) {
-      setTimeout(() => {
-        quizNumBox.classList.add('blurry');
-        playEnd.classList.remove("d-none");
-        exerciseContent.classList.remove("d-none");
-      }, 1500);
-    }
+        })
 
-    carousel_idx++;
-  });
-</script>
+        highCreditBtn.addEventListener('click', () => {
+            [].forEach.call(carouselSubTitles, (subtitle) => {
+                subtitle.innerHTML = "+" + {{ difficulty }};
+            });
+            diff = parseInt({{ difficulty }});
+            carousel.nextWhenVisible();
+            carousel.cycle();
+
+            if ({{ number_3 }} -diff < 0) {
+                num1.innerHTML = {{ number_3 }} -diff + 10;
+            } else {
+                num1.innerHTML = {{ number_3 }} -diff;
+            }
+            if ({{ number_2 }} -diff < 0) {
+                num2.innerHTML = {{ number_2 }} -diff + 10;
+            } else {
+                num2.innerHTML = {{ number_2 }} -diff;
+            }
+            if ({{ number_1 }} -diff < 0) {
+                num3.innerHTML = {{ number_1 }} -diff + 10;
+            } else {
+                num3.innerHTML = {{ number_1 }} -diff;
+            }
+        });
+
+        playStart.addEventListener("click", () => {
+            playStart.classList.add("d-none");
+            carouselQuiz.classList.remove("d-none");
+            quizNumBox.classList.remove('blurry');
+            carousel.to(0);
+            carousel.pause();
+        });
+
+        carouselQuiz.addEventListener('slid.bs.carousel', function (e) {
+            if (carousel_idx === 2) {
+                setTimeout(() => {
+                    quizNumBox.classList.add('blurry');
+                    playEnd.classList.remove("d-none");
+                    exerciseContent.classList.remove("d-none");
+                }, 1500);
+            }
+
+            carousel_idx++;
+        });
+
+
+        var submits = document.getElementById('mcqsubmit');
+
+        submits.addEventListener("click", () => {
+            fetch('{{ url_for('quiz_content') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({level: diff}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        })
+
+
+        var remainingTime = {{ remaining_time }};
+        var timerElement = document.getElementById("timer");
+        // Update the timer every second
+        var timerInterval = setInterval(function () {
+            if (remainingTime <= 0) {
+                clearInterval(timerInterval);
+                var myModal = new bootstrap.Modal(document.getElementById('timeout'));
+                myModal.show();
+            } else {
+                var minutes = Math.floor(remainingTime / 60);
+                var seconds = remainingTime % 60;
+                var timeString = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
+                timerElement.innerHTML = "Time remaining: " + timeString;
+                remainingTime--;
+            }
+        }, 1000);
+    </script>
 {% endblock js_files %}
