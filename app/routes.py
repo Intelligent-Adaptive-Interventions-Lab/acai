@@ -11,28 +11,18 @@ from app.conversation import (
 )
 from app.gpt_chatbot import MI_Conversation, MI_GPTConversation
 
-<<<<<<< HEAD
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for, Response
-=======
-from flask import Flask, request, session, jsonify, render_template, redirect, \
-    url_for
->>>>>>> quiz_interface
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import datetime, timezone
 import sqlite3
-<<<<<<< HEAD
+
 import os, os.path
 import errno
 import uuid
 import time
 
-
-
-=======
 from app.quiz import Quiz
->>>>>>> quiz_interface
-# run_with_ngrok(app)
 
 USER = "Person"
 CHATBOT = "AI"
