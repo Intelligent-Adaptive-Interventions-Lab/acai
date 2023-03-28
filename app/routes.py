@@ -12,7 +12,7 @@ from app.conversation import (
 from app.gpt_chatbot import MI_Conversation, MI_GPTConversation
 
 
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, Response
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import datetime, timezone
 
@@ -21,6 +21,7 @@ import sqlite3
 import os, os.path
 import errno
 import uuid
+import time
 
 
 
@@ -168,13 +169,70 @@ def _delete_session_variable(variable: str) -> None:
 def main():
     return render_template("/pages/main.html")
 
+@app.route('/mi_conversation', methods=['GET', 'POST'])
+def mi_conversation():
+    INITIAL_TIMER = 300
+
+    chat_log = session.get('mi_chat_log', f"{MI_Conversation.CONVO_START}\n\n{MI_Conversation.CHATBOT}: {MI_Conversation.BOT_START}")
+    chatbot = session.get('mi_chatbot', "Alex")
+    user = session.get('mi_user', "A-"+str(uuid.uuid1()))
+    start = session.get('mi_start', int(time.time()))
+
+    timer_remaining = INITIAL_TIMER - (int(time.time()) - start)
+
+    convo = MI_GPTConversation(user, chatbot, chat_log)
+
+    session['mi_user'] = user
+    session["mi_chatbot"] = chatbot
+    session["mi_start"] = start
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+        session["mi_chat_log"] = chat_log
+
+        f = None
+        try:
+            path = f"{os.path.dirname(__file__)}/adaptive_mi_chatlogs/{user}.txt"
+            f = safe_open_w(path)
+            f.write(chat_log)
+            print(f"Saved chatlogs to {path}")
+        except Exception as e:
+            print(f"Failed to save chatlogs. {e}")
+        finally:
+            if f:
+                f.close()
+        
+        return redirect(url_for('mi_conversation'))
+    
+    return render_template(
+        '/pages/adaptive_convo_motivational_interview.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        # warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(test=True),
+        form=form,
+        timer=timer_remaining
+    )
+
 @app.route('/motivational_interview', methods=['GET', 'POST'])
 def motivational_interview_conversation():
+    INITIAL_TIMER = 300
+
     chat_log = session.get('motivational_interview_chat_log', None)
     dialogue_id = session.get('motivational_interview_dialogue_id', None)
     dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
     auxillary_data = session.get('motivational_interview_auxillary_data', {})
     user = session.get('motivational_interview_user', "D-"+str(uuid.uuid1()))
+    start = session.get('motivational_interview_start', int(time.time()))
+
+    timer_remaining = INITIAL_TIMER - (int(time.time()) - start)
+
+    print(timer_remaining)
 
     convo = AutoScriptConversation(
         user=user,
@@ -188,6 +246,7 @@ def motivational_interview_conversation():
     session["motivational_interview_chat_log"] = chat_log
     session["motivational_interview_dialogue_id"] = dialogue_id
     session["motivational_interview_user"] = user
+    session["motivational_interview_start"] = start
 
     form = ChatForm()
     if form.validate_on_submit():
@@ -222,7 +281,8 @@ def motivational_interview_conversation():
             notification=convo.NOTI,
             conversation=convo.get_conversation(),
             form=form,
-            enable_typing_animation=1
+            enable_typing_animation=1,
+            timer=timer_remaining
         )
 
     return render_template(
@@ -234,7 +294,8 @@ def motivational_interview_conversation():
         notification=convo.NOTI,
         conversation=convo.get_conversation(),
         form=form,
-        enable_typing_animation=1
+        enable_typing_animation=1,
+        timer=timer_remaining
     )
 
 
@@ -418,49 +479,6 @@ def bot_to_bot():
         end=bot.END,
         notification=bot.NOTI,
         conversation=bot.get_conversation(test=False),
-        form=form
-    )
-
-@app.route('/mi_conversation', methods=['GET', 'POST'])
-def mi_conversation():
-    chat_log = session.get('mi_chat_log', f"{MI_Conversation.CONVO_START}\n\n{MI_Conversation.CHATBOT}: {MI_Conversation.BOT_START}")
-    chatbot = session.get('mi_chatbot', "Alex")
-    user = session.get('mi_user', "A-"+str(uuid.uuid1()))
-
-    convo = MI_GPTConversation(user, chatbot, chat_log)
-
-    session['mi_user'] = user
-    session["mi_chatbot"] = chatbot
-
-    form = ChatForm()
-    if form.validate_on_submit():
-        user_message = form.message.data
-        answer = convo.ask(user_message)
-        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
-        session["mi_chat_log"] = chat_log
-
-        f = None
-        try:
-            path = f"{os.path.dirname(__file__)}/adaptive_mi_chatlogs/{user}.txt"
-            f = safe_open_w(path)
-            f.write(chat_log)
-            print(f"Saved chatlogs to {path}")
-        except Exception as e:
-            print(f"Failed to save chatlogs. {e}")
-        finally:
-            if f:
-                f.close()
-        
-        return redirect(url_for('mi_conversation'))
-    
-    return render_template(
-        '/pages/adaptive_convo_motivational_interview.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        # warning=convo.WARNING, 
-        end=convo.END,
-        notification=convo.NOTI,
-        conversation=convo.get_conversation(test=True),
         form=form
     )
 
