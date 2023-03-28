@@ -217,7 +217,7 @@ def quiz_content():
         # check if correct answer
         if int(result) == int(message["correct_idx"]):
             # When answer is correct
-            quiz_id, recevier, difficulty, reward, answer, actual_reward = q.get_message(True, temp)
+            quiz_id, recevier, difficulty, reward, answer, actual_reward = q.get_message(True, 1)
         else:
             # When answer is wrong
             quiz_id, recevier, difficulty, reward, answer, actual_reward = q.get_message(False)
