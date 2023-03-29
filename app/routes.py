@@ -211,6 +211,29 @@ def quiz_content():
         session["index"] = current_index + 1
         session["score"] = quiz.get_score()
         # TODO: store the above variable into database.
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO quiz
+                                  (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2) 
+                                   VALUES 
+                                  (?,?,?,?,?,?,?,?);"""
+#             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
+            param_tuple = (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2)  #TODO: add implementation for time1, time2          
+            count = cursor.execute(sqlite_insert_query, param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
     # Get end time of timer
     end_time = session["end_time"]
     remaining_time = max(end_time - datetime.now(timezone.utc), timedelta(0))
