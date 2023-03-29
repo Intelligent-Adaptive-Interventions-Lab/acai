@@ -181,6 +181,8 @@ def index():
     session["end_time"] = end_time
 
     return render_template("/quiz/main.html", date=datetime.today().strftime('%Y-%m-%d'))
+
+
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
 
@@ -202,8 +204,8 @@ def quiz_content():
     # init the form
     form = EvaluationForm()
     # update the selection in the html
-    form.selection.choices = [("0", ''.join(map(str, choice[0]))),
-                              ("1", ''.join(map(str, choice[1])))]
+    form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
+                              ("1", ''.join(map(str, choice[1]))[::-1])]
     if form.validate_on_submit():
         submit_time = datetime.now()
         result = form.selection.data
