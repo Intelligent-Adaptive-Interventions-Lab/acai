@@ -171,7 +171,6 @@ def index():
     #init quiz
     questions = Quiz()
     #store into session variable
-    session["u_id"] = request.remote_addr
     session["quiz"] = questions.get_questions()
     session["index"] = 0
     session["score"] = {"charity": 0, "self": 0}
@@ -183,10 +182,6 @@ def index():
     return render_template("/quiz/main.html", date=datetime.today().strftime('%Y-%m-%d'))
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
-
-    start_time = session.get('start_time_stamp', datetime.now())
-    session["start_time_stamp"] = start_time
-
     current_index = session["index"]
     questions, score =session["quiz"], session["score"]
     quiz = QuizUtility(current_index, questions, score)
@@ -205,7 +200,6 @@ def quiz_content():
     form.selection.choices = [("0", ''.join(map(str, choice[0]))),
                               ("1", ''.join(map(str, choice[1])))]
     if form.validate_on_submit():
-        submit_time = datetime.now()
         result = form.selection.data
         # check if correct answer
         if int(result) == int(message["correct_idx"]):
@@ -222,15 +216,13 @@ def quiz_content():
             sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
-            time1 = (session["start_time_stamp"] - session["diff_time_stamp"]).total_seconds()
-            time2 = (session["diff_time_stamp"] - submit_time).total_seconds()
+
             sqlite_insert_query = """INSERT INTO quiz
                                   (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
 #             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
-
-            param_tuple = (session["u_id"], recevier, difficulty, reward, answer, actual_reward, time1, time2)  #TODO: add implementation for time1, time2
+            param_tuple = (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2)  #TODO: add implementation for time1, time2          
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
@@ -269,7 +261,6 @@ def get_user_choice():
     if len(reward) > 0:
         temp = int(reward[-2])
         if temp != 0:
-            session["diff_time_stamp"] = datetime.now()
             session["test_reward"] = temp
             reponse = app.response_class(
                 response=json.dumps({"diff": temp}),

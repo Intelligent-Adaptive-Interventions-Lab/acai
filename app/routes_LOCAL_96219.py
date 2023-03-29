@@ -171,7 +171,6 @@ def index():
     #init quiz
     questions = Quiz()
     #store into session variable
-    session["u_id"] = request.remote_addr
     session["quiz"] = questions.get_questions()
     session["index"] = 0
     session["score"] = {"charity": 0, "self": 0}
@@ -229,8 +228,7 @@ def quiz_content():
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
 #             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
-
-            param_tuple = (session["u_id"], recevier, difficulty, reward, answer, actual_reward, time1, time2)  #TODO: add implementation for time1, time2
+            param_tuple = (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2)  #TODO: add implementation for time1, time2
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
