@@ -6,13 +6,6 @@
 
 {% block css_files %}
     <style>
-        #timer {
-            font-size: 3rem;
-            font-weight: bold;
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-        }
 
         .card-title {
             font-weight: bold;
@@ -61,7 +54,6 @@
 {% endblock css_files %}
 
 {% block contents %}
-    <div id="timer"></div>
 
     <h1 class="text-left">LOGO</h1>
     <div class="container mt-5">
@@ -265,24 +257,5 @@
 
             carousel_idx++;
         });
-
-
-
-        var remainingTime = {{ remaining_time }};
-        var timerElement = document.getElementById("timer");
-        // Update the timer every second
-        var timerInterval = setInterval(function () {
-            if (remainingTime <= 0) {
-                clearInterval(timerInterval);
-                var myModal = new bootstrap.Modal(document.getElementById('timeout'));
-                myModal.show();
-            } else {
-                var minutes = Math.floor(remainingTime / 60);
-                var seconds = remainingTime % 60;
-                var timeString = minutes.toString().padStart(2, "0") + ":" + seconds.toString().padStart(2, "0");
-                timerElement.innerHTML = "Time remaining: " + timeString;
-                remainingTime--;
-            }
-        }, 1000);
     </script>
 {% endblock js_files %}
