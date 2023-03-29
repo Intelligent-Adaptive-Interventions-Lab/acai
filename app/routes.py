@@ -249,6 +249,7 @@ def quiz_content():
     remaining_time = max(end_time - datetime.now(timezone.utc), timedelta(0))
     remaining_seconds = remaining_time.seconds
 
+    print(f"idx: {quiz.current_idx}")
     return render_template("/quiz/content.html",
                            reciever=message['receiver'],
                            difficulty=message["difficulty"],
@@ -352,8 +353,6 @@ def motivational_interview_conversation():
     start = session.get('motivational_interview_start', int(time.time()))
 
     timer_remaining = INITIAL_TIMER - (int(time.time()) - start)
-
-    print(timer_remaining)
 
     convo = AutoScriptConversation(
         user=user,

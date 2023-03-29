@@ -29,7 +29,7 @@
                 {% endif %}
             </li>
             <li class="nav-item" style="max-width: 100vw; padding-left:5vw">
-                <div id="id_display" class="bot__name">00:00</div>
+                <div id="id_display" style="visibility: hidden" class="bot__name">00:00</div>
 
                 <script>
                     window.onload = function() {
@@ -44,6 +44,13 @@
                           sec = 59;
                         }
                         sec--;
+
+                        if (minute >= 1) {
+                            document.getElementById("id_display").style.visibility = "hidden";
+                        }
+                        else {
+                            document.getElementById("id_display").style.visibility = "visible";
+                        }
 
                         if (minute >= 0) {
                             var time = new Date(2011, 0, 1, 0, minute, sec, 0);
