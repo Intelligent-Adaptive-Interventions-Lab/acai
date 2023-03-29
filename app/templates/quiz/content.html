@@ -181,6 +181,21 @@
         var score2 = document.getElementById("s2");
 
         lowCreditBtn.addEventListener('click', () => {
+            fetch('{{ url_for('get_user_choice') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({level: 1}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+
             [].forEach.call(carouselSubTitles, (subtitle) => {
                 subtitle.innerHTML = '+1';
             });
@@ -200,6 +215,20 @@
             carousel.nextWhenVisible();
             carousel.cycle();
 
+            fetch('{{ url_for('get_user_choice') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({level: diff}),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
             if ({{ number_3 }} -diff < 0) {
                 num1.innerHTML = {{ number_3 }} -diff + 10;
             } else {
@@ -237,25 +266,6 @@
             carousel_idx++;
         });
 
-
-        var submits = document.getElementById('mcqsubmit');
-
-        submits.addEventListener("click", () => {
-            fetch('{{ url_for('quiz_content') }}', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({level: diff}),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
-        })
 
 
         var remainingTime = {{ remaining_time }};
