@@ -167,20 +167,13 @@ def _delete_session_variable(variable: str) -> None:
     except KeyError:
         pass
 
-def get_client_ip():
-    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
-        return request.environ['REMOTE_ADDR']
-    else:
-        return request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
-
 
 @app.route('/index')
 def index():
     #init quiz
     questions = Quiz()
     #store into session variable
-    session["u_id"] = get_client_ip()
-    print(get_client_ip())
+    session["u_id"] = f"QUIZ-{uuid.uuid1()}"
     session["quiz"] = questions.get_questions()
     session["index"] = 0
     session["score"] = {"charity": 0, "self": 0}
