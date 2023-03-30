@@ -212,10 +212,11 @@ def quiz_content():
     form = EvaluationForm()
 
     # update the selection in the html
-    form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
-                              ("1", ''.join(map(str, choice[1]))[::-1])]
+    form.selection.choices = [("0", ''.join(map(str, choice[0]))),
+                              ("1", ''.join(map(str, choice[1])))]
 
     if form.validate_on_submit():
+        print(questions[current_index])
         submit_time = datetime.now(timezone.utc)
         result = form.selection.data
 
@@ -236,8 +237,8 @@ def quiz_content():
         idx = message["correct_idx"]
         number = choice[int(idx)]
 
-        form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
-                                  ("1", ''.join(map(str, choice[1]))[::-1])]
+        form.selection.choices = [("0", ''.join(map(str, choice[0]))),
+                                  ("1", ''.join(map(str, choice[1])))]
 
         # TODO: store the above variable into database.
         sqliteConnection = None

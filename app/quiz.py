@@ -38,7 +38,7 @@ class Quiz:
             org[i] -= diff
             if org[i] < 0:
                 org[i] += 10
-        org.reverse()
+        # org.reverse()
         return answers, index, org
 
 
