@@ -241,7 +241,7 @@ def quiz_content():
                                   (?,?,?,?,?,?,?,?);"""
 #             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
 
-            param_tuple = (session["u_id"], recevier, difficulty, reward, ''.join(map(str, answer)), actual_reward, time1, time2)
+            param_tuple = (session["u_id"], recevier, difficulty, reward, ''.join(map(str, answer)), actual_reward, '%.2f'%time1, '%.2f'%time2)
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
