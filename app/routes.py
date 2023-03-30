@@ -170,36 +170,39 @@ def _delete_session_variable(variable: str) -> None:
 
 @app.route('/index')
 def index():
-    #init quiz
-    questions = Quiz()
-    #store into session variable
-    session["u_id"] = f"QUIZ-{uuid.uuid1()}"
-    session["quiz"] = questions.get_questions()
-    session["index"] = 0
-    session["score"] = {"charity": 0, "self": 0}
-    session["start_time_stamp"] = datetime.now(timezone.utc)
-    duration = 1800
-
-    end_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
-    session["end_time"] = end_time
 
     return render_template("/quiz/main.html", date=datetime.today().strftime('%Y-%m-%d'))
 
 
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
+
+    #init quiz
+    q = Quiz()
+    #store into session variable
+    session.setdefault("u_id", f"QUIZ-{uuid.uuid1()}")
+    session.setdefault("quiz", q.get_questions())
+    session.setdefault("index", 0)
+    session.setdefault("score", {"charity": 0, "self": 0})
+    session.setdefault("start_time_stamp", datetime.now(timezone.utc))
+    duration = 1800
+    end_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
+    session.setdefault("end_time", end_time)
+
+
     current_index = session["index"]
+    if current_index >= 32:
+        return render_template("/quiz/ending_page.html", 
+                user_id = session["u_id"],
+                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+                )
+
     if flask.request.method == 'GET':
         session["start_time_stamp"] = datetime.now(timezone.utc) 
     questions, score = session["quiz"], session["score"]
 
     quiz = QuizUtility(current_index, questions, score)
     #print("index {}".format(session["index"]),"score {}".format(session["score"]) )
-    if current_index == 32:
-        return render_template("/quiz/ending_page.html", 
-            user_id = session["u_id"],
-            date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
-            )
 
     # Get new message
     message = quiz.send_message()
@@ -218,6 +221,7 @@ def quiz_content():
     if form.validate_on_submit():
         print(questions[current_index])
         submit_time = datetime.now(timezone.utc)
+
         result = form.selection.data
 
         # check if correct answer
@@ -227,18 +231,6 @@ def quiz_content():
             quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(True, reward)
         else:
             quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(False, 0)
-        session["index"] = current_index + 1
-        session["score"] = quiz.get_score()
-
-        # Change form to next
-        message = QuizUtility(session["index"], questions, session["score"]).send_message()
-        score = quiz.get_score()
-        choice = message["choices"]
-        idx = message["correct_idx"]
-        number = choice[int(idx)]
-
-        form.selection.choices = [("0", ''.join(map(str, choice[0]))),
-                                  ("1", ''.join(map(str, choice[1])))]
 
         # TODO: store the above variable into database.
         sqliteConnection = None
@@ -260,15 +252,34 @@ def quiz_content():
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
             cursor.close()
 
-        except sqlite3.Error as error:
+        except Exception as error:
             print("Failed to insert data into sqlite table", error)
         finally:
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
 
-        session["start_time_stamp"] = datetime.now(timezone.utc) 
 
+        session["index"] = current_index + 1
+        session["score"] = quiz.get_score()
+
+        if session["index"] >= 32:
+            return render_template("/quiz/ending_page.html", 
+                user_id = session["u_id"],
+                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+                )
+
+        # Change form to next
+        message = QuizUtility(session["index"], questions, session["score"]).send_message()
+        score = quiz.get_score()
+        choice = message["choices"]
+        idx = message["correct_idx"]
+        number = choice[int(idx)]
+
+        form.selection.choices = [("0", ''.join(map(str, choice[0]))),
+                                  ("1", ''.join(map(str, choice[1])))]
+
+        session["start_time_stamp"] = datetime.now(timezone.utc)
 
     print(f"idx: {quiz.current_idx}")
     return render_template("/quiz/content.html",
