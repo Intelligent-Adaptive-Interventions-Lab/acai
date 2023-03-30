@@ -16,7 +16,7 @@ cur.execute("INSERT INTO chats (user_id, chat_log) VALUES (?, ?)",
             ('127.0.0.1', 'Content for the second chat')
             )
 
-cur.execute("INSERT INTO quiz (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+cur.execute("INSERT INTO quiz (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             ('127.0.0.1', '1', '1', '1', '1', '1', '1', '1')
             )
 
