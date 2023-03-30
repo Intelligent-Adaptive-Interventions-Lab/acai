@@ -229,7 +229,6 @@ def quiz_content():
         session["index"] = current_index + 1
         session["score"] = quiz.get_score()
 
-
         # Change form to next
         message = QuizUtility(session["index"], questions, session["score"]).send_message()
         score = quiz.get_score()
@@ -266,6 +265,37 @@ def quiz_content():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
+        current_index = session["index"]
+        questions, score = session["quiz"], session["score"]
+        quiz = QuizUtility(current_index, questions, score)
+        # print("index {}".format(session["index"]),"score {}".format(session["score"]) )
+        if current_index == 32:
+            return render_template("/quiz/ending_page.html")
+        # Get new message
+        message = quiz.send_message()
+        score = quiz.get_score()
+        choice = message["choices"]
+        idx = message["correct_idx"]
+        number = choice[int(idx)]
+
+        # init the form
+        form = EvaluationForm()
+        # update the selection in the html
+        form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
+                                  ("1", ''.join(map(str, choice[1]))[::-1])]
+        return render_template("/quiz/content.html",
+                               reciever=message['receiver'],
+                               difficulty=message["difficulty"],
+                               credit=message["reward"],
+                               number_1=number[0],
+                               number_2=number[1],
+                               number_3=number[2],
+                               score1=score["charity"],
+                               score2=score["self"],
+                               form=form,
+                               idx=idx,
+                               page_num=session["index"]
+                               )
 
     print(f"idx: {quiz.current_idx}")
     return render_template("/quiz/content.html",
