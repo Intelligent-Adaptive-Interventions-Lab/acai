@@ -244,10 +244,6 @@ def quiz_content():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-    # Get end time of timer
-    end_time = session["end_time"]
-    remaining_time = max(end_time - datetime.now(timezone.utc), timedelta(0))
-    remaining_seconds = remaining_time.seconds
 
     return render_template("/quiz/content.html",
                            reciever=message['receiver'],
@@ -260,8 +256,7 @@ def quiz_content():
                            score2=score["self"],
                            form=form,
                            idx=idx,
-                           page_num=quiz.current_idx,
-                           remaining_time=remaining_seconds
+                           page_num=quiz.current_idx
                            )
 
 
