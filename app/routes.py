@@ -224,7 +224,6 @@ def quiz_content():
         else:
             quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(False, 0)
         session["index"] = current_index + 1
-        session
         session["score"] = quiz.get_score()
 
         # TODO: store the above variable into database.
