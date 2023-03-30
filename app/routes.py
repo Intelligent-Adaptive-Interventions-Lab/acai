@@ -168,7 +168,10 @@ def _delete_session_variable(variable: str) -> None:
         pass
 
 def get_client_ip():
-    request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        return request.environ['REMOTE_ADDR']
+    else:
+        return request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
 
 
 @app.route('/index')
