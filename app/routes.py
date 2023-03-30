@@ -27,6 +27,8 @@ from app.quiz import Quiz, QuizUtility
 from datetime import datetime
 # run_with_ngrok(app)
 
+
+
 USER = "Person"
 CHATBOT = "AI"
 WARNING = "warning"
@@ -165,13 +167,20 @@ def _delete_session_variable(variable: str) -> None:
     except KeyError:
         pass
 
+def get_client_ip():
+    if request.environ.get('HTTP_X_FORWARDED_FOR') is None:
+        return request.environ['REMOTE_ADDR']
+    else:
+        return request.environ['HTTP_X_FORWARDED_FOR'] # if behind a proxy
+
 
 @app.route('/index')
 def index():
     #init quiz
     questions = Quiz()
     #store into session variable
-    session["u_id"] = request.remote_addr
+    session["u_id"] = get_client_ip()
+    print(get_client_ip())
     session["quiz"] = questions.get_questions()
     session["index"] = 0
     session["score"] = {"charity": 0, "self": 0}
@@ -186,29 +195,34 @@ def index():
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
 
-    start_time = session.get('start_time_stamp', datetime.now())
+    start_time = session.get('start_time_stamp', datetime.now(timezone.utc))
     session["start_time_stamp"] = start_time
-
     current_index = session["index"]
     questions, score =session["quiz"], session["score"]
+
     quiz = QuizUtility(current_index, questions, score)
     #print("index {}".format(session["index"]),"score {}".format(session["score"]) )
     if current_index == 32:
         return render_template("/quiz/ending_page.html")
+
     # Get new message
     message = quiz.send_message()
     score = quiz.get_score()
     choice = message["choices"]
     idx = message["correct_idx"]
     number = choice[int(idx)]
+
     # init the form
     form = EvaluationForm()
+
     # update the selection in the html
     form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
                               ("1", ''.join(map(str, choice[1]))[::-1])]
+
     if form.validate_on_submit():
-        submit_time = datetime.now()
+        submit_time = datetime.now(timezone.utc)
         result = form.selection.data
+
         # check if correct answer
         if int(result) == int(message["correct_idx"]):
             # When answer is correct
@@ -217,22 +231,24 @@ def quiz_content():
         else:
             quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(False, 0)
         session["index"] = current_index + 1
+        session
         session["score"] = quiz.get_score()
+
         # TODO: store the above variable into database.
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/acai/app/database.db')
+            sqliteConnection = sqlite3.connect(app.root_path+'/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
-            time1 = (session["start_time_stamp"] - session["diff_time_stamp"]).total_seconds()
-            time2 = (session["diff_time_stamp"] - submit_time).total_seconds()
+            time1 = (session["diff_time_stamp"] - session["start_time_stamp"]).total_seconds()
+            time2 = (submit_time - session["diff_time_stamp"]).total_seconds()
             sqlite_insert_query = """INSERT INTO quiz
                                   (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
 #             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
 
-            param_tuple = (session["u_id"], recevier, difficulty, reward, answer, actual_reward, time1, time2)  #TODO: add implementation for time1, time2
+            param_tuple = (session["u_id"], recevier, difficulty, reward, ''.join(map(str, answer)), actual_reward, time1, time2)
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
@@ -267,7 +283,7 @@ def get_user_choice():
     if len(reward) > 0:
         temp = int(reward[-2])
         if temp != 0:
-            session["diff_time_stamp"] = datetime.now()
+            session["diff_time_stamp"] = datetime.now(timezone.utc)
             session["test_reward"] = temp
             reponse = app.response_class(
                 response=json.dumps({"diff": temp}),
@@ -312,7 +328,7 @@ def mi_conversation():
 
         f = None
         try:
-            path = f"{os.path.dirname(__file__)}/adaptive_mi_chatlogs/{user}.txt"
+            path = f"{app.root_path}/adaptive_mi_chatlogs/{user}.txt"
             f = safe_open_w(path)
             f.write(chat_log)
             print(f"Saved chatlogs to {path}")
@@ -378,7 +394,7 @@ def motivational_interview_conversation():
 
         f = None
         try:
-            path = f"{os.path.dirname(__file__)}/deterministic_mi_chatlogs/{user}.txt"
+            path = f"{app.root_path}/deterministic_mi_chatlogs/{user}.txt"
             f = safe_open_w(path)
             f.write(chat_log)
             print(f"Saved chatlogs to {path}")
