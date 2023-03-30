@@ -177,6 +177,7 @@ def index():
     session["quiz"] = questions.get_questions()
     session["index"] = 0
     session["score"] = {"charity": 0, "self": 0}
+    session["start_time_stamp"] = datetime.now(timezone.utc)
     duration = 1800
 
     end_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
@@ -187,10 +188,9 @@ def index():
 
 @app.route('/quiz_content', methods=['GET', 'POST'])
 def quiz_content():
-
-    start_time = session.get('start_time_stamp', datetime.now(timezone.utc))
-    session["start_time_stamp"] = start_time
     current_index = session["index"]
+    if flask.request.method == 'GET':
+        session["start_time_stamp"] = datetime.now(timezone.utc) 
     questions, score = session["quiz"], session["score"]
 
     quiz = QuizUtility(current_index, questions, score)
@@ -251,7 +251,7 @@ def quiz_content():
                                   (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
-#             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
+            # param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
 
             param_tuple = (session["u_id"], recevier, difficulty, reward, ''.join(map(str, answer)), actual_reward, '%.2f'%time1, '%.2f'%time2)
             count = cursor.execute(sqlite_insert_query, param_tuple)
@@ -265,37 +265,9 @@ def quiz_content():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-        current_index = session["index"]
-        questions, score = session["quiz"], session["score"]
-        quiz = QuizUtility(current_index, questions, score)
-        # print("index {}".format(session["index"]),"score {}".format(session["score"]) )
-        if current_index == 32:
-            return render_template("/quiz/ending_page.html")
-        # Get new message
-        message = quiz.send_message()
-        score = quiz.get_score()
-        choice = message["choices"]
-        idx = message["correct_idx"]
-        number = choice[int(idx)]
 
-        # init the form
-        form = EvaluationForm()
-        # update the selection in the html
-        form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
-                                  ("1", ''.join(map(str, choice[1]))[::-1])]
-        return render_template("/quiz/content.html",
-                               reciever=message['receiver'],
-                               difficulty=message["difficulty"],
-                               credit=message["reward"],
-                               number_1=number[0],
-                               number_2=number[1],
-                               number_3=number[2],
-                               score1=score["charity"],
-                               score2=score["self"],
-                               form=form,
-                               idx=idx,
-                               page_num=session["index"]
-                               )
+        session["start_time_stamp"] = datetime.now(timezone.utc) 
+
 
     print(f"idx: {quiz.current_idx}")
     return render_template("/quiz/content.html",
