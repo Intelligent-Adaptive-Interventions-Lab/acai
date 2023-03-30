@@ -191,12 +191,15 @@ def quiz_content():
     start_time = session.get('start_time_stamp', datetime.now(timezone.utc))
     session["start_time_stamp"] = start_time
     current_index = session["index"]
-    questions, score =session["quiz"], session["score"]
+    questions, score = session["quiz"], session["score"]
 
     quiz = QuizUtility(current_index, questions, score)
     #print("index {}".format(session["index"]),"score {}".format(session["score"]) )
     if current_index == 32:
-        return render_template("/quiz/ending_page.html")
+        return render_template("/quiz/ending_page.html", 
+            user_id = session["u_id"],
+            date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+            )
 
     # Get new message
     message = quiz.send_message()
@@ -224,8 +227,18 @@ def quiz_content():
         else:
             quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(False, 0)
         session["index"] = current_index + 1
-        session
         session["score"] = quiz.get_score()
+
+
+        # Change form to next
+        message = QuizUtility(session["index"], questions, session["score"]).send_message()
+        score = quiz.get_score()
+        choice = message["choices"]
+        idx = message["correct_idx"]
+        number = choice[int(idx)]
+
+        form.selection.choices = [("0", ''.join(map(str, choice[0]))[::-1]),
+                                  ("1", ''.join(map(str, choice[1]))[::-1])]
 
         # TODO: store the above variable into database.
         sqliteConnection = None
@@ -266,7 +279,7 @@ def quiz_content():
                            score2=score["self"],
                            form=form,
                            idx=idx,
-                           page_num=quiz.current_idx
+                           page_num=session["index"]
                            )
 
 
