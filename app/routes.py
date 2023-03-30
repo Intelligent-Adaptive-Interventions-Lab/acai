@@ -221,13 +221,13 @@ def quiz_content():
         # TODO: store the above variable into database.
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect('/acai/app/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
             time1 = (session["start_time_stamp"] - session["diff_time_stamp"]).total_seconds()
             time2 = (session["diff_time_stamp"] - submit_time).total_seconds()
             sqlite_insert_query = """INSERT INTO quiz
-                                  (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2) 
+                                  (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
 #             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
@@ -244,10 +244,6 @@ def quiz_content():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-    # Get end time of timer
-    end_time = session["end_time"]
-    remaining_time = max(end_time - datetime.now(timezone.utc), timedelta(0))
-    remaining_seconds = remaining_time.seconds
 
     print(f"idx: {quiz.current_idx}")
     return render_template("/quiz/content.html",
@@ -261,8 +257,7 @@ def quiz_content():
                            score2=score["self"],
                            form=form,
                            idx=idx,
-                           page_num=quiz.current_idx,
-                           remaining_time=remaining_seconds
+                           page_num=quiz.current_idx
                            )
 
 
