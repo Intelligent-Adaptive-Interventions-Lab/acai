@@ -221,13 +221,13 @@ def quiz_content():
         # TODO: store the above variable into database.
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect('/acai/app/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
             time1 = (session["start_time_stamp"] - session["diff_time_stamp"]).total_seconds()
             time2 = (session["diff_time_stamp"] - submit_time).total_seconds()
             sqlite_insert_query = """INSERT INTO quiz
-                                  (quiz_id, recevier, difficulty, reward, answer, actual_reward, time1, time2) 
+                                  (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
 #             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
