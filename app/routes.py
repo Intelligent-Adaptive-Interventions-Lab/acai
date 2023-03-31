@@ -174,13 +174,14 @@ def index():
     return render_template("/quiz/main.html", date=datetime.today().strftime('%Y-%m-%d'))
 
 
-@app.route('/quiz_content', methods=['POST'])
-def quiz_content_submit():
+@app.route('/quiz_content', methods=['GET', 'POST'])
+def quiz_content():
     # invariant: all values are valid here, especially curr_idx
 
     qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
+    print(curr_idx)
     total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
     question_start_time = session.setdefault("question_start_time", datetime.now(timezone.utc))
     difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
@@ -190,6 +191,9 @@ def quiz_content_submit():
     form = EvaluationForm()
     form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
                               ("1", "".join(map(str, curr_question["choices"][1])))]
+
+    if request.method == "GET" or (difficulty_selection_time - question_start_time).total_seconds() < 0:
+        return quiz_content_route()
     
     if form.validate_on_submit():
         print(curr_question)
@@ -248,10 +252,6 @@ def quiz_content_submit():
     curr_question = questions[curr_idx]
     question_start_time = datetime.now(timezone.utc)    
 
-    # fill form
-    form = EvaluationForm()
-    form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
-                              ("1", "".join(map(str, curr_question["choices"][1])))]
 
     # update session variables
     session["qid"] = qid
@@ -261,24 +261,117 @@ def quiz_content_submit():
     session["question_start_time"] = question_start_time
     session["difficulty_selection_time"] = difficulty_selection_time
 
+    return redirect(url_for('quiz_content_route'))
+
+
+@app.route('/quiz_content')
+def quiz_content_route():
+    print("rendering quiz page")
+    curr_idx = session["index"]
+    curr_question = session["quiz_questions"][curr_idx]
+    total_rewards = session["total_rewards"]
+
+    form = EvaluationForm()
+    form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
+                              ("1", "".join(map(str, curr_question["choices"][1])))]
+
     return render_template("/quiz/content.html",
                                 question=curr_question,
-                                receiver=curr_question["receiver"],
-                                difficulty=curr_question["difficulty"],
-                                credit=curr_question["reward"],
-                                number_1=curr_question["number"][0],
-                                number_2=curr_question["number"][1],
-                                number_3=curr_question["number"][2],
                                 score1=total_rewards["charity"],
                                 score2=total_rewards["self"],
                                 form=form,
-                                # idx=curr_question["correct_idx"],
                                 page_num=curr_idx
                            )
 
 
+# @app.route('/quiz_content', methods=['GET', 'POST'])
+# def quiz_content():
+#     # invariant: all values are valid here, especially curr_idx
 
-@app.route('/quiz_content', methods=['GET'])
+#     qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
+#     questions = session.setdefault("quiz_questions", Quiz().get_questions())
+#     curr_idx = session.setdefault("index", 0)
+#     total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
+#     question_start_time = session.setdefault("question_start_time", datetime.now(timezone.utc))
+#     difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
+
+#     curr_question = questions[curr_idx]
+
+#     form = EvaluationForm()
+#     form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
+#                               ("1", "".join(map(str, curr_question["choices"][1])))]
+    
+#     if form.validate_on_submit():
+#         print(curr_question)
+#         submit_time = datetime.now(timezone.utc)
+#         result = int(form.selection.data)
+
+#         # set reward if correctly answered
+#         if result == curr_question["correct_idx"]:
+#             actual_reward = curr_question["reward"]
+#             total_rewards[curr_question["receiver"]] += actual_reward
+#         else:
+#             actual_reward = 0
+
+#         sqliteConnection = None
+#         try:
+#             sqliteConnection = sqlite3.connect(app.root_path+'/database.db')
+#             cursor = sqliteConnection.cursor()
+#             print("Successfully Connected to SQLite")
+#             time1 = (difficulty_selection_time - question_start_time).total_seconds()
+#             time2 = (submit_time - difficulty_selection_time).total_seconds()
+#             sqlite_insert_query = """INSERT INTO quiz
+#                                   (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
+#                                    VALUES 
+#                                   (?,?,?,?,?,?,?,?);"""
+
+#             param_tuple = (qid, 
+#                 curr_question["receiver"], 
+#                 curr_question["difficulty"], 
+#                 curr_question["reward"], 
+#                 "".join(map(str, curr_question["choices"][result])), 
+#                 actual_reward, 
+#                 '%.2f'%time1, 
+#                 '%.2f'%time2)
+
+#             count = cursor.execute(sqlite_insert_query, param_tuple)
+#             sqliteConnection.commit()
+#             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+#             cursor.close()
+
+#         except Exception as error:
+#             print("Failed to insert data into sqlite table", error)
+#         finally:
+#             if sqliteConnection:
+#                 sqliteConnection.close()
+#                 print("The SQLite connection is closed")
+
+
+#     # increment variables and check values
+#     curr_idx += 1
+#     if curr_idx >= 32:
+#         return render_template("/quiz/ending_page.html", 
+#             user_id = qid,
+#             date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+#             )
+
+#     curr_question = questions[curr_idx]
+#     question_start_time = datetime.now(timezone.utc)    
+
+
+#     # update session variables
+#     session["qid"] = qid
+#     session["quiz_questions"] = questions
+#     session["index"] = curr_idx
+#     session["total_rewards"] = total_rewards
+#     session["question_start_time"] = question_start_time
+#     session["difficulty_selection_time"] = difficulty_selection_time
+
+#     return redirect(url_for('quiz_content_route'))
+
+
+
+# @app.route('/quiz_content', methods=['GET'])
 def quiz_content():
 
     qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
@@ -297,16 +390,9 @@ def quiz_content():
 
     return render_template("/quiz/content.html",
                             question=curr_question,
-                           receiver=curr_question["receiver"],
-                           difficulty=curr_question["difficulty"],
-                           credit=curr_question["reward"],
-                           number_1=curr_question["number"][0],
-                           number_2=curr_question["number"][1],
-                           number_3=curr_question["number"][2],
                            score1=total_rewards["charity"],
                            score2=total_rewards["self"],
                            form=form,
-                           # idx=curr_question["correct_idx"],
                            page_num=curr_idx
                            )
 
