@@ -181,7 +181,7 @@ def quiz_content():
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
     total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
-    question_start_time = session.setdefault("question_start_time", datetime.now(timezone.utc))
+    question_start_time = session.setdefault("question_start_time", time.time())
     difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
     selected_choice = session.setdefault("selected_choice", 0)
 
@@ -196,17 +196,19 @@ def quiz_content():
     print(f"selection: {selected_choice}    \nactive_questions:{active_questions}\ncurr_questions:{curr_question}")
 
 
-    if form.validate_on_submit() and (difficulty_selection_time - question_start_time).total_seconds() > 0:
-        submit_time = datetime.now(timezone.utc)
+    if form.validate_on_submit() and difficulty_selection_time > question_start_time:
+        submit_time = time.time()
         result = int(form.selection.data)
 
         print(f"choice {result}")
 
         # set reward if correctly answered
         if result == curr_question["correct_idx"]:
+            print("Correct choice")
             actual_reward = curr_question["reward"]
             total_rewards[curr_question["receiver"]] += actual_reward
         else:
+            print("Incorrect choice")
             actual_reward = 0
 
         sqliteConnection = None
@@ -214,8 +216,9 @@ def quiz_content():
             sqliteConnection = sqlite3.connect(app.root_path+'/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
-            time1 = (difficulty_selection_time - question_start_time).total_seconds()
-            time2 = (submit_time - difficulty_selection_time).total_seconds()
+            time1 = difficulty_selection_time - question_start_time
+            print(f"time {difficulty_selection_time} {question_start_time} {submit_time} {difficulty_selection_time}")
+            time2 = submit_time - difficulty_selection_time
             sqlite_insert_query = """INSERT INTO quiz
                                   (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
@@ -248,11 +251,11 @@ def quiz_content():
         if curr_idx >= 32:
             return render_template("/quiz/ending_page.html", 
                 user_id = qid,
-                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+                date = time.time().strftime('%m/%d/%Y')
                 )
 
         active_questions = questions[curr_idx]
-        question_start_time = datetime.now(timezone.utc)
+        question_start_time = time.time()
 
 
         # update session variables
@@ -302,7 +305,7 @@ def get_user_choice():
             status=200,
             mimetype='application/json'
         )
-        session["difficulty_selection_time"] = datetime.now(timezone.utc)
+        session["difficulty_selection_time"] = time.time()
         print(f"selection: {selected_choice}    \nactive_questions:{active_questions}\ncurr_questions:{curr_question}")
     else:
         response = app.response_class(
