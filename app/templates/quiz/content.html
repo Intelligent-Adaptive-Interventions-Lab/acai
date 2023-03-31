@@ -132,6 +132,7 @@
 
                     <!-- Add container for the question and answer -->
                     {% include 'quiz/mcq.html' %}
+                    {{test}}
 
                 </div>
             </div>
@@ -166,7 +167,12 @@
         var num1 = document.getElementById("num1");
         var num2 = document.getElementById("num2");
         var num3 = document.getElementById("num3");
-        var diff = {{question["difficulty"]}};
+
+        var number1 = {{question1["number"]}}
+        var diff1 = {{question1["difficulty"]}}
+
+        var number2 = {{question2["number"]}}
+        var diff2 = {{question2["difficulty"]}}
 
         lowCreditBtn.addEventListener('click', () => {
             fetch('{{ url_for('get_user_choice') }}', {
@@ -174,10 +180,12 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({"diff": 0}),
+                body: JSON.stringify({"difficulty_choice": 0}),
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    document.querySelector("label[for=selection-0]").innerHTML = data["choice0"];
+                    document.querySelector("label[for=selection-1]").innerHTML = data["choice1"];
                     console.log("Success:", data);
                 })
                 .catch((error) => {
@@ -189,18 +197,17 @@
             });
             carousel.nextWhenVisible();
             carousel.cycle();
-            num1.innerHTML = ({{ question["number"][0] }} + diff) % 10;
-            num2.innerHTML = ({{ question["number"][1] }} + diff) % 10;
-            num3.innerHTML = ({{ question["number"][2] }} + diff) % 10;
+            num1.innerHTML = number1[0];
+            num2.innerHTML = number1[1];
+            num3.innerHTML = number1[2];
 
         })
 
         highCreditBtn.addEventListener('click', () => {
             [].forEach.call(carouselSubTitles, (subtitle) => {
-                subtitle.innerHTML = "+" + {{ question["difficulty"] }};
+                subtitle.innerHTML = "+" + diff2;
             });
 
-            // diff = {{question["difficulty"]}}
             carousel.nextWhenVisible();
             carousel.cycle();
 
@@ -209,18 +216,20 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({"diff": diff}),
+                body: JSON.stringify({"difficulty_choice": 1}),
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    document.querySelector("label[for=selection-0]").innerHTML = data["choice0"];
+                    document.querySelector("label[for=selection-1]").innerHTML = data["choice1"];
                     console.log("Success:", data);
                 })
                 .catch((error) => {
                     console.error("Error:", error);
                 });
-            num1.innerHTML = {{ question["number"][0] }};
-            num2.innerHTML = {{ question["number"][1] }};
-            num3.innerHTML = {{ question["number"][2] }};
+            num1.innerHTML = number2[0];
+            num2.innerHTML = number2[1];
+            num3.innerHTML = number2[2];
         });
 
         playStart.addEventListener("click", () => {

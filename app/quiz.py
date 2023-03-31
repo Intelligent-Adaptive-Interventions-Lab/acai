@@ -21,13 +21,14 @@ class Quiz:
         random.shuffle(combination)
         for receiver, reward, difficulty in combination:
             choice, index, original = self.__generate_answers(difficulty)
-            self.questions.append({"receiver": receiver,
-                                   "reward": reward,
-                                   "difficulty": difficulty,
-                                   "choices": choice,
-                                   "correct_idx": index,
-                                   "number": original
-                                   })
+            q = {"receiver": receiver,
+               "reward": reward,
+               "difficulty": difficulty,
+               "choices": choice,
+               "correct_idx": index,
+               "number": original
+               }
+            self.questions.append([Quiz.adjust(q, 0), q])
 
 
     def __generate_answers(self, diff):
