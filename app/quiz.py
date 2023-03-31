@@ -28,7 +28,7 @@ class Quiz:
                "correct_idx": index,
                "number": original
                }
-            self.questions.append([Quiz.adjust(q, 0), q])
+            self.questions.append([Quiz.adjust(q, 0, reward=1), q])
 
 
     def __generate_answers(self, diff):
