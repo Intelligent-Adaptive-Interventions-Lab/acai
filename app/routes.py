@@ -174,79 +174,56 @@ def index():
     return render_template("/quiz/main.html", date=datetime.today().strftime('%Y-%m-%d'))
 
 
-@app.route('/quiz_content', methods=['GET', 'POST'])
-def quiz_content():
+@app.route('/quiz_content', methods=['POST'])
+def quiz_content_submit():
+    # invariant: all values are valid here, especially curr_idx
 
-    #init quiz
-    q = Quiz()
-    #store into session variable
-    session.setdefault("u_id", f"QUIZ-{uuid.uuid1()}")
-    session.setdefault("quiz", q.get_questions())
-    session.setdefault("index", 0)
-    session.setdefault("score", {"charity": 0, "self": 0})
-    session.setdefault("start_time_stamp", datetime.now(timezone.utc))
-    duration = 1800
-    end_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
-    session.setdefault("end_time", end_time)
+    qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
+    questions = session.setdefault("quiz_questions", Quiz().get_questions())
+    curr_idx = session.setdefault("index", 0)
+    total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
+    question_start_time = session.setdefault("question_start_time", datetime.now(timezone.utc))
+    difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
 
+    curr_question = questions[curr_idx]
 
-    current_index = session["index"]
-    if current_index >= 32:
-        return render_template("/quiz/ending_page.html", 
-                user_id = session["u_id"],
-                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
-                )
-
-    if flask.request.method == 'GET':
-        session["start_time_stamp"] = datetime.now(timezone.utc) 
-    questions, score = session["quiz"], session["score"]
-
-    quiz = QuizUtility(current_index, questions, score)
-    #print("index {}".format(session["index"]),"score {}".format(session["score"]) )
-
-    # Get new message
-    message = quiz.send_message()
-    score = quiz.get_score()
-    choice = message["choices"]
-    idx = message["correct_idx"]
-    number = choice[int(idx)]
-
-    # init the form
     form = EvaluationForm()
-
-    # update the selection in the html
-    form.selection.choices = [("0", ''.join(map(str, choice[0]))),
-                              ("1", ''.join(map(str, choice[1])))]
-
+    form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
+                              ("1", "".join(map(str, curr_question["choices"][1])))]
+    
     if form.validate_on_submit():
-        print(questions[current_index])
+        print(curr_question)
         submit_time = datetime.now(timezone.utc)
+        result = int(form.selection.data)
 
-        result = form.selection.data
-
-        # check if correct answer
-        if int(result) == int(message["correct_idx"]):
-            # When answer is correct
-            reward = session.get("test_reward")
-            quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(True, reward)
+        # set reward if correctly answered
+        if result == curr_question["correct_idx"]:
+            actual_reward = curr_question["reward"]
+            total_rewards[curr_question["receiver"]] += actual_reward
         else:
-            quiz_id, recevier, difficulty, reward, answer, actual_reward = quiz.get_message(False, 0)
+            actual_reward = 0
 
-        # TODO: store the above variable into database.
         sqliteConnection = None
         try:
             sqliteConnection = sqlite3.connect(app.root_path+'/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
-            time1 = (session["diff_time_stamp"] - session["start_time_stamp"]).total_seconds()
-            time2 = (submit_time - session["diff_time_stamp"]).total_seconds()
+            time1 = (difficulty_selection_time - question_start_time).total_seconds()
+            time2 = (submit_time - difficulty_selection_time).total_seconds()
             sqlite_insert_query = """INSERT INTO quiz
                                   (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
-            # param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
 
-            param_tuple = (session["u_id"], recevier, difficulty, reward, ''.join(map(str, answer)), actual_reward, '%.2f'%time1, '%.2f'%time2)
+            param_tuple = (qid, 
+                curr_question["receiver"], 
+                curr_question["difficulty"], 
+                curr_question["reward"], 
+                "".join(map(str, curr_question["choices"][result])), 
+                actual_reward, 
+                '%.2f'%time1, 
+                '%.2f'%time2)
+
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
@@ -260,62 +237,106 @@ def quiz_content():
                 print("The SQLite connection is closed")
 
 
-        session["index"] = current_index + 1
-        session["score"] = quiz.get_score()
+    # increment variables and check values
+    curr_idx += 1
+    if curr_idx >= 32:
+        return render_template("/quiz/ending_page.html", 
+            user_id = qid,
+            date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+            )
 
-        if session["index"] >= 32:
-            return render_template("/quiz/ending_page.html", 
-                user_id = session["u_id"],
-                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
-                )
+    curr_question = questions[curr_idx]
+    question_start_time = datetime.now(timezone.utc)    
 
-        # Change form to next
-        message = QuizUtility(session["index"], questions, session["score"]).send_message()
-        score = quiz.get_score()
-        choice = message["choices"]
-        idx = message["correct_idx"]
-        number = choice[int(idx)]
+    # fill form
+    form = EvaluationForm()
+    form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
+                              ("1", "".join(map(str, curr_question["choices"][1])))]
 
-        form.selection.choices = [("0", ''.join(map(str, choice[0]))),
-                                  ("1", ''.join(map(str, choice[1])))]
+    # update session variables
+    session["qid"] = qid
+    session["quiz_questions"] = questions
+    session["index"] = curr_idx
+    session["total_rewards"] = total_rewards
+    session["question_start_time"] = question_start_time
+    session["difficulty_selection_time"] = difficulty_selection_time
 
-        session["start_time_stamp"] = datetime.now(timezone.utc)
-
-    print(f"idx: {quiz.current_idx}")
     return render_template("/quiz/content.html",
-                           reciever=message['receiver'],
-                           difficulty=message["difficulty"],
-                           credit=message["reward"],
-                           number_1=number[0],
-                           number_2=number[1],
-                           number_3=number[2],
-                           score1=score["charity"],
-                           score2=score["self"],
+                                question=curr_question,
+                                receiver=curr_question["receiver"],
+                                difficulty=curr_question["difficulty"],
+                                credit=curr_question["reward"],
+                                number_1=curr_question["number"][0],
+                                number_2=curr_question["number"][1],
+                                number_3=curr_question["number"][2],
+                                score1=total_rewards["charity"],
+                                score2=total_rewards["self"],
+                                form=form,
+                                # idx=curr_question["correct_idx"],
+                                page_num=curr_idx
+                           )
+
+
+
+@app.route('/quiz_content', methods=['GET'])
+def quiz_content():
+
+    qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
+    questions = session.setdefault("quiz_questions", Quiz().get_questions())
+    curr_idx = session.setdefault("index", 0)
+    total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
+    question_start_time = session.setdefault("question_start_time", datetime.now(timezone.utc))
+    difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
+
+    curr_question = questions[curr_idx]
+
+    # fill form
+    form = EvaluationForm()
+    form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
+                              ("1", "".join(map(str, curr_question["choices"][1])))]
+
+    return render_template("/quiz/content.html",
+                            question=curr_question,
+                           receiver=curr_question["receiver"],
+                           difficulty=curr_question["difficulty"],
+                           credit=curr_question["reward"],
+                           number_1=curr_question["number"][0],
+                           number_2=curr_question["number"][1],
+                           number_3=curr_question["number"][2],
+                           score1=total_rewards["charity"],
+                           score2=total_rewards["self"],
                            form=form,
-                           idx=idx,
-                           page_num=session["index"]
+                           # idx=curr_question["correct_idx"],
+                           page_num=curr_idx
                            )
 
 
 @app.route("/getchoice", methods=["POST"])
 def get_user_choice():
-    reward = request.get_data(as_text=True)
-    if len(reward) > 0:
-        temp = int(reward[-2])
-        if temp != 0:
-            session["diff_time_stamp"] = datetime.now(timezone.utc)
-            session["test_reward"] = temp
-            reponse = app.response_class(
-                response=json.dumps({"diff": temp}),
-                status=200,
-                mimetype='application/json'
-            )
+    difficulty_choice = request.json.get("diff")
+
+    curr_idx = session["index"]
+    curr_question = session["quiz_questions"][curr_idx]
+
+
+    if difficulty_choice != None:
+        if difficulty_choice == 0:
+            session["quiz_questions"][curr_idx] = Quiz.adjust(curr_question, 0, 1)
+
+        reponse = app.response_class(
+            response=json.dumps({"diff": difficulty_choice}),
+            status=200,
+            mimetype='application/json'
+        )
+        curr_question["difficulty"] = difficulty_choice
+        session["difficulty_selection_time"] = datetime.now(timezone.utc)
     else:
         reponse = app.response_class(
             response=json.dumps({"diff": 0}),
             status=400,
             mimetype='application/json'
         )
+
     return reponse
 
 @app.route('/')
@@ -369,6 +390,7 @@ def mi_conversation():
         notification=convo.NOTI,
         conversation=convo.get_conversation(test=True),
         form=form,
+        enable_typing_animation=1,
         timer=timer_remaining
     )
 

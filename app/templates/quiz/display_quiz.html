@@ -3,13 +3,17 @@
          data-bs-ride="true" data-bs-touch="false"
          data-bs-wrap="false">
         <div class="carousel-inner h-100">
-            <div class="carousel-item active h-100" data-bs-interval="false">
+            <div class="carousel-item active" data-bs-interval="false">
+                <div class="d-block" style="margin:7vh">
+                    <h5 class="prevent-select">To {{ question["receiver"] }}</h5>
+                    <p class="prevent-select">Choose one of two provided options to proceed.</p>
+                </div>
                 <div class="d-flex justify-content-center align-items-center w-100 h-100">
                     <button id="quiz-choice-1" type="button"
                             class="btn btn-outline-success flex-fill me-3">
                         <div class="d-flex flex-column">
                             <span class="prevent-select">Add 0</span>
-                            <span class="prevent-select">1 Credit</span>
+                            <span class="prevent-select">1 Credit {{question["reward"]}}</span>
                         </div>
                     </button>
                     <button id="quiz-choice-2" type="button"
@@ -18,20 +22,15 @@
                             <span class="prevent-select"
                                   id="diff">Add {{ difficulty }}</span>
                             <span class="prevent-select"
-                                  id="reward">{{ credit }} Credit</span>
+                                  id="reward">{{ question["reward"] }} Credit</span>
                         </div>
                     </button>
-                </div>
-                <div class="carousel-caption d-block">
-                    <h5 class="prevent-select">To {{ reciever }}</h5>
-                    <p class="prevent-select">Choose one of two provided options
-                        to proceed.</p>
                 </div>
             </div>
             <div class="carousel-item h-100" data-bs-interval="1500">
                 <div class="d-flex justify-content-center align-items-center w-100 h-100">
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <h5 class="prevent-select">To {{ reciever }}</h5>
+                        <h5 class="prevent-select">To {{ question["receiver"] }}</h5>
                         <span id="carouselSubTitle"
                               class="prevent-select"></span>
                         <span class="display-3 prevent-select" id="num1"></span>
@@ -44,7 +43,7 @@
             <div class="carousel-item h-100" data-bs-interval="1500">
                 <div class="d-flex justify-content-center align-items-center w-100 h-100">
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <h5 class="prevent-select">To {{ reciever }}</h5>
+                        <h5 class="prevent-select">To {{ question["receiver"] }}</h5>
                         <span id="carouselSubTitle"
                               class="prevent-select"></span>
                         <span class="display-3 prevent-select" id="num2"></span>
@@ -57,7 +56,7 @@
             <div class="carousel-item h-100" data-bs-interval="1500">
                 <div class="d-flex justify-content-center align-items-center w-100 h-100">
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <h5 class="prevent-select">To {{ reciever }}</h5>
+                        <h5 class="prevent-select">To {{ question["receiver"] }}</h5>
                         <span id="carouselSubTitle"
                               class="prevent-select"></span>
                         <span class="display-3 prevent-select" id="num3"></span>

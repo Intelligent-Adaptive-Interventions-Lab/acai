@@ -55,7 +55,6 @@
 
 {% block contents %}
 
-    <h1 class="text-left">LOGO</h1>
     <div class="container mt-5">
         <div class="card shadow-sm">
             <div class="card-body">
@@ -66,7 +65,7 @@
                             Read the following instructions:
                         </p>
                     </div>
-                    <div class="d-flex">
+                    <!-- <div class="d-flex">
                         <table class="table table-bordered text-break border-dark text-center m-0">
                             <tr>
                                 <td class="align-middle">Charity</td>
@@ -79,7 +78,7 @@
                                     id="s2">{{ score2 }}</td>
                             </tr>
                         </table>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="row align-items-center">
@@ -167,10 +166,7 @@
         var num1 = document.getElementById("num1");
         var num2 = document.getElementById("num2");
         var num3 = document.getElementById("num3");
-        var diff = 1;
-
-        var score1 = document.getElementById("s1");
-        var score2 = document.getElementById("s2");
+        var diff = {{question["difficulty"]}};
 
         lowCreditBtn.addEventListener('click', () => {
             fetch('{{ url_for('get_user_choice') }}', {
@@ -178,7 +174,7 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({level: 1}),
+                body: JSON.stringify({"diff": 0}),
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -193,17 +189,18 @@
             });
             carousel.nextWhenVisible();
             carousel.cycle();
-            num1.innerHTML = {{ number_1 }};
-            num2.innerHTML = {{ number_2 }};
-            num3.innerHTML = {{ number_3 }};
+            num1.innerHTML = ({{ question["number"][0] }} + diff) % 10;
+            num2.innerHTML = ({{ question["number"][1] }} + diff) % 10;
+            num3.innerHTML = ({{ question["number"][2] }} + diff) % 10;
 
         })
 
         highCreditBtn.addEventListener('click', () => {
             [].forEach.call(carouselSubTitles, (subtitle) => {
-                subtitle.innerHTML = "+" + {{ difficulty }};
+                subtitle.innerHTML = "+" + {{ question["difficulty"] }};
             });
-            diff = parseInt({{ difficulty }});
+
+            // diff = {{question["difficulty"]}}
             carousel.nextWhenVisible();
             carousel.cycle();
 
@@ -212,7 +209,7 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({level: diff}),
+                body: JSON.stringify({"diff": diff}),
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -221,21 +218,9 @@
                 .catch((error) => {
                     console.error("Error:", error);
                 });
-            if ({{ number_3 }} -diff < 0) {
-                num1.innerHTML = {{ number_1 }} -diff + 10;
-            } else {
-                num1.innerHTML = {{ number_1 }} -diff;
-            }
-            if ({{ number_2 }} -diff < 0) {
-                num2.innerHTML = {{ number_2 }} -diff + 10;
-            } else {
-                num2.innerHTML = {{ number_2 }} -diff;
-            }
-            if ({{ number_1 }} -diff < 0) {
-                num3.innerHTML = {{ number_3 }} -diff + 10;
-            } else {
-                num3.innerHTML = {{ number_3 }} -diff;
-            }
+            num1.innerHTML = {{ question["number"][0] }};
+            num2.innerHTML = {{ question["number"][1] }};
+            num3.innerHTML = {{ question["number"][2] }};
         });
 
         playStart.addEventListener("click", () => {

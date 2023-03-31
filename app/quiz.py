@@ -25,21 +25,43 @@ class Quiz:
                                    "reward": reward,
                                    "difficulty": difficulty,
                                    "choices": choice,
-                                   "correct_idx": str(index),
+                                   "correct_idx": index,
                                    "number": original
                                    })
+
+
     def __generate_answers(self, diff):
-        index = random.randint(0, 1)
-        answers = [random.sample(range(0, 9), 3), random.sample(range(0, 9), 3)]
-        if answers[0] == answers[1]:
-            answers[0] = random.sample(range(0, 9), 3)
-        org = list(answers[index])
-        for i in range(0, 3):
-            org[i] -= diff
-            if org[i] < 0:
-                org[i] += 10
-        # org.reverse()
-        return answers, index, org
+        original = random.sample(range(0, 9), 3)
+        target = list(map(lambda x: (x+diff)%10, original.copy()))
+        other = target.copy()
+
+        idx = random.randint(0,2)
+        other[idx] = (other[idx] + 1) % 10
+
+        if random.randint(0, 1) == 0:
+            return [target, other], 0, original
+        return [other, target], 1, original
+
+    def adjust(question, diff, reward=None):
+        question=question.copy()
+
+        target = list(map(lambda x: (x+diff)%10, question["number"].copy()))
+        other = target.copy()
+
+        idx = random.randint(0,2)
+        other[idx] = (other[idx] + 1) % 10
+
+        if random.randint(0, 1) == 0:
+            question["choices"] = [target, other]
+            question["correct_idx"] = 0
+        else:
+            question["choices"] = [other, target]
+            question["correct_idx"] = 1
+
+        question["difficulty"] = diff
+        question["reward"] = reward or question["reward"]
+
+        return question
 
 
 class QuizUtility:
