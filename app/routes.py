@@ -181,7 +181,6 @@ def quiz_content():
     qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
-    print(curr_idx)
     total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
     question_start_time = session.setdefault("question_start_time", datetime.now(timezone.utc))
     difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
@@ -199,6 +198,8 @@ def quiz_content():
         print(curr_question)
         submit_time = datetime.now(timezone.utc)
         result = int(form.selection.data)
+
+        print(result)
 
         # set reward if correctly answered
         if result == curr_question["correct_idx"]:
