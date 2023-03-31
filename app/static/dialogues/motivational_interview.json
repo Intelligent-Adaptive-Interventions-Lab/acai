@@ -1,7 +1,7 @@
 [
    {
       "dialogue_id":"BAP20001",
-      "bot_message":"Hey there! I am Alex, an AI developed by the university of Toronto.",
+      "bot_message":"Hey there! I am Alex, an AI developed by the University of Toronto.",
       "answer":null,
       "jump_to":[
          {
