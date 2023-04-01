@@ -180,6 +180,13 @@ def quiz_content():
     qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
+    
+    if curr_idx >= 32:
+            return render_template("/quiz/ending_page.html", 
+                user_id = qid,
+                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+                )
+
     total_rewards = session.setdefault("total_rewards", {"charity": 0, "self": 0})
     question_start_time = session.setdefault("question_start_time", time.time())
     difficulty_selection_time = session.setdefault("difficulty_selection_time", datetime.min)
@@ -251,7 +258,7 @@ def quiz_content():
         if curr_idx >= 32:
             return render_template("/quiz/ending_page.html", 
                 user_id = qid,
-                date = time.time().strftime('%m/%d/%Y')
+                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
                 )
 
         active_questions = questions[curr_idx]
