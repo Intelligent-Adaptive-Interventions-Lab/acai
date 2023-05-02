@@ -74,7 +74,7 @@ class MI_GPTConversation(MI_Conversation):
                 prompt=prompt_text,
                 stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
                 **self.CONFIGS,
-                request_timeout=5
+                request_timeout=10
             )
 
             story = response['choices'][0]['text']
