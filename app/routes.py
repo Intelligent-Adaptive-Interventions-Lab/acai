@@ -14,6 +14,7 @@ from app.conversation import (
 from app.gpt_chatbot import MI_Conversation, MI_GPTConversation
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for, Response, json
+from flask_session import Session
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import datetime, timedelta, timezone
 import sqlite3

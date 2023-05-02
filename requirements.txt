@@ -9,3 +9,5 @@ openai
 twilio
 WTForms
 pyyaml
+Flask-Session
+redis
