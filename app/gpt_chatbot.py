@@ -74,13 +74,13 @@ class MI_GPTConversation(MI_Conversation):
                 prompt=prompt_text,
                 stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
                 **self.CONFIGS,
-                request_timeout=3
+                request_timeout=5
             )
 
             story = response['choices'][0]['text']
             answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
         except Exception as e:
-            print(e)
+            print(f"ERROR: {e}")
             return "Sorry, something went wrong. Can you please try again?"
 
         return answer
