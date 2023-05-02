@@ -254,13 +254,8 @@ def quiz_content():
                 print("The SQLite connection is closed")
 
 
-        # increment variables and check values
+        # update variables
         curr_idx += 1
-        if curr_idx >= 32:
-            return render_template("/quiz/ending_page.html", 
-                user_id = qid,
-                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
-                )
 
         active_questions = questions[curr_idx]
         question_start_time = time.time()
@@ -273,6 +268,12 @@ def quiz_content():
         session["total_rewards"] = total_rewards
         session["question_start_time"] = question_start_time
         session["difficulty_selection_time"] = difficulty_selection_time
+
+        if curr_idx >= 32:
+            return render_template("/quiz/ending_page.html", 
+                user_id = qid,
+                date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
+                )
 
         return redirect(url_for('quiz_content'))
 
