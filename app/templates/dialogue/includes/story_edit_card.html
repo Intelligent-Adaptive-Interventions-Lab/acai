@@ -1,0 +1,38 @@
+<div class="card-header bg-transparent">
+    <div class="navbar navbar-expand p-0">
+        <ul class="navbar-nav me-auto align-items-center">
+            <li class="nav-item" style="max-width: 30vw;">
+                <h4>Story</h4>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="card-body story__box">
+    <form id='all-form' method="post" autocomplete="off">
+        <div class="form-group align-self-center">
+            <textarea id="textarea-story" type="textbox" class="form-control border-0" style="height: 70vh;" placeholder="Write your story here..."></textarea>
+        </div>
+    </form>
+</div>
+<div class="card-footer bg-transparent bottom-0 m-0">
+    <div class="row">
+        <div class="input-group">
+            <form id='all-form' class="col-12" method="post" autocomplete="off" action="{{ url_for('start_qualtrics_conversation') }}">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    <button id="btn-submit form-submit" class="btn send response__box" type="submit">
+                        <div class="d-none d-sm-block">
+                            Continue(With help from AI)
+                            <i class="bi bi-send"></i>
+                        </div>
+                        <div class="d-block d-sm-none">
+                            <i class="bi bi-send"></i>
+                        </div>
+                    </button>
+                    {{ form.message(hidden='true', id='form-message') }}
+                    {{ form.submit(hidden='true', id='form-submit') }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

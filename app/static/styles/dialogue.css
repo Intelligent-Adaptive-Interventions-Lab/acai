@@ -80,6 +80,11 @@ a.nav-link:hover, a.nav-link:visited {
     overflow-y: scroll; 
 }
 
+.story__box {
+    height: 70vh;
+    background-color: var(--dialog_background);
+}
+
 .chat__box::-webkit-scrollbar {
     display: none; /* for Chrome, Safari, and Opera */
 }

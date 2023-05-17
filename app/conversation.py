@@ -263,6 +263,17 @@ def init_information_bot() -> Dict:
 
     return information
 
+def init_story_edit_bot() -> Dict:
+    story_edit = {
+        "prompt": "The following is a conversation with a AI writing assistant.",
+        "message_start": "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?",
+        "bot_start": "Hi there! I'm your personal writing assistant. I'm here to help you craft compelling stories that truly resonate with your audience.\nAs we get started, remember that a good story is all about authenticity. The more specific and detailed your descriptions, the more your readers will be able to connect with your characters and their experiences.\n"
+                     "A successful story needs to strike a balance between positivity and realism. Let's work together to make sure your characters face realistic struggles, but ultimately come out on top. Don't hesitate to ask me for any help you need along the way.\n"
+                     "What can I do to assist you in creating stories that are both genuine and relatable?",
+        "chatbot": "AI"
+    }
+    return story_edit
+
 
 class Conversation:
     CONVO_START = MESSAGE_START
@@ -334,6 +345,8 @@ class GPTConversation(Conversation):
         print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
         dialogs = chat_log_clean.split(self.restart_sequence)
+        bot_start_dialogs = self.BOT_START.splitlines(True)
+        print("bot_start_dialogs: ", bot_start_dialogs)
 
         converation = []
 
@@ -345,12 +358,13 @@ class GPTConversation(Conversation):
                 "send_time": None
             })
 
-        converation.append({
-            "from": self.chatbot_name,
-            "to": self.user_name,
-            "message": self.BOT_START,
-            "send_time": None
-        })
+        for dialog in bot_start_dialogs:
+            converation.append({
+                "from": self.chatbot_name,
+                "to": self.user_name,
+                "message": dialog,
+                "send_time": None
+            })
 
         for i in range(1, len(dialogs)):
             messages = dialogs[i].split(self.start_sequence)

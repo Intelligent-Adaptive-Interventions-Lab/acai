@@ -7,7 +7,8 @@ from app.conversation import (
     GPTConversation,
     init_prompt,
     init_reflection_bot,
-    init_information_bot
+    init_information_bot,
+    init_story_edit_bot
 )
 
 
@@ -464,6 +465,64 @@ def start_conversation():
         conversation=convo.get_conversation(test=True),
         form=form
     )
+
+
+@app.route('/story_editing', methods=['GET', 'POST'])
+def story_editing():
+    chat_log = session.get('chat_log')
+
+    if chat_log is None:
+        select_prompt = init_story_edit_bot()
+        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
+        session["chatbot"] = select_prompt["chatbot"]
+        session["bot_start"] = select_prompt["bot_start"]
+        session["user"] = request.remote_addr
+        session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
+    convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"), session.get("bot_start"))
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+        session["chat_log"] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"],session["chat_log"])
+            count = cursor.execute(sqlite_insert_query,param_tuple)
+            sqliteConnection.commit()
+            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+        
+        return redirect(url_for('story_editing'))
+    
+    return render_template(
+        '/pages/story_edit_page1.html', 
+        user=convo.get_user(), 
+        bot=convo.get_chatbot(), 
+        warning=convo.WARNING, 
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(test=True),
+        form=form
+    )
+
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
 def start_qualtrics_conversation():
