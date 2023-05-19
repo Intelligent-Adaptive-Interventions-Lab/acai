@@ -72,7 +72,7 @@ a.nav-link:hover, a.nav-link:visited {
     font-size: x-small;
 }
 
-.chat__box {
+.chat__box{
     height: 70vh;
     background-color: var(--dialog_background);
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
@@ -83,6 +83,13 @@ a.nav-link:hover, a.nav-link:visited {
 .story__box {
     height: 70vh;
     background-color: var(--dialog_background);
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll; 
+}
+
+.story__textarea {
+    height: 70vh;
 }
 
 .chat__box::-webkit-scrollbar {

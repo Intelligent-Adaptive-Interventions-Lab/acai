@@ -467,8 +467,8 @@ def start_conversation():
     )
 
 
-@app.route('/story_editing', methods=['GET', 'POST'])
-def story_editing():
+@app.route('/story_edit', methods=['GET', 'POST'])
+def story_edit():
     chat_log = session.get('chat_log')
 
     if chat_log is None:
@@ -510,17 +510,23 @@ def story_editing():
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
         
-        return redirect(url_for('story_editing'))
+        return redirect(url_for('story_edit_page2'))
     
+    if request.method == 'POST':
+        initial_story = request.form.get("story")
+        return render_template(
+            '/pages/story_edit_page2.html', 
+            user=convo.get_user(), 
+            bot=convo.get_chatbot(), 
+            warning=convo.WARNING, 
+            end=convo.END,
+            notification=convo.NOTI,
+            conversation=convo.get_conversation(test=True),
+            form=form,
+            initial_story=initial_story
+        )
     return render_template(
-        '/pages/story_edit_page1.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
-        end=convo.END,
-        notification=convo.NOTI,
-        conversation=convo.get_conversation(test=True),
-        form=form
+        '/pages/story_edit_page1.html'
     )
 
 
