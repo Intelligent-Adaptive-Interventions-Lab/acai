@@ -302,7 +302,7 @@ class Conversation:
 
 class GPTConversation(Conversation):
     CONFIGS = {
-        "engine": "text-davinci-002",
+        "model": "gpt-3.5-turbo",
         "temperature": 0.9,
         "max_tokens": 300,
         "top_p": 1,
@@ -328,14 +328,21 @@ class GPTConversation(Conversation):
         openai.api_key = secret_keys["openai"]
 
     def ask(self, question: str) -> str:
-        prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
-        response = openai.Completion.create(
-            prompt=prompt_text,
-            stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
+        # prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
+        
+        message_list = [{'role':'system','content':self.prompt}]
+        for sentence in self.chat_log.split(self.prompt)[1].split("Human:")[1:]:
+            message_list.append({'role':'user', 'content':sentence.split("AI:")[0]})
+            message_list.append({'role':'assistant', 'content':sentence.split("AI:")[1]})
+        
+        message_list.append({'role':'user', 'content':question})
+        response = openai.ChatCompletion.create(
+            messages=message_list,
+            # stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
             **self.CONFIGS
         )
 
-        story = response['choices'][0]['text']
+        story = response['choices'][0]['message']['content']
         answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
 
         return answer
