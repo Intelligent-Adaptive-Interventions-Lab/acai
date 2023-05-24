@@ -263,10 +263,14 @@ def init_information_bot() -> Dict:
 
     return information
 
-def init_story_edit_bot() -> Dict:
+def init_story_edit_bot(initial_message:str = "") -> Dict:
+    if initial_message == "":
+        initial_message = "I haven't came up with the story and the topic for my story. "
+    else:
+        initial_message = "Here is my initial story: " + initial_message
     story_edit = {
         "prompt": "The following is a conversation with a AI writing assistant.",
-        "message_start": "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?",
+        "message_start": "\n\nHuman: Hello, I am trying to write a compelling story that is genuine and relatable. " + initial_message + "\nAI: It is my pleasure to serve as your writing assistant. I will do my best to help you with your writing needs. Thank you for trusting me with this important task.",
         "bot_start": "Hi there! I'm your personal writing assistant. I'm here to help you craft compelling stories that truly resonate with your audience.\nAs we get started, remember that a good story is all about authenticity. The more specific and detailed your descriptions, the more your readers will be able to connect with your characters and their experiences.\n"
                      "A successful story needs to strike a balance between positivity and realism. Let's work together to make sure your characters face realistic struggles, but ultimately come out on top. Don't hesitate to ask me for any help you need along the way.\n"
                      "What can I do to assist you in creating stories that are both genuine and relatable?",
@@ -341,12 +345,10 @@ class GPTConversation(Conversation):
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
         print("chat_log: ", self.chat_log)
-        print("split: ", "".join([self.prompt, self.CONVO_START]))
-        print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
+        # print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
         dialogs = chat_log_clean.split(self.restart_sequence)
         bot_start_dialogs = self.BOT_START.splitlines(True)
-        print("bot_start_dialogs: ", bot_start_dialogs)
 
         converation = []
 

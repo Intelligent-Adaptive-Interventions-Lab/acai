@@ -148,6 +148,7 @@ def _delete_session_variable(variable: str) -> None:
 
 @app.route('/')
 def main():
+    clear_session()
     return render_template("/pages/main.html")
 
 @app.route('/motivational_interview', methods=['GET', 'POST'])
@@ -469,21 +470,38 @@ def start_conversation():
 
 @app.route('/story_edit', methods=['GET', 'POST'])
 def story_edit():
-    chat_log = session.get('chat_log')
+    initial_story = session.get('initial_story')
 
+    if request.method == 'POST' and initial_story is None:
+        initial_story = request.form.get("story")
+        session["initial_story"] = initial_story
+
+    if initial_story is None:
+        return render_template('/pages/story_edit_page1.html')
+
+    chat_log = session.get('chat_log')
     if chat_log is None:
-        select_prompt = init_story_edit_bot()
+        select_prompt = init_story_edit_bot(initial_story)
         session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["bot_start"] = select_prompt["bot_start"]
+        session["message_start"] = select_prompt["message_start"]
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"), session.get("bot_start"))
+    convo = GPTConversation(
+        session.get("user"), 
+        session.get("chatbot"), 
+        session.get("chat_log"), 
+        session.get("bot_start"), 
+        session.get("message_start"))
 
     form = ChatForm()
     if form.validate_on_submit():
         user_message = form.message.data
+        story = request.form.get("story")
+        print("story", story)
+        question = "Here is the current version of my story: "
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
         session["chat_log"] = chat_log
@@ -510,10 +528,10 @@ def story_edit():
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
         
-        return redirect(url_for('story_edit_page2'))
-    
-    if request.method == 'POST':
-        initial_story = request.form.get("story")
+        return redirect(url_for('story_edit'))
+
+
+    if initial_story is not None:
         return render_template(
             '/pages/story_edit_page2.html', 
             user=convo.get_user(), 
@@ -525,9 +543,7 @@ def story_edit():
             form=form,
             initial_story=initial_story
         )
-    return render_template(
-        '/pages/story_edit_page1.html'
-    )
+
 
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
@@ -650,7 +666,8 @@ def clear_session():
         'motivational_interview_id',
         'motivational_interview_answers',
         'info_bot',
-        'reflection_bot'
+        'reflection_bot',
+        'initial_story'
     ]
     for variable in delete_variables:
         _delete_session_variable(variable)
