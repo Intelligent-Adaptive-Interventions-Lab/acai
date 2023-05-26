@@ -18,11 +18,16 @@ app.config.update(
 )
 
 # Flask-Session + Redis Configs
-app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_USE_SIGNER'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=1)
+# app.config['SESSION_TYPE'] = 'redis'
+# app.config['SESSION_USE_SIGNER'] = True
+# app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=1)
 # not sure if this is needed, but it currently works without it
 # app.config['SESSION_REDIS'] = redis.from_url('redis://localhost:6379')
+
+# Flask-Session + filesystem
+app.config['SESSION_PERMANENT'] = True
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(hours=5)
 
 server_session = Session(app)
 
