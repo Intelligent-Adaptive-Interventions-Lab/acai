@@ -1,0 +1,79 @@
+
+AI: Hey there! I am Alex, an AI developed by the University of Toronto.
+AI: What is your name?
+
+Human: Josie
+AI: Nice to meet you, Josie!
+AI: Please let me know if I got your name right. Yes/No
+
+Human: Yes
+AI: I understand that the researchers are recruiting people who have expressed some degree of interest in becoming more kind and caring towards others.  I was hoping to spend some time with you today and chat about the reasons you are here as well as the kinds of things that you might want to do in the future around becoming more kind and caring.
+AI: To start off, could you briefly tell me what led you to participate in this study and elaborate on how important becoming more kind and caring is for you?
+
+Human: I participated in this study, because I like doing studies in general. It allows me to contribute to research while also receiving a small payment.
+AI: I would also like to learn a little bit about your personal values. Just so I understand you a bit better, could you tell me which of the following values is the most important to you? Here are the values: relationships, personal growth, community, health.
+
+Human: community
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: why don't you understand? you're the one who suggested those topics...
+AI: Sorry, your answer did not meet the requirements of the question.
+
+Human: The value important to me is community
+AI: It is certainly very important to value your community. Why is this the most important value for you personally?
+
+Human: because we need connection
+AI: Tell me a little about the ways in which you see being more kind and caring  as beneficial towards community?
+
+Human: we should help others and they will also help us when we need it
+AI: Thank you for sharing that, Josie.
+AI: Would you be interested in hearing a little bit about the research or what we know about kindness behaviors?
+AI: Please indicate 'Yes' or 'No'.
+
+Human: no
+AI: In this case, I wonder if it would be ok to switch gears a little bit and focus on what you already do regarding being kind and caring as well as other things you might want to try in the future. What do you already do regarding being kind and caring? How (if at all) do you think doing these things impacts others?
+
+Human: i volunteer to help refugees to integrate
+AI: What might you do to increase how you already show kindness and caring? In your current day-to-day life, what are one or two things you could do to help others?
+AI:  Please write 'None' if you cannot think of anything.
+
+Human: i already do many things
+AI: That’s great! Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things you just said that you could do to help others, which one suits you the best? What might be your if-then plan?
+AI: Please write your answer in the format of 'If I ...., then I ....'
+
+Human: I am not really sure, because I already do things and have plans, so I don't need to make a new one
+AI: Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things one could do to help others we just discussed, which one suits you the best? What might be your if-then plan?
+AI: Please write your answer below in the format of 'If I ...., then I ....'
+
+Human: None
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: I don't have a plan
+AI: It is important to create a plan that reminds you what to do when something specific happens. For example, if I wanted to be more friendly to strangers, I'd say something like "*if* I make eye contact with a stranger, *then* I will smile at them". What might be your if-then plan? 
+AI: Please write your answer below in the format of 'If I ...., then I ....'
+
+Human: If the AI chat bot asks me a question I will reply in a way that it will let me finish the conversation. How about that?
+AI: I'm sorry, I don't seem to be able to detect your if-then plan. Would you mind trying again? Please make sure you write it in the format of "When X happens, I will do Y"
+AI: Please write your answer below in the format of 'If I ...., then I ....'
+
+Human: If I answer this question, then I can finish the survey. 
+AI: That sounds great! What might be some obstacles when implementing this plan, if any? What might be a way that you could deal with them?
+
+Human: I don't know 
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: There are no obstacles to my plan because I am already doing it, as I said. I can't think of a new plan just now. I would like to end this conversation.
+AI: Thinking of obstacles can be a little intimidating, but those feelings are completely normal. Remember that being more kind and caring can help you with your community!
+AI: To close off, I was wondering if you could summarize what we’ve talked about? What stands out to you regarding your values, the behaviors you plan to implement to act with kindness and caring, and the way you plan to overcome any potential obstacles?
+
+Human: We have talked about making plans, but I feel the conversation was unhelpful because the bot didn't listen to me and tried to force answers. I plan to continue being kind, as I already am. If I face obstacles I will deal with them when they occur.
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: My plan is to be kind to refugees, helping them to settle. An obstacle is that some of them get moved around to other cities. If this happens I will keep contact with them online and help others.
+AI: Thank you very much, Josie! It’s been a pleasure chatting with you today. I hope you found this conversation useful, and I wish you all the best with your plan to achieve your goals!
+
+Human: Thanks I didn't find it useful to be honest, but I am not sure if the researchers did.

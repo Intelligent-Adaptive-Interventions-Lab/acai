@@ -1,0 +1,42 @@
+
+AI: Hey there! I am Alex, an AI developed by the University of Toronto.
+AI: What is your name?
+
+Human: Daniel
+AI: Nice to meet you, Daniel!
+AI: Please let me know if I got your name right. Yes/No
+
+Human: Daniel yes
+AI: I understand that the researchers are recruiting people who have expressed some degree of interest in becoming more kind and caring towards others.  I was hoping to spend some time with you today and chat about the reasons you are here as well as the kinds of things that you might want to do in the future around becoming more kind and caring.
+AI: To start off, could you briefly tell me what led you to participate in this study and elaborate on how important becoming more kind and caring is for you?
+
+Human: Daniel yes confused 
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: No 
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: Are you broken
+AI: I'm sorry, but this answer does not answer the question or follow the instructions. Please try again and provide an answer that is relevant to the question.
+AI: Could you please try saying that in a different way?
+
+Human: I am already kind and caring I just wanted to take the study
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: No 
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: I don't understand 
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: Could you please try saying that a diffeant way 
+AI: I understand that you may not have been able to answer the question as asked, but it would be helpful if you could provide an answer that is more related to the question.
+AI: Could you please try saying that in a different way?
+
+Human: I had free time and was interested 
+AI: I would also like to learn a little bit about your personal values. Just so I understand you a bit better, could you tell me which of the following values is the most important to you? Here are the values: relationships, personal growth, community, health.
