@@ -6,8 +6,8 @@ class Quiz:
     def __init__(self):
         self.index = 0
         self.receiver = ["charity", "self"]
-        self.reward = [2, 3, 4, 5]
-        self.difficulty = [3, 4, 6, 7]
+        self.reward = [2, 4, 6, 8]
+        self.difficulty = [1, 3, 5, 7]
         self.score = {"charity": 0, "self": 0}
         self.questions = []
         self.log = []
@@ -17,7 +17,7 @@ class Quiz:
 
     def __init_quiz(self):
         combination = list(
-            itertools.product(self.receiver, self.reward, self.difficulty))
+            itertools.product(self.receiver, self.reward, self.difficulty)) * 3
         random.shuffle(combination)
         for receiver, reward, difficulty in combination:
             choice, index, original = self.__generate_answers(difficulty)
@@ -29,7 +29,7 @@ class Quiz:
                "number": original
                }
             self.questions.append([Quiz.adjust(q, 0, reward=1), q])
-
+        print(self.questions)
 
     def __generate_answers(self, diff):
         original = random.sample(range(0, 9), 3)
