@@ -11,7 +11,7 @@
             font-weight: bold;
         }
 
-        .carousel-inner .carousel-item{
+        .carousel-inner .carousel-item {
             transition-duration: 0ms;
         }
 
@@ -64,7 +64,8 @@
             <div class="card-body">
                 <div class="d-flex w-100 my-2">
                     <div class="flex-grow-1 d-flex flex-column">
-                        <h2 class="card-title text-left mt-4">Exercise, {{ page_num }}/31</h2>
+                        <h2 class="card-title text-left mt-4">
+                            Exercise, {{ page_num }}/31</h2>
                         <p class="card-text text-left mb-4">
                             Read the following instructions:
                         </p>
@@ -133,18 +134,28 @@
                             </p>
                         </div>
                     </div>
+                    {% include "quiz/notification_timeup.html" %}
 
                     <!-- Add container for the question and answer -->
                     {% include 'quiz/mcq.html' %}
-                    {{test}}
+                    {{ test }}
 
                 </div>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <h1 id="submit-result"></h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-    {% include "quiz/notification.html" %}
-    {% include "quiz/notification_Wrong.html" %}
-    {% include "quiz/notification_timeup.html" %}
 
 {% endblock contents %}
 
@@ -172,40 +183,43 @@
         var num2 = document.getElementById("num2");
         var num3 = document.getElementById("num3");
 
-        var number1 = {{question1["number"]}}
-        var diff1 = {{question1["difficulty"]}}
+        var number1 =
+        {{question1["number"]}}
+        var diff1 =
+        {{question1["difficulty"]}}
 
-        var number2 = {{question2["number"]}}
+        var number2 =
+        {{question2["number"]}}
         var diff2 = {{question2["difficulty"]}}
 
-        lowCreditBtn.addEventListener('click', () => {
-            fetch('{{ url_for('get_user_choice') }}', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({"difficulty_choice": 0}),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    document.querySelector("label[for=selection-0]").innerHTML = data["choice0"];
-                    document.querySelector("label[for=selection-1]").innerHTML = data["choice1"];
-                    console.log("Success:", data);
+            lowCreditBtn.addEventListener('click', () => {
+                fetch('{{ url_for('get_user_choice') }}', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({"difficulty_choice": 0}),
                 })
-                .catch((error) => {
-                    console.error("Error:", error);
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.querySelector("label[for=selection-0]").innerHTML = data["choice0"];
+                        document.querySelector("label[for=selection-1]").innerHTML = data["choice1"];
+                        console.log("Success:", data);
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+
+                [].forEach.call(carouselSubTitles, (subtitle) => {
+                    subtitle.innerHTML = '+0';
                 });
+                carousel.nextWhenVisible();
+                carousel.cycle();
+                num1.innerHTML = number1[0];
+                num2.innerHTML = number1[1];
+                num3.innerHTML = number1[2];
 
-            [].forEach.call(carouselSubTitles, (subtitle) => {
-                subtitle.innerHTML = '+0';
-            });
-            carousel.nextWhenVisible();
-            carousel.cycle();
-            num1.innerHTML = number1[0];
-            num2.innerHTML = number1[1];
-            num3.innerHTML = number1[2];
-
-        })
+            })
 
         highCreditBtn.addEventListener('click', () => {
             [].forEach.call(carouselSubTitles, (subtitle) => {
@@ -255,5 +269,27 @@
 
             carousel_idx++;
         });
+
+        var submit = document.getElementById("mcqsubmit")
+        var myModal = document.getElementById("wrong")
+        var selection = document.getElementById("form-selected")
+        submit.addEventListener('click', () => {
+            var selectedChoice = document.querySelector('input[name="selection"]:checked');
+            if (selectedChoice) {
+                if (selectedChoice.value.toString() == {{ answer }}){
+                    document.getElementById("submit-result").innerHTML = "Answer Correct"
+                    document.getElementById("submit-result").style.color = "green";
+                }else{
+                    document.getElementById("submit-result").innerHTML = "Incorrect"
+                    document.getElementById("submit-result").style.color = "red";
+                }
+                console.log(selectedChoice.value, {{ answer }});
+            }
+            setTimeout(function () {
+                document.getElementById("mcq-form").submit();
+            }, 1500);
+
+        })
+
     </script>
 {% endblock js_files %}

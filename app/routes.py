@@ -203,7 +203,7 @@ def quiz_content():
 
     print(f"selection: {selected_choice}    \nactive_questions:{active_questions}\ncurr_questions:{curr_question}")
 
-
+    print(form.validate_on_submit())
     if form.validate_on_submit() and difficulty_selection_time > question_start_time:
         submit_time = time.time()
         result = int(form.selection.data)
@@ -276,14 +276,15 @@ def quiz_content():
         session["difficulty_selection_time"] = difficulty_selection_time
 
         return redirect(url_for('quiz_content'))
-
+    #TODO: set it to wrong if form is not valid
     return render_template("/quiz/content.html",
                                 question1=active_questions[0],
                                 question2=active_questions[1],
                                 score1=total_rewards["charity"],
                                 score2=total_rewards["self"],
                                 form=form,
-                                page_num=curr_idx
+                                page_num=curr_idx,
+                                answer=str(curr_question["correct_idx"])
                            )
 
 

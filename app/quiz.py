@@ -29,7 +29,6 @@ class Quiz:
                "number": original
                }
             self.questions.append([Quiz.adjust(q, 0, reward=1), q])
-        print(self.questions)
 
     def __generate_answers(self, diff):
         original = random.sample(range(0, 9), 3)

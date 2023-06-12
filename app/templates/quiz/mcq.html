@@ -1,18 +1,37 @@
+{#<div id="exercise-content" class="d-none">#}
+{#    <div class="ins">#}
+{#        What is the correct number?#}
+{#    </div>#}
+{#    <form id="mcq-form" method="POST" action="">#}
+{#        {{ form.hidden_tag() }}#}
+{#        {{ form.selection(id="form-select") }}#}
+{#        <div class="d-flex justify-content-end m-2">#}
+{#            <button type="button" class="btn btn-primary" id="mcqsubmit" data-bs-toggle="modal" data-bs-target="#exampleModal">#}
+{#                Submit#}
+{#            </button>#}
+{#        </div>#}
+{#    </form>#}
+{#</div>#}
+
 <div id="exercise-content" class="d-none">
     <div class="ins">
         What is the correct number?
     </div>
-    <form method="POST" action="">
+    <form id="mcq-form" method="POST" action="">
         {{ form.hidden_tag() }}
-        {{ form.selection() }}
+        {% for choice in form.selection %}
+            <div>
+                <input type="radio" id="{{ choice.id }}"
+                       name="{{ choice.name }}" value="{{ choice.data }}">
+                <label for="{{ choice.id }}">{{ choice.label.text }}</label>
+            </div>
+        {% endfor %}
         <div class="d-flex justify-content-end m-2">
-            <button type="submit" class="btn btn-primary" id="mcqsubmit"
-                    onclick="displaymodal()">
+            <button type="button" class="btn btn-primary" id="mcqsubmit"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Submit
             </button>
         </div>
     </form>
 </div>
-
-
 
