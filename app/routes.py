@@ -181,9 +181,9 @@ def quiz_content():
     qid = session.setdefault("qid", f"QUIZ-{uuid.uuid1()}")
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
-    
-    if curr_idx >= 32:
-            return render_template("/quiz/ending_page.html", 
+
+    if curr_idx >= 48:
+            return render_template("/quiz/ending_page.html",
                 user_id = qid,
                 date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
                 )
@@ -200,9 +200,8 @@ def quiz_content():
     form = EvaluationForm()
     form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
                               ("1", "".join(map(str, curr_question["choices"][1])))]
-    
-    print(f"selection: {selected_choice}    \nactive_questions:{active_questions}\ncurr_questions:{curr_question}")
 
+    print(f"selection: {selected_choice}    \nactive_questions:{active_questions}\ncurr_questions:{curr_question}")
 
     if form.validate_on_submit() and difficulty_selection_time > question_start_time:
         submit_time = time.time()
@@ -232,13 +231,13 @@ def quiz_content():
                                    VALUES 
                                   (?,?,?,?,?,?,?,?);"""
 
-            param_tuple = (qid, 
-                curr_question["receiver"], 
-                curr_question["difficulty"], 
-                curr_question["reward"], 
-                "".join(map(str, curr_question["choices"][result])), 
-                actual_reward, 
-                '%.2f'%time1, 
+            param_tuple = (qid,
+                curr_question["receiver"],
+                curr_question["difficulty"],
+                curr_question["reward"],
+                "".join(map(str, curr_question["choices"][result])),
+                actual_reward,
+                '%.2f'%time1,
                 '%.2f'%time2)
 
             count = cursor.execute(sqlite_insert_query, param_tuple)
@@ -256,9 +255,9 @@ def quiz_content():
 
         # increment variables and check values
         curr_idx += 1
-        if curr_idx >= 32:
+        if curr_idx >= 48:
             session["index"] = curr_idx
-            return render_template("/quiz/ending_page.html", 
+            return render_template("/quiz/ending_page.html",
                 user_id = qid,
                 date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
                 )
@@ -283,7 +282,8 @@ def quiz_content():
                                 score1=total_rewards["charity"],
                                 score2=total_rewards["self"],
                                 form=form,
-                                page_num=curr_idx
+                                page_num=curr_idx,
+                                answer=str(curr_question["correct_idx"])
                            )
 
 
