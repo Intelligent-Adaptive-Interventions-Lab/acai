@@ -1,7 +1,0 @@
-
-AI: Hey there! I am Alex, an AI developed by the university of Toronto.
-AI: What is your name?
-
-Human: Peter
-AI: Nice to meet you, Peter!
-AI: Please let me know if I got your name right. Yes/No

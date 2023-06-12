@@ -270,26 +270,33 @@
             carousel_idx++;
         });
 
-        var submit = document.getElementById("mcqsubmit")
-        var myModal = document.getElementById("wrong")
-        var selection = document.getElementById("form-selected")
+
+        var submit = document.getElementById("mcqsubmit");
+        var myModal = document.getElementById("wrong");
+        var selection = document.getElementById("form-selected");
+
+        var submitClicked = false;
         submit.addEventListener('click', () => {
+            submitClicked = true;
             var selectedChoice = document.querySelector('input[name="selection"]:checked');
             if (selectedChoice) {
-                if (selectedChoice.value.toString() == {{ answer }}){
-                    document.getElementById("submit-result").innerHTML = "Answer Correct"
+                if (selectedChoice.value.toString() === "{{ answer }}") {
+                    document.getElementById("submit-result").innerHTML = "Answer Correct";
                     document.getElementById("submit-result").style.color = "green";
-                }else{
-                    document.getElementById("submit-result").innerHTML = "Incorrect"
+                } else {
+                    document.getElementById("submit-result").innerHTML = "Incorrect";
                     document.getElementById("submit-result").style.color = "red";
                 }
-                console.log(selectedChoice.value, {{ answer }});
+                console.log(selectedChoice.value, "{{ answer }}");
             }
-            setTimeout(function () {
-                document.getElementById("mcq-form").submit();
-            }, 1500);
+        });
 
-        })
+        setTimeout(function () {
+            if (!submitClicked) {
+                document.getElementById("mcq-form").submit();
+            }
+        }, 20000);
+
 
     </script>
 {% endblock js_files %}
