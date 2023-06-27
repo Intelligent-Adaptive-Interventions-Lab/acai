@@ -17,7 +17,7 @@ class Quiz:
 
     def __init_quiz(self):
         combination = list(
-            itertools.product(self.receiver, self.reward, self.difficulty)) * 3
+            itertools.product(self.receiver, self.reward, self.dÏifficulty)) * 3
         random.shuffle(combination)
         for receiver, reward, difficulty in combination:
             choice, index, original = self.__generate_answers(difficulty)

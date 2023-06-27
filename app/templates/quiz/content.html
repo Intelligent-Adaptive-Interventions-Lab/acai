@@ -65,7 +65,7 @@
                 <div class="d-flex w-100 my-2">
                     <div class="flex-grow-1 d-flex flex-column">
                         <h2 class="card-title text-left mt-4">
-                            Exercise, {{ page_num }}/31</h2>
+                            Exercise {{ page_num }}</h2>
                         <p class="card-text text-left mb-4">
                             Read the following instructions:
                         </p>
@@ -276,8 +276,15 @@
         var selection = document.getElementById("form-selected");
 
         var submitClicked = false;
+        setTimeout(function () {
+            if (!submitClicked) {
+                document.getElementById("mcq-form").submit();
+            }
+        }, 20000);
+
         submit.addEventListener('click', () => {
             submitClicked = true;
+
             var selectedChoice = document.querySelector('input[name="selection"]:checked');
             if (selectedChoice) {
                 if (selectedChoice.value.toString() === "{{ answer }}") {
@@ -287,16 +294,12 @@
                     document.getElementById("submit-result").innerHTML = "Incorrect";
                     document.getElementById("submit-result").style.color = "red";
                 }
-                console.log(selectedChoice.value, "{{ answer }}");
             }
-        });
 
-        setTimeout(function () {
-            if (!submitClicked) {
+            setTimeout(function () {
                 document.getElementById("mcq-form").submit();
-            }
-        }, 20000);
-
+            }, 500);
+        });
 
     </script>
 {% endblock js_files %}
