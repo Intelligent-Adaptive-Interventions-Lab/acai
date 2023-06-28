@@ -11,7 +11,7 @@ from app.conversation import (
     init_reflection_bot,
     init_information_bot
 )
-from app.gpt_chatbot import MI_Conversation, MI_GPTConversation
+from app.gpt_chatbot import MI_Conversation, MI_GPTConversation, NP_MI_GPTConversation
 
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for, Response, json
 from flask_session import Session
@@ -379,6 +379,59 @@ def mi_conversation():
         enable_typing_animation=1,
         timer=timer_remaining
     )
+
+
+@app.route('/np_mi_conversation', methods=['GET', 'POST'])
+def np_mi_conversation():
+    INITIAL_TIMER = 300
+
+    chat_log = session.get('np_mi_chat_log', f"{MI_Conversation.CHATBOT}: Hello, how can I help you?")
+    chatbot = session.get('np_mi_chatbot', "Alex")
+    user = session.get('np_mi_user', "A-"+str(uuid.uuid1()))
+    start = session.get('np_mi_start', int(time.time()))
+
+    timer_remaining = INITIAL_TIMER - (int(time.time()) - start)
+
+    convo = NP_MI_GPTConversation(user, chatbot, chat_log)
+
+    session['np_mi_user'] = user
+    session["np_mi_chatbot"] = chatbot
+    session["np_mi_start"] = start
+
+    form = ChatForm()
+    if form.validate_on_submit():
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+        session["np_mi_chat_log"] = chat_log
+
+        f = None
+        try:
+            path = f"{app.root_path}/adaptive_np_mi_chatlogs/{user}.txt"
+            f = safe_open_w(path)
+            f.write(chat_log)
+            print(f"Saved chatlogs to {path}")
+        except Exception as e:
+            print(f"Failed to save chatlogs. {e}")
+        finally:
+            if f:
+                f.close()
+
+        return redirect(url_for('np_mi_conversation'))
+
+    return render_template(
+        '/pages/adaptive_convo_motivational_interview.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        # warning=convo.WARNING,
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(test=True),
+        form=form,
+        enable_typing_animation=1,
+        timer=timer_remaining
+    )
+
 
 @app.route('/motivational_interview', methods=['GET', 'POST'])
 def motivational_interview_conversation():
