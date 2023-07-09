@@ -195,8 +195,7 @@ def quiz_content():
 
     active_questions = questions[curr_idx]
     curr_question = active_questions[selected_choice]
-
-
+    difficulty1 = active_questions[1]["difficulty"]
     form = EvaluationForm()
     form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
                               ("1", "".join(map(str, curr_question["choices"][1])))]
@@ -227,9 +226,9 @@ def quiz_content():
             print(f"time {difficulty_selection_time} {question_start_time} {submit_time} {difficulty_selection_time}")
             time2 = submit_time - difficulty_selection_time
             sqlite_insert_query = """INSERT INTO quiz
-                                  (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2) 
+                                  (quiz_id, receiver, difficulty, reward, answer, actual_reward, time1, time2, difficulty1) 
                                    VALUES 
-                                  (?,?,?,?,?,?,?,?);"""
+                                  (?,?,?,?,?,?,?,?,?);"""
 
             param_tuple = (qid,
                 curr_question["receiver"],
@@ -238,7 +237,8 @@ def quiz_content():
                 "".join(map(str, curr_question["choices"][result])),
                 actual_reward,
                 '%.2f'%time1,
-                '%.2f'%time2)
+                '%.2f'%time2,
+                str(difficulty1))
 
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()

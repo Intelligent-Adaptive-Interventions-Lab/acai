@@ -18,6 +18,7 @@ CREATE TABLE quiz (
     answer TEXT NOT NULL,
     actual_reward TEXT NOT NULL,
     time1 TEXT NOT NULL,
-    time2 TEXT NOT NULL
+    time2 TEXT NOT NULL,
+    difficulty1 TEXT NOT NULL
 );
 
