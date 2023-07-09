@@ -231,11 +231,15 @@ def quiz_content():
                                    VALUES 
                                   (?,?,?,?,?,?,?,?,?);"""
 
+            if result == 2:
+                answer = "Time out"
+            else:
+                answer = "".join(map(str, curr_question["choices"][result]))
             param_tuple = (qid,
                 curr_question["receiver"],
                 curr_question["difficulty"],
                 curr_question["reward"],
-                "".join(map(str, curr_question["choices"][result])),
+                answer,
                 actual_reward,
                 '%.2f'%time1,
                 '%.2f'%time2,
