@@ -198,7 +198,8 @@ def quiz_content():
     difficulty1 = active_questions[1]["difficulty"]
     form = EvaluationForm()
     form.selection.choices = [("0", "".join(map(str, curr_question["choices"][0]))),
-                              ("1", "".join(map(str, curr_question["choices"][1])))]
+                              ("1", "".join(map(str, curr_question["choices"][1]))),
+                              ("2", "0")]
 
     print(f"selection: {selected_choice}    \nactive_questions:{active_questions}\ncurr_questions:{curr_question}")
 

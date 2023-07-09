@@ -20,11 +20,21 @@
     <form id="mcq-form" method="POST" action="">
         {{ form.hidden_tag() }}
         {% for choice in form.selection %}
-            <div>
-                <input type="radio" id="{{ choice.id }}"
-                       name="{{ choice.name }}" value="{{ choice.data }}">
-                <label for="{{ choice.id }}">{{ choice.label.text }}</label>
-            </div>
+
+                <div>
+                    {% if choice.data != "2" %}
+
+                    <input type="radio" id="{{ choice.id }}"
+                           name="{{ choice.name }}" value="{{ choice.data }}">
+                    <label for="{{ choice.id }}">{{ choice.label.text }}</label>
+
+                    {% else %}
+                        <input type="radio" id="{{ choice.id }}" name="{{ choice.name }}"
+                               value="{{ choice.data }}" style="display:none"/>
+                    {% endif %}
+
+                </div>
+
         {% endfor %}
         <div class="d-flex justify-content-end m-2">
             <button type="button" class="btn btn-primary" id="mcqsubmit"

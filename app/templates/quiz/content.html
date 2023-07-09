@@ -262,8 +262,11 @@
         var selection = document.getElementById("form-selected");
 
         var submitClicked = false;
+        console.log(document.getElementById("mcq-form"));
+
         setTimeout(function () {
             if (!submitClicked) {
+                document.getElementById('selection-2').checked = true;
                 document.getElementById("mcq-form").submit();
             }
         }, 20000);
