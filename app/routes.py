@@ -182,7 +182,7 @@ def quiz_content():
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
 
-    if curr_idx >= 48:
+    if curr_idx >= 64:
             return render_template("/quiz/ending_page.html",
                 user_id = qid,
                 date = datetime.now(timezone.utc).strftime('%m/%d/%Y')

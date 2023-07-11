@@ -17,7 +17,7 @@ class Quiz:
 
     def __init_quiz(self):
         combination = list(
-            itertools.product(self.receiver, self.reward, self.difficulty)) * 3
+            itertools.product(self.receiver, self.reward, self.difficulty)) * 2
         random.shuffle(combination)
         for receiver, reward, difficulty in combination:
             choice, index, original = self.__generate_answers(difficulty)
@@ -29,7 +29,7 @@ class Quiz:
                "number": original
                }
             self.questions.append([Quiz.adjust(q, 0, reward=1), q])
-
+        print(len(self.questions))
     def __generate_answers(self, diff):
         original = random.sample(range(0, 9), 3)
         target = list(map(lambda x: (x+diff)%10, original.copy()))
