@@ -62,15 +62,15 @@
     <div class="container mt-5">
         <div class="card shadow-sm">
             <div class="card-body">
-{#                <div class="d-flex w-100 my-2">#}
-{#                    <div class="flex-grow-1 d-flex flex-column">#}
-{#                        <h2 class="card-title text-left mt-4">#}
-{#                            Exercise # {{ page_num }}</h2>#}
-{#                        <p class="card-text text-left mb-4">#}
-{#                            Read the following instructions:#}
-{#                        </p>#}
-{#                    </div>#}
-{#                </div>#}
+                {#                <div class="d-flex w-100 my-2">#}
+                {#                    <div class="flex-grow-1 d-flex flex-column">#}
+                {#                        <h2 class="card-title text-left mt-4">#}
+                {#                            Exercise # {{ page_num }}</h2>#}
+                {#                        <p class="card-text text-left mb-4">#}
+                {#                            Read the following instructions:#}
+                {#                        </p>#}
+                {#                    </div>#}
+                {#                </div>#}
 
                 <div class="row align-items-center">
                     <!-- Add container for the image and question -->
@@ -147,6 +147,11 @@
 
 {% block js_files %}
     <script>
+        var date1 = new Date();
+
+        // Get the current time
+        var time1 = date1.getTime();
+
         var carouselQuiz = document.querySelector('#carouselQuiz');
         var carousel = new bootstrap.Carousel(carouselQuiz, {
             interval: 100,
@@ -179,12 +184,15 @@
         var diff2 = {{question2["difficulty"]}}
 
             lowCreditBtn.addEventListener('click', () => {
+                var date = new Date();
+                var diffTimer = date.getTime() - time1;
                 fetch('{{ url_for('get_user_choice') }}', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({"difficulty_choice": 0}),
+                    body: JSON.stringify({
+                        "difficulty_choice": 0}),
                 })
                     .then((response) => response.json())
                     .then((data) => {
@@ -220,7 +228,9 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({"difficulty_choice": 1}),
+                body: JSON.stringify({
+                    "difficulty_choice": 1
+                }),
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -237,6 +247,22 @@
         });
 
         playStart.addEventListener("click", () => {
+            var timestamp = new Date().getTime();
+            console.log("Timestamp:", timestamp);
+
+            fetch('{{ url_for('get_time') }}', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"time1":timestamp})
+            })
+                .then(response => {
+                    // Handle response
+                })
+                .catch(error => {
+                    // Handle error
+                });
             playStart.classList.add("d-none");
             carouselQuiz.classList.remove("d-none");
             quizNumBox.classList.remove('blurry');

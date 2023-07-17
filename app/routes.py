@@ -182,7 +182,7 @@ def quiz_content():
     questions = session.setdefault("quiz_questions", Quiz().get_questions())
     curr_idx = session.setdefault("index", 0)
 
-    if curr_idx >= 48:
+    if curr_idx >= 64:
             return render_template("/quiz/ending_page.html",
                 user_id = qid,
                 date = datetime.now(timezone.utc).strftime('%m/%d/%Y')
@@ -223,7 +223,9 @@ def quiz_content():
             sqliteConnection = sqlite3.connect(app.root_path+'/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
-            time1 = difficulty_selection_time - question_start_time
+            print(difficulty_selection_time, session["play_button_stamp"])
+            time1 = difficulty_selection_time - session["play_button_stamp"]
+            print(f"-----time1-------------------\n{time1}")
             print(f"time {difficulty_selection_time} {question_start_time} {submit_time} {difficulty_selection_time}")
             time2 = submit_time - difficulty_selection_time
             sqlite_insert_query = """INSERT INTO quiz
@@ -290,8 +292,11 @@ def quiz_content():
                                 page_num=curr_idx,
                                 answer=str(curr_question["correct_idx"])
                            )
-
-
+@app.route("/gettime", methods=["POST"])
+def get_time():
+    time1 = request.json.get("time1")
+    session["play_button_stamp"] = time1 / 1000
+    return "good"
 
 
 @app.route("/getchoice", methods=["POST"])
