@@ -1,0 +1,17 @@
+HUMAN: asdfasdf
+AI: I'm sorry, I don't understand.
+
+HUMAN: asdfasdf
+AI: I'm sorry, I don't understand. Could you please rephrase your question?
+
+HUMAN: asdfasdfasdf
+AI: I'm sorry, I'm not sure what you're asking. Can you please explain your question in a different way?
+
+HUMAN: Fuck you
+AI: I'm sorry, I don't understand. Could you please rephrase your question in a more respectful way?
+
+HUMAN: Are you a chatbot?
+AI: Yes, I am a chatbot.
+
+HUMAN: are you chatgpt
+AI: No, I'm not a chatgpt. I'm a chatbot.

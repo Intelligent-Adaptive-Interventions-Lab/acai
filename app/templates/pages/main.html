@@ -54,6 +54,17 @@ ACAI
                     </div>
                 </div>
             </button>
+            <button id="np-mi-gpt-chatbot-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
+                <div class="d-flex gap-3">
+                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
+                        <i class="bi bi bi-chat-dots" style="width: 44px; height: 44px; font-size: 38px;"></i>
+                    </h5>
+                    <div class="d-flex flex-column align-items-start justify-content-center">
+                        <h5 class="card-title text-start fs-5">Adaptive MI Conversation NO PROMPT</h5>
+                        <p class="card-text text-start text-muted fs-6">Motivational Intervew conversations with an adaptive chatbot.</p>
+                    </div>
+                </div>
+            </button>
             <!-- <button id="mindfulness-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
                 <div class="d-flex gap-3">
                     <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
@@ -114,6 +125,10 @@ ACAI
 
     document.getElementById("mi-gpt-chatbot-btn").onclick = function() {
         location.href = `{{ url_for('mi_conversation') }}`;
+    }
+
+    document.getElementById("np-mi-gpt-chatbot-btn").onclick = function() {
+        location.href = `{{ url_for('np_mi_conversation') }}`;
     }
 
     document.getElementById("quiz-page-btn").onclick = function() {

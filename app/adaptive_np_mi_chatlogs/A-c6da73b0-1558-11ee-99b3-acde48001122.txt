@@ -1,0 +1,93 @@
+AI: Hello, how can I help you?
+
+HUMAN: what is ur name
+AI: My name is AI.
+
+HUMAN: asdfasdf
+AI: I'm sorry, I didn't understand. Can you please rephrase your question?
+
+HUMAN: asdfasdf
+AI: I'm sorry, I still don't understand. How can I help you?
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm not sure what you are asking. Could you please ask your question in a different way?
+
+HUMAN: assfasdf
+AI: Sorry, something went wrong. Can you please try again?
+
+HUMAN: asfsadff
+AI: Sorry, something went wrong. Can you please try again?
+
+HUMAN: asdfasdf
+AI: Sorry, I'm not sure what you're asking. Can you please rephrase your question?2023-06-27 19:21:15.394036
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm having a hard time understanding your question. Could you please ask it in a different way?2023-06-27 19:21:27.573066
+
+HUMAN: asdfasdf
+AI: I'm sorry, I don't understand. Could you please rephrase your question?
+2023-06-27 19:24:59.243940
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm not sure what you are asking. Could you please ask your question in a different way?
+Date:2023-06-27 19:26:39.804039
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm not sure what you are looking for. Could you please rephrase your question?
+Date:2023-06-27 19:26:48.163343
+
+HUMAN: asdfasdfasdf
+AI: I'm sorry, I don't understand. Could you please rephrase your question?
+Date:2023-06-27 19:27:01.612688
+
+HUMAN: what is ur name
+AI: My name is AI.
+Date:2023-06-27 19:27:08.371021
+
+HUMAN: sdfadsf
+AI: I'm sorry, I don't understand. Can you please rephrase your question?
+Date:2023-06-27 19:27:24.142583
+
+
+HUMAN: asdfasdf
+AI: I'm sorry, I don't understand. Could you please rephrase your question?
+Date(2023-06-27 19:30:41.677948)
+
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm not sure what you are asking. Could you please ask your question in a different way?
+Date(2023-06-27 19:30:57.650634)
+
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm still not understanding what you're asking. Could you please rephrase your question?
+Date(2023-06-27 19:31:10.798204)
+
+
+HUMAN: asdfadsf
+AI: I'm sorry, I'm not sure what you are asking. Could you please ask your question in a different way?
+Date(2023-06-27 19:32:08.516746)
+
+
+HUMAN: asdfsadf
+AI: I'm sorry, I don't understand. Could you please rephrase your question? Date(2023-06-27 19:32:12.539917)
+Date(2023-06-27 19:33:00.234480)
+
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm having a hard time understanding your question. Could you please ask it in a different way? Date(2023-06-27 19:32:19.693372)
+Date(2023-06-27 19:33:06.064206)
+
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm still not understanding what you're asking. Could you please rephrase your question? Date(2023-06-27 19:33:08.349728)
+Date(2023-06-27 19:33:51.116462)
+
+
+HUMAN: whas ur name
+AI: My name is AI.
+Date(2023-06-27 19:34:12.126148)
+
+
+HUMAN: asdfasdf
+AI: I'm sorry, I'm still not understanding what you're asking. Could you please rephrase your question? Date(2023-06-27 19:34:16.553679)
