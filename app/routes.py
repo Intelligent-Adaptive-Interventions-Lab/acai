@@ -447,8 +447,12 @@ def start_conversation():
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    convo = GPTConversation(session.get("user"), session.get("chatbot"),
-                            session.get("chat_log"))
+    convo = GPTConversation(
+        session.get("user"), 
+        session.get("chatbot"),
+        session.get("chat_log"),
+        bot_start="Hello. I am an AI agent designed to help you solve math questions. How can I help you?"
+    )
 
     form = ChatForm()
     if form.validate_on_submit():
@@ -511,8 +515,12 @@ def start_qualtrics_conversation():
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    convo = GPTConversation(session.get("user"), session.get("chatbot"),
-                            session.get("chat_log"))
+    convo = GPTConversation(
+        session.get("user"), 
+        session.get("chatbot"),
+        session.get("chat_log"), 
+        bot_start="Hello. I am an AI agent designed to help you solve math questions. How can I help you?"
+    )
 
     start = session.get('start')
     if start is None:
@@ -531,6 +539,7 @@ def start_qualtrics_conversation():
     if end is None or not end:
         session["end"] = (difference_seconds >= session.get('stop'))
 
+    session["end"] = False
     form = ChatForm()
     if form.validate_on_submit() and not session.get('end'):
         user_message = form.message.data
