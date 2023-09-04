@@ -1,63 +1,87 @@
-<div class="container h-100 w-100">
-  <div id="carouselQuiz" class="carousel carousel-dark slide h-100 d-none" data-bs-ride="true" data-bs-touch="false"
-    data-bs-wrap="false">
-    <div class="carousel-inner h-100">
-      <div class="carousel-item active h-100" data-bs-interval="false">
-        <div class="d-flex justify-content-center align-items-center w-100 h-100">
-          <button id="quiz-choice-1" type="button" class="btn btn-outline-success flex-fill me-3">
-            <div class="d-flex flex-column">
-              <span class="prevent-select">Add 0</span>
-              <span class="prevent-select">1 Credit</span>
+{% extends '_base.html' %}
+
+{% block title %}
+Display Quiz
+{% endblock title %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/dialogue.css') }}">
+{% endblock css_files %}
+
+{% block contents %}
+
+<div class="container" style="width: 500px; height: 500px" >
+    <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-interval="false">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="d-flex justify-content-center align-items-center w-100" style="height: 400px">
+                    <button id="quiz-choice-1" type="button" class="btn btn-outline-success flex-fill me-3">
+                        <div class="d-flex flex-column">
+                            <span>Add 0</span>
+                            <span>1 Credit</span>
+                        </div>
+                    </button>
+                    <button id="quiz-choice-2" type="button" class="btn btn-outline-danger flex-fill">
+                        <div class="d-flex flex-column">
+                            <span>Add 3</span>
+                            <span>5 Credit</span>
+                        </div>
+                    </button>
+                </div>
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>To Charity</h5>
+                    <p>Choose one of two provided options to proceed.</p>
+                </div>
             </div>
-          </button>
-          <button id="quiz-choice-2" type="button" class="btn btn-outline-danger flex-fill">
-            <div class="d-flex flex-column">
-              <span class="prevent-select">Add 3</span>
-              <span class="prevent-select">5 Credit</span>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center w-100" style="height: 400px">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <span>+3</span>
+                        <span class="display-3">5</span>
+                    </div>
+                </div>
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>To Charity</h5>
+                    <p>First number.</p>
+                </div>
             </div>
-          </button>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center w-100" style="height: 400px">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <span>+3</span>
+                        <span class="display-3">3</span>
+                    </div>
+                </div>
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>To Charity</h5>
+                    <p>Second number.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="d-flex justify-content-center align-items-center w-100" style="height: 400px">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <span>+3</span>
+                        <span class="display-3">9</span>
+                    </div>
+                </div>
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>To Charity</h5>
+                    <p>Third number.</p>
+                </div>
+            </div>
         </div>
-        <div class="carousel-caption d-block">
-          <h5 class="prevent-select">To Charity</h5>
-          <p class="prevent-select">Choose one of two provided options to proceed.</p>
-        </div>
-      </div>
-      <div class="carousel-item h-100" data-bs-interval="1500">
-        <div class="d-flex justify-content-center align-items-center w-100 h-100">
-          <div class="d-flex flex-column justify-content-center align-items-center">
-            <h5 class="prevent-select">To Charity</h5>
-            <span id="carouselSubTitle" class="prevent-select"></span>
-            <span class="display-3 prevent-select">5</span>
-          </div>
-        </div>
-        <div class="carousel-caption d-block">
-          <p class="prevent-select">First number.</p>
-        </div>
-      </div>
-      <div class="carousel-item h-100" data-bs-interval="1500">
-        <div class="d-flex justify-content-center align-items-center w-100 h-100">
-          <div class="d-flex flex-column justify-content-center align-items-center">
-            <h5 class="prevent-select">To Charity</h5>
-            <span id="carouselSubTitle" class="prevent-select"></span>
-            <span class="display-3 prevent-select">3</span>
-          </div>
-        </div>
-        <div class="carousel-caption dd-block">
-          <p class="prevent-select">Second number.</p>
-        </div>
-      </div>
-      <div class="carousel-item h-100" data-bs-interval="1500">
-        <div class="d-flex justify-content-center align-items-center w-100 h-100">
-          <div class="d-flex flex-column justify-content-center align-items-center">
-            <h5 class="prevent-select">To Charity</h5>
-            <span id="carouselSubTitle" class="prevent-select"></span>
-            <span class="display-3 prevent-select">9</span>
-          </div>
-        </div>
-        <div class="carousel-caption d-block">
-          <p class="prevent-select">Third number.</p>
-        </div>
-      </div>
+        <a class="carousel-control-next" href="#carouselExampleDark" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </a>
     </div>
-  </div>
 </div>
+
+
+{% endblock contents %}
+
+{% block js_files %}
+<script>
+
+</script>
+{% endblock js_files %}
