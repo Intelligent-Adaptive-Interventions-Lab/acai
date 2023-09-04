@@ -10,14 +10,12 @@ from app.conversation import (
     init_information_bot
 )
 
-
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for
+from flask import Flask, request, session, jsonify, render_template, redirect, \
+    url_for
 from twilio.twiml.messaging_response import MessagingResponse
 from datetime import datetime, timezone
 
-
 import sqlite3
-
 
 # run_with_ngrok(app)
 
@@ -33,97 +31,97 @@ conversation = [
         "to": WARNING,
         "message": "The following is a conversation with a therapist. The therapist is helpful, creative, empathetic, and very friendly.",
         "send_time": datetime(2022, 6, 20, 0, 0, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": NOTI,
         "message": "Yesterday",
         "send_time": datetime(2022, 6, 20, 0, 0, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "Hello, who are you?",
         "send_time": datetime(2022, 6, 20, 0, 0, 1, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
         "message": "I am an AI created by OpenAI. How can I help you today?",
         "send_time": datetime(2022, 6, 20, 0, 1, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "I need help.",
         "send_time": datetime(2022, 6, 20, 0, 2, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
         "message": "I'm sorry to hear that. What's going on?",
         "send_time": datetime(2022, 6, 20, 0, 3, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": NOTI,
         "message": "Today",
         "send_time": datetime(2022, 6, 20, 0, 4, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "I had an argument with my family today.",
         "send_time": datetime(2022, 6, 20, 0, 4, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
         "message": "I'm sorry to hear that. Can you tell me more about what happened?",
         "send_time": datetime(2022, 6, 20, 0, 5, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "I told my mom that I want to buy a computer but she was very upset about that.",
         "send_time": datetime(2022, 6, 20, 0, 6, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
         "message": "I'm sorry to hear that she was upset. Can you tell me more about why you want to buy a computer?",
         "send_time": datetime(2022, 6, 20, 0, 7, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "I told her that I need a computer to complete my assignment.",
         "send_time": datetime(2022, 6, 20, 0, 8, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
         "message": "I see. And she was upset because she doesn't think you need a computer for that?",
         "send_time": datetime(2022, 6, 20, 0, 9, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "No, she doesn't 😥.",
         "send_time": datetime(2022, 6, 20, 0, 10, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
         "message": "I'm sorry to hear that. Can you tell me more about your assignment? Maybe there's a way to do it without a computer.",
         "send_time": datetime(2022, 6, 20, 0, 11, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": USER,
         "to": CHATBOT,
         "message": "There is NO WAY to finish that assignment without a computer. Why didn't she understand that??? 😡",
         "send_time": datetime(2022, 6, 20, 0, 12, 0, tzinfo=timezone.utc)
-    }, 
+    },
     {
         "from": CHATBOT,
         "to": USER,
@@ -145,24 +143,38 @@ def _delete_session_variable(variable: str) -> None:
     except KeyError:
         pass
 
+
+@app.route('/index')
+def index():
+    return render_template("/quiz/main.html")
+
+
+@app.route('/quiz_content')
+def quiz_content():
+    return render_template("/quiz/content.html")
+
+
 @app.route('/')
 def main():
     return render_template("/pages/main.html")
+
 
 @app.route('/motivational_interview', methods=['GET', 'POST'])
 def motivational_interview_conversation():
     chat_log = session.get('motivational_interview_chat_log', None)
     dialogue_id = session.get('motivational_interview_dialogue_id', None)
-    dialogue_answers = session.get('motivational_interview_dialogue_answers', {})
+    dialogue_answers = session.get('motivational_interview_dialogue_answers',
+                                   {})
 
     convo = AutoScriptConversation(
-        user="HUMAN",
-        chatbot="AI",
+        user="Human",
+        chatbot="Alex",
         dialogue_path="motivational_interview",
         dialogue_answers=dialogue_answers
     )
 
-    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
+    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log,
+                                                dialogue_id=dialogue_id)
     session["motivational_interview_chat_log"] = chat_log
     session["motivational_interview_dialogue_id"] = dialogue_id
 
@@ -177,7 +189,7 @@ def motivational_interview_conversation():
         session["motivational_interview_dialogue_id"] = dialogue_id
 
         return render_template(
-            '/pages/convo.html',
+            '/pages/convo_motivational_interview.html',
             user=convo.get_user(),
             bot=convo.get_chatbot(),
             warning=convo.WARNING,
@@ -185,13 +197,13 @@ def motivational_interview_conversation():
             notification=convo.NOTI,
             conversation=convo.get_conversation(),
             form=form
-        )
+         )
 
     return render_template(
-        '/pages/convo.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
+        '/pages/convo_motivational_interview.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(),
@@ -212,7 +224,8 @@ def mindfulness_conversation():
         dialogue_answers=dialogue_answers
     )
 
-    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log, dialogue_id=dialogue_id)
+    dialogue_id, chat_log = convo.sync_chat_log(chat_log=chat_log,
+                                                dialogue_id=dialogue_id)
     session["mindfulness_chat_log"] = chat_log
     session["mindfulness_dialogue_id"] = dialogue_id
 
@@ -238,33 +251,34 @@ def mindfulness_conversation():
         )
 
     return render_template(
-        '/pages/convo.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
+        '/pages/convo.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(),
         form=form
     )
 
+
 @app.route('/bot_to_bot', methods=['GET', 'POST'])
 def bot_to_bot():
     form = BotToBotChatForm(turn="Bot")
 
     bot = CustomGPTConversation(
-        user="HUMAN", 
-        chatbot="AI", 
+        user="HUMAN",
+        chatbot="AI",
         chat_log=session.get('bot_chat_log', form.bot_prompt.data),
         prompt=form.bot_prompt.data,
         default_start="I am an AI created by OpenAI. How are you doing today?"
     )
     bot.prompt = bot.get_prompt()
     form.bot_prompt.default = bot.get_prompt()
-    
+
     user = CustomGPTConversation(
-        user="HUMAN", 
-        chatbot="AI", 
+        user="HUMAN",
+        chatbot="AI",
         chat_log=session.get('user_chat_log', form.user_prompt.data),
         prompt=form.user_prompt.data,
         default_start="Hello, who are you?"
@@ -289,10 +303,12 @@ def bot_to_bot():
                 answer = bot.ask(question=message)
 
                 # [BOT] Add message back to chat log
-                bot_chat_log = bot.append_interaction_to_chat_log(question=message, answer=answer)
+                bot_chat_log = bot.append_interaction_to_chat_log(
+                    question=message, answer=answer)
 
                 # [USER] Add question (opposite) message to chat log
-                user_chat_log = user.append_interaction_to_chat_log(question=answer)
+                user_chat_log = user.append_interaction_to_chat_log(
+                    question=answer)
 
                 form.turn.default = 'User'
             else:
@@ -307,10 +323,12 @@ def bot_to_bot():
                     answer = user.ask()
 
                 # [BOT] Add question (opposite) message to chat log
-                bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
+                bot_chat_log = bot.append_interaction_to_chat_log(
+                    question=answer)
 
                 # [USER] Add answer (self) message to chat log
-                user_chat_log = user.append_interaction_to_chat_log(answer=answer)
+                user_chat_log = user.append_interaction_to_chat_log(
+                    answer=answer)
 
                 form.turn.default = 'Bot'
         else:
@@ -324,11 +342,14 @@ def bot_to_bot():
                 answer = user.ask(question=message)
 
                 # [USER] Add message back to chat log
-                user_chat_log = user.append_interaction_to_chat_log(question=message, answer=answer)
+                user_chat_log = user.append_interaction_to_chat_log(
+                    question=message, answer=answer)
 
                 # [BOT] Add question (opposite) message to chat log
-                bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
-
+                bot_chat_log = user.append_interaction_to_chat_log(
+                    question=answer)
+                bot_chat_log = bot.append_interaction_to_chat_log(
+                    question=answer)
                 form.turn.default = 'Bot'
             else:
                 # [BOT] Get last message for question
@@ -342,7 +363,8 @@ def bot_to_bot():
                     answer = bot.ask()
 
                 # [USER] Add question (opposite) message to chat log
-                user_chat_log = user.append_interaction_to_chat_log(question=answer)
+                user_chat_log = user.append_interaction_to_chat_log(
+                    question=answer)
 
                 # [BOT] Add answer (self) message to chat log
                 bot_chat_log = bot.append_interaction_to_chat_log(answer=answer)
@@ -360,7 +382,8 @@ def bot_to_bot():
 
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
@@ -371,7 +394,9 @@ def bot_to_bot():
             param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
-            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
             cursor.close()
 
         except sqlite3.Error as error:
@@ -385,9 +410,9 @@ def bot_to_bot():
         # Render conversation from BOT
         return render_template(
             "/pages/bot_to_bot.html",
-            user=bot.get_user(), 
-            bot=bot.get_chatbot(), 
-            warning=bot.WARNING, 
+            user=bot.get_user(),
+            bot=bot.get_chatbot(),
+            warning=bot.WARNING,
             end=bot.END,
             notification=bot.NOTI,
             conversation=bot.get_conversation(test=False),
@@ -396,9 +421,9 @@ def bot_to_bot():
 
     return render_template(
         "/pages/bot_to_bot.html",
-        user=bot.get_user(), 
-        bot=bot.get_chatbot(), 
-        warning=bot.WARNING, 
+        user=bot.get_user(),
+        bot=bot.get_chatbot(),
+        warning=bot.WARNING,
         end=bot.END,
         notification=bot.NOTI,
         conversation=bot.get_conversation(test=False),
@@ -416,12 +441,14 @@ def start_conversation():
             select_prompt = init_prompt(random=True)
         else:
             select_prompt = init_prompt(arm_no=arm_no)
-        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
+        session["chat_log"] = select_prompt["prompt"] + select_prompt[
+            "message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
+    convo = GPTConversation(session.get("user"), session.get("chatbot"),
+                            session.get("chat_log"))
 
     form = ChatForm()
     if form.validate_on_submit():
@@ -431,7 +458,8 @@ def start_conversation():
         session["chat_log"] = chat_log
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
@@ -439,10 +467,12 @@ def start_conversation():
                                   (user_id, chat_log) 
                                    VALUES 
                                   (?,?);"""
-            param_tuple = (session["user"],session["chat_log"])
-            count = cursor.execute(sqlite_insert_query,param_tuple)
+            param_tuple = (session["user"], session["chat_log"])
+            count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
-            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
             cursor.close()
 
         except sqlite3.Error as error:
@@ -451,19 +481,20 @@ def start_conversation():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-        
+
         return redirect(url_for('start_conversation'))
-    
+
     return render_template(
-        '/pages/convo.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
+        '/pages/convo.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(test=True),
         form=form
     )
+
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
 def start_qualtrics_conversation():
@@ -474,12 +505,14 @@ def start_qualtrics_conversation():
             select_prompt = init_prompt(random=True)
         else:
             select_prompt = init_prompt(arm_no=arm_no)
-        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
+        session["chat_log"] = select_prompt["prompt"] + select_prompt[
+            "message_start"]
         session["chatbot"] = select_prompt["chatbot"]
         session["user"] = request.remote_addr
         session["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
-    convo = GPTConversation(session.get("user"), session.get("chatbot"), session.get("chat_log"))
+    convo = GPTConversation(session.get("user"), session.get("chatbot"),
+                            session.get("chat_log"))
 
     start = session.get('start')
     if start is None:
@@ -487,10 +520,11 @@ def start_qualtrics_conversation():
 
     stop = session.get('stop')
     if stop is None:
-        session["stop"] = 5*60
+        session["stop"] = 5 * 60
 
     now = datetime.now()
-    difference = now - datetime.strptime(session.get('start'), "%m/%d/%Y, %H:%M:%S")
+    difference = now - datetime.strptime(session.get('start'),
+                                         "%m/%d/%Y, %H:%M:%S")
     difference_seconds = difference.total_seconds()
 
     end = session.get('end')
@@ -506,7 +540,8 @@ def start_qualtrics_conversation():
         session['chat_log'] = chat_log
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
@@ -514,10 +549,12 @@ def start_qualtrics_conversation():
                                   (user_id, chat_log) 
                                    VALUES 
                                   (?,?);"""
-            param_tuple = (session["user"],session["chat_log"])
-            count = cursor.execute(sqlite_insert_query,param_tuple)
+            param_tuple = (session["user"], session["chat_log"])
+            count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
-            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
             cursor.close()
 
         except sqlite3.Error as error:
@@ -530,10 +567,10 @@ def start_qualtrics_conversation():
         return redirect(url_for('start_qualtrics_conversation'))
 
     return render_template(
-        '/dialogue/qualtrics_card.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(end=session.get('end')),
@@ -547,7 +584,8 @@ def chatsms():
     chat_log = session.get('chat_log')
     answer = ask(incoming_msg, chat_log)
 
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,chat_log)
+    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,
+                                                         chat_log)
 
     msg = MessagingResponse()
     msg.message(answer)
@@ -557,17 +595,19 @@ def chatsms():
 
 @app.route('/chatweb', methods=['POST'])
 def chatweb():
-    input_json = request.get_json(force=True) 
+    input_json = request.get_json(force=True)
     incoming_msg = str(input_json['response'])
     chat_log = session.get('chat_log')
     answer = ask(incoming_msg, chat_log)
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer, chat_log)
+    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,
+                                                         chat_log)
 
     dictToReturn = {
         "answer": answer,
         "chat_log": session['chat_log']
     }
     return jsonify(dictToReturn)
+
 
 @app.route('/clear', methods=['GET'])
 def clear_session():
@@ -654,7 +694,8 @@ def info_bot():
     if not info_bot:
         select_prompt = init_information_bot()
         info_bot = {
-            "chat_log": select_prompt["prompt"] + select_prompt["message_start"],
+            "chat_log": select_prompt["prompt"] + select_prompt[
+                "message_start"],
             "convo_start": select_prompt["message_start"],
             "bot_start": "Hello. I am an AI agent designed to act as your Mindfulness instructor. I can answer any questions you might have related to Mindfulness. How can I help you?",
             "chatbot": select_prompt["chatbot"],
@@ -663,8 +704,8 @@ def info_bot():
         }
 
     convo = GPTConversation(
-        user=info_bot.get("user"), 
-        chatbot=info_bot.get("chatbot"), 
+        user=info_bot.get("user"),
+        chatbot=info_bot.get("chatbot"),
         chat_log=info_bot.get("chat_log"),
         bot_start=info_bot.get("bot_start"),
         convo_start=info_bot.get("convo_start")
@@ -676,10 +717,11 @@ def info_bot():
 
     stop = info_bot.get('stop')
     if stop is None:
-        info_bot["stop"] = 5*60
+        info_bot["stop"] = 5 * 60
 
     now = datetime.now()
-    difference = now - datetime.strptime(info_bot.get('start'), "%m/%d/%Y, %H:%M:%S")
+    difference = now - datetime.strptime(info_bot.get('start'),
+                                         "%m/%d/%Y, %H:%M:%S")
     difference_seconds = difference.total_seconds()
 
     end = info_bot.get('end')
@@ -695,7 +737,8 @@ def info_bot():
         info_bot['chat_log'] = chat_log
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
@@ -704,9 +747,11 @@ def info_bot():
                                    VALUES 
                                   (?,?);"""
             param_tuple = (info_bot["user"], info_bot["chat_log"])
-            count = cursor.execute(sqlite_insert_query,param_tuple)
+            count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
-            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
             cursor.close()
 
         except sqlite3.Error as error:
@@ -715,16 +760,16 @@ def info_bot():
             if sqliteConnection:
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
-        
+
         session["info_bot"] = info_bot
         return redirect(url_for('info_bot'))
 
     session["info_bot"] = info_bot
     return render_template(
-        '/dialogue/qualtrics_card.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(end=info_bot.get('end')),
@@ -738,7 +783,8 @@ def reflect_bot():
     if not reflection_bot:
         select_prompt = init_reflection_bot()
         reflection_bot = {
-            "chat_log": select_prompt["prompt"] + select_prompt["message_start"],
+            "chat_log": select_prompt["prompt"] + select_prompt[
+                "message_start"],
             "convo_start": select_prompt["message_start"],
             "bot_start": "Hello. I am an AI agent designed to act as your Mindfulness instructor. I am here to help you reflect on your learnings. How can I help you?",
             "chatbot": select_prompt["chatbot"],
@@ -747,8 +793,8 @@ def reflect_bot():
         }
 
     convo = GPTConversation(
-        user=reflection_bot.get("user"), 
-        chatbot=reflection_bot.get("chatbot"), 
+        user=reflection_bot.get("user"),
+        chatbot=reflection_bot.get("chatbot"),
         chat_log=reflection_bot.get("chat_log"),
         bot_start=reflection_bot.get("bot_start"),
         convo_start=reflection_bot.get("convo_start")
@@ -760,15 +806,17 @@ def reflect_bot():
 
     stop = reflection_bot.get('stop')
     if stop is None:
-        reflection_bot["stop"] = 5*60
+        reflection_bot["stop"] = 5 * 60
 
     now = datetime.now()
-    difference = now - datetime.strptime(reflection_bot.get('start'), "%m/%d/%Y, %H:%M:%S")
+    difference = now - datetime.strptime(reflection_bot.get('start'),
+                                         "%m/%d/%Y, %H:%M:%S")
     difference_seconds = difference.total_seconds()
 
     end = reflection_bot.get('end')
     if end is None or not end:
-        reflection_bot["end"] = (difference_seconds >= reflection_bot.get('stop'))
+        reflection_bot["end"] = (
+                    difference_seconds >= reflection_bot.get('stop'))
 
     form = ChatForm()
     if form.validate_on_submit() and not reflection_bot.get('end'):
@@ -779,7 +827,8 @@ def reflect_bot():
         reflection_bot['chat_log'] = chat_log
         sqliteConnection = None
         try:
-            sqliteConnection = sqlite3.connect('/var/www/html/acaidb/database.db')
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
             cursor = sqliteConnection.cursor()
             print("Successfully Connected to SQLite")
 
@@ -788,9 +837,11 @@ def reflect_bot():
                                    VALUES 
                                   (?,?);"""
             param_tuple = (reflection_bot["user"], reflection_bot["chat_log"])
-            count = cursor.execute(sqlite_insert_query,param_tuple)
+            count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
-            print("Record inserted successfully into SqliteDb_developers table ", cursor.rowcount)
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
             cursor.close()
 
         except sqlite3.Error as error:
@@ -805,10 +856,10 @@ def reflect_bot():
 
     session["reflection_bot"] = reflection_bot
     return render_template(
-        '/dialogue/qualtrics_card.html', 
-        user=convo.get_user(), 
-        bot=convo.get_chatbot(), 
-        warning=convo.WARNING, 
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(end=reflection_bot.get('end')),
