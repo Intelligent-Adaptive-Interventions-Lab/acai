@@ -518,7 +518,7 @@ def start_qualtrics_conversation():
     convo = GPTConversation(
         session.get("user"), 
         session.get("chatbot"),
-        session.get("chat_log"), 
+        session.get("chat_log"),
         bot_start="Hello. I am an AI agent designed to help you solve math questions. How can I help you?"
     )
 

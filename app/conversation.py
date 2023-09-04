@@ -259,7 +259,6 @@ def _init_twoprompt(arm_no: int=0, random: bool=False) -> Dict:
       return arms[arm_no]
   return arms[0]
 
-
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
     return _init_twoprompt(arm_no, random)
 
