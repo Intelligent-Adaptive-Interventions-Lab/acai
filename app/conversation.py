@@ -239,9 +239,28 @@ def _init_prompt_mindfulness(arm_no: int=0, random: bool=False) -> Dict:
         return arms[arm_no]
     return arms[0]
 
+def _init_twoprompt(arm_no: int=0, random: bool=False) -> Dict:
+  arms = [
+      {
+          "prompt": "You are a professional K12 math teacher helping students answer math questions.\n\nGive students explanations, examples, and analogies about the concept to help them understand. You should guide students in an open-ended way. Make the answer as precise and succinct as possible.\n\nYou should help them in a way that helps them (1) learn the concept, (2) have confidence in their understanding, and (3) have confidence in your ability to help them. Before answering, reflect on how your answer will help you achieve goals (1) (2) (3). Update your answer based on this reflection.",
+          "message_start": MESSAGE_START,
+          "chatbot": "AI"
+      },
+      {
+          "prompt": "",
+          "message_start": MESSAGE_START,
+          "chatbot": "AI"
+      }
+  ]
+
+  if random:
+      return choice(arms)
+  if arm_no < len(arms):
+      return arms[arm_no]
+  return arms[0]
 
 def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
-    return _init_prompt_field(arm_no, random)
+    return _init_twoprompt(arm_no, random)
 
 
 def init_reflection_bot() -> Dict:
@@ -287,7 +306,7 @@ class Conversation:
 
 class GPTConversation(Conversation):
     CONFIGS = {
-        "engine": "text-davinci-002",
+        "engine": "text-davinci-003",
         "temperature": 0.9,
         "max_tokens": 300,
         "top_p": 1,
