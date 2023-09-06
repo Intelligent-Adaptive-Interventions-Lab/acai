@@ -52,44 +52,75 @@ class MI_GPTConversation(MI_Conversation):
             self.CONVO_START = convo_start
 
         self.prompt = chat_log.split(self.CONVO_START)[0]
-        self.start_sequence = f"\n{self.CHATBOT}:"
-        self.restart_sequence = f"\n\n{self.USER}: "
+        self.start_sequence = f"{self.CHATBOT}:"
+        self.restart_sequence = f"{self.USER}: "
 
     def ask(self, question: str) -> str:
         try:
-            is_english_query = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=f"Is the text english? Yes or No?\n\nText:{question}\n\nAnswer:",
-                temperature=0,
-                max_tokens=15,
-                request_timeout=3
-            )['choices'][0]['text'].lower().strip()
+            # is_english_query = openai.Completion.create(
+            #     model="text-davinci-003",
+            #     prompt=f"Is the text english? Yes or No?\n\nText:{question}\n\nAnswer:",
+            #     temperature=0,
+            #     max_tokens=15,
+            #     request_timeout=3
+            # )['choices'][0]['text'].lower().strip()
 
-            if "no" in is_english_query:
-                print('NOT ENGLISH')
-                return "Sorry, I don't understand. Could you try saying that in a different way?"
+            # if "no" in is_english_query:
+            #     print('NOT ENGLISH')
+            #     return "Sorry, I don't understand. Could you try saying that in a different way?"
 
-
-
-            prompt_text = f"{self.chat_log}{self.restart_sequence}{question.strip()}{self.start_sequence}"
+            # prompt_text = f"{self.chat_log}{self.restart_sequence}{question.strip()}{self.start_sequence}"
             # print(prompt_text)
-            response = openai.Completion.create(
-                prompt=prompt_text,
-                stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
-                **self.CONFIGS,
-                request_timeout=10
+
+            messages = [
+                {
+                    "role": "system",
+                    "content": self.CONVO_START
+                }
+            ]
+
+            for s in self.chat_log.split('\n'):
+                if s == "":
+                    continue
+                msg = s.split(' ', 1)
+
+                msg[0] = msg[0].strip()
+                msg[1] = msg[1].strip()
+
+                messages.append({
+                    "role": "user" if msg[0] == self.restart_sequence else "assistant",
+                    "content": msg[1]
+                })
+
+            messages.append({
+                "role": "user",
+                "content": question.strip()
+            })
+
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=messages
             )
 
-            story = response['choices'][0]['text']
-            answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
+            resp_msg = response['choices'][0]['message']
+            return resp_msg['content']
+            
+
+            # response = openai.Completion.create(
+            #     prompt=prompt_text,
+            #     stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
+            #     **self.CONFIGS,
+            #     request_timeout=10
+            # )
+
+            # story = response['choices'][0]['text']
+            # answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
         except Exception as e:
             print(f"ERROR: {e}")
             return "Sorry, something went wrong. Can you please try again?"
 
-        return answer
-
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
-            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+            return f"{self.chat_log}\n{self.restart_sequence} {question}\n{self.start_sequence} {answer}".strip()
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
         # print("chat_log: ", self.chat_log)
