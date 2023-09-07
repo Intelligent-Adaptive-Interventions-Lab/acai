@@ -247,7 +247,7 @@ def _init_twoprompt(arm_no: int=0, random: bool=False) -> Dict:
           "chatbot": "AI"
       },
       {
-          "prompt": "",
+          "prompt": "You are a helpful assistant.",
           "message_start": MESSAGE_START,
           "chatbot": "AI"
       }
@@ -324,6 +324,7 @@ class GPTConversation(Conversation):
             self.CONVO_START = convo_start
 
         self.prompt = chat_log.split(self.CONVO_START)[0]
+        print(f"INIT: prompt - {self.prompt}")
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
@@ -348,8 +349,8 @@ class GPTConversation(Conversation):
             return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
-        print("chat_log: ", self.chat_log)
-        print("split: ", "".join([self.prompt, self.CONVO_START]))
+        # print("chat_log: ", self.chat_log)
+        # print("split: ", "".join([self.prompt, self.CONVO_START]))
         print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
         dialogs = chat_log_clean.split(self.restart_sequence)
