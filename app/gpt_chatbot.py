@@ -99,7 +99,10 @@ class MI_GPTConversation(MI_Conversation):
 
             response = openai.ChatCompletion.create(
                 model="gpt-4",
-                messages=messages
+                messages=messages,
+                temperature=0.9,
+                presence_penalty=0.6,
+                request_timeout=10
             )
 
             resp_msg = response['choices'][0]['message']
@@ -231,7 +234,10 @@ class NP_MI_GPTConversation(MI_Conversation):
 
             response = openai.ChatCompletion.create(
                 model="gpt-4",
-                messages=messages
+                messages=messages,
+                temperature=0.9,
+                presence_penalty=0.6,
+                request_timeout=10
             )
 
             resp_msg = response['choices'][0]['message']

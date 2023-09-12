@@ -1,0 +1,9 @@
+AI: Hello, how can I help you?
+HUMAN:  asdfasdf
+AI: Sorry, something went wrong. Can you please try again?
+HUMAN:  asdfasdf
+AI: I'm sorry, but I'm somewhat confused with your query. Could you please provide more details or clarify it?
+HUMAN:  asdfs
+AI: I'm sorry, I didn't get that. Could you please repeat or clarify what you need assistance with?
+HUMAN:  asdfasdf
+AI: I'm sorry for the inconvenience, it seems like there's an issue understanding the request. Could you please provide more information?
