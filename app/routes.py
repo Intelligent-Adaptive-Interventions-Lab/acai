@@ -397,7 +397,7 @@ def np_mi_conversation():
 
     timer_remaining = INITIAL_TIMER - (int(time.time()) - start)
 
-    convo = NP_MI_GPTConversation(user, chatbot, chat_log, "You are a conversational chatbot.", "Hey there! I'm an AI developed by the University of Toronto. How can I help you?")
+    convo = MI_GPTConversation(user, chatbot, chat_log, "Hey there! I'm an AI developed by the University of Toronto. How can I help you?", "You are a conversational chatbot.")
 
     session['np_mi_user'] = user
     session["np_mi_chatbot"] = chatbot
