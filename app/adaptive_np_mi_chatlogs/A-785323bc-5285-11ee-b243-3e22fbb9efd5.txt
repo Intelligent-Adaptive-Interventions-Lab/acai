@@ -1,0 +1,2 @@
+HUMAN:  asdfasdf
+AI: Hello! It seems like you're inputting random letters. Can I help you with anything?

@@ -344,7 +344,7 @@ def mi_conversation():
     INITIAL_TIMER = 300
 
     chat_log = session.get('mi_chat_log', f"{MI_Conversation.CONVO_START}\n\n{MI_Conversation.CHATBOT}: {MI_Conversation.BOT_START}")
-    chatbot = session.get('mi_chatbot', "Alex")
+    chatbot = session.get('mi_chatbot', "Alex (chatbot)")
     user = session.get('mi_user', "A-"+str(uuid.uuid1()))
     start = session.get('mi_start', int(time.time()))
 
@@ -395,14 +395,14 @@ def mi_conversation():
 def np_mi_conversation():
     INITIAL_TIMER = 300
 
-    chat_log = session.get('np_mi_chat_log', f"{MI_Conversation.CHATBOT}: Hello, how can I help you?")
-    chatbot = session.get('np_mi_chatbot', "Alex")
+    chat_log = session.get('np_mi_chat_log', f"You are a conversational chatbot.\n\n{MI_Conversation.CHATBOT}: Hey there! I'm an AI developed by the University of Toronto. How can I help you?")
+    chatbot = session.get('np_mi_chatbot', "Alex (chatbot)")
     user = session.get('np_mi_user', "A-"+str(uuid.uuid1()))
     start = session.get('np_mi_start', int(time.time()))
 
     timer_remaining = INITIAL_TIMER - (int(time.time()) - start)
 
-    convo = NP_MI_GPTConversation(user, chatbot, chat_log)
+    convo = NP_MI_GPTConversation(user, chatbot, chat_log, "You are a conversational chatbot.", "Hey there! I'm an AI developed by the University of Toronto. How can I help you?")
 
     session['np_mi_user'] = user
     session["np_mi_chatbot"] = chatbot
