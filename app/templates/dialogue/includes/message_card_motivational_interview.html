@@ -15,7 +15,7 @@
                 </a>
             </li>
             <li class="nav-item" style="max-width: 48vw;">
-                <a href="#!" class="nav-link bot__name">{{ bot }}</a>
+                <a href="#!" class="nav-link bot__name">{{ bot }} (chatbot)</a>
                 {% if conversation %}
                     {% with first_convo=conversation.0 %}
                         {% if (first_convo) and (first_convo.from == bot) and (first_convo.to == warning) %}

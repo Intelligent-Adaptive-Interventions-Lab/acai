@@ -1,0 +1,7 @@
+
+AI: Hey there! I am Alex, an AI developed by the University of Toronto.
+AI: What is your name?
+
+Human: pdf
+AI: Nice to meet you, pdf!
+AI: Please let me know if I got your name right. Yes/No
