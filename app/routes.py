@@ -453,7 +453,7 @@ def d_mi_conversation():
 
     convo = AutoScriptConversation(
         user=user,
-        chatbot="Alex",
+        chatbot="Alex (chatbot)",
         dialogue_path="motivational_interview",
         dialogue_answers=dialogue_answers,
         auxillary_data=auxillary_data
