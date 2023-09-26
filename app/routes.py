@@ -438,8 +438,8 @@ def np_mi_conversation():
     )
 
 
-@app.route('/motivational_interview', methods=['GET', 'POST'])
-def motivational_interview_conversation():
+@app.route('/d_mi_conversation', methods=['GET', 'POST'])
+def d_mi_conversation():
     INITIAL_TIMER = 300
 
     chat_log = session.get('motivational_interview_chat_log', None)
