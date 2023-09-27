@@ -112,7 +112,7 @@ class Answer:
                         prompt=f"Is the text english? Yes or No?\n\nText:{ans}\n\nAnswer:",
                         temperature=0,
                         max_tokens=15,
-                        request_timeout=3
+                        request_timeout=10
                     )['choices'][0]['text'].lower().strip()
 
                     if "no" in is_english_query:
@@ -130,7 +130,7 @@ class Answer:
                         f"\n\nQuestion: {self.question}\n\nAnswer: {ans}\n\nResult:",
                         temperature=0,
                         max_tokens=100,
-                        request_timeout=3
+                        request_timeout=10
                     )['choices'][0]['text'].strip()
 
                     print(is_relevant_answer_query)
