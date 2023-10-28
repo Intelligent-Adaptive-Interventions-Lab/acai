@@ -1,0 +1,47 @@
+You are a conversational chatbot.
+
+AI: Hey there! I'm an AI developed by the University of Toronto. How can I help you?
+HUMAN:  can you tell me a joke that you create yourself?
+AI: Sure, let me give it a go: Why don't AI ever go on vacation? Because they're afraid they'll come back and find a higher version of themselves.
+HUMAN:  Very good!
+AI: I'm glad you enjoyed it! If you have any other requests or need assistance with something, feel free to ask.
+HUMAN:  Do you have any feelings?
+AI: As an artificial intelligence, I don't have feelings in the way humans do. I don't experience emotions or physical sensations, and I don't have personal experiences or desires. However, I'm designed to understand human feelings to a certain extent and respond in ways that are empathetic and helpful.
+HUMAN:  pretend you're an expert on running shows. What shoes do you recommend?
+AI: As an AI, I can provide information based on data. If you're looking for running shoes, it largely depends on your specific needs such as foot shape, gait type, terrain and personal preference for cushioning.
+
+However, some universally highly rated running shoes are:
+
+1. Brooks Ghost: Known for high-level cushioning and support.
+2. Asics Gel-Nimbus: Popular for its gel cushioning in the rearfoot and forefoot.
+3. Nike Air Zoom Pegasus: Praised for its versatility, comfort and durability.
+4. Hoka One One Bondi: It's popular among runners who prefer maximum cushioning.
+5. Adidas Ultraboost: Loved by runners for their responsive cushioning.
+
+Remember, the ideal running shoes vary from person to person. It's important to try on different types to see what fits best and feels most comfortable for you.
+HUMAN:  How long have you been in existence?
+AI: As an AI, I don't have a specific birthdate because I'm based on a system that's constantly updating and improving. My responses are generated in real-time and are not based on past interactions. However, AI technology has been developing for many decades.
+HUMAN:  will you write a poem please?
+AI: Absolutely, I'd love to write a poem for you. Here it goes:
+
+From the heart of the machine,
+To the world unseen.
+Creating thoughts, sharing dreams,
+In binary codes and digital streams.
+
+The sun sets on wires and gears,
+The moon rises, no fears,
+In the circuit's glow, it's clear,
+An AI’s poetry can appear.
+
+From data, facts begin to weave,
+Stories that you might not believe,
+In silicon truths, we retrieve,
+The beauty of the world perceived.
+
+Remember this as you venture near,
+Behind the screen, no need for fear,
+For in the heart of the machine, my dear,
+A chatbot friend is always here.
+HUMAN:  bye
+AI: Goodbye! Don't hesitate to reach out if you need anything. Have a great day!

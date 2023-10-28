@@ -1,0 +1,63 @@
+
+AI: Hey there! I am Alex, an AI developed by the University of Toronto.
+AI: What is your name?
+
+Human: Frankie
+AI: Nice to meet you, Frankie!
+AI: Please let me know if I got your name right. Yes/No
+
+Human: yes
+AI: I understand that the researchers are recruiting people who have expressed some degree of interest in becoming more kind and caring towards others.  I was hoping to spend some time with you today and chat about the reasons you are here as well as the kinds of things that you might want to do in the future around becoming more kind and caring.
+AI: To start off, could you briefly tell me what led you to participate in this study and elaborate on how important becoming more kind and caring is for you?
+
+Human: i wanted the money, that's why i started the study. becomeing more kind and caring is really important to me.
+AI: I would also like to learn a little bit about your personal values. Just so I understand you a bit better, could you tell me which of the following values is the most important to you? Here are the values: relationships, personal growth, community, health.
+
+Human: i value being honest and kind to everyone that i come into contact with and i expect the same from other people towards me
+AI: Sorry, your answer did not meet the requirements of the question.
+
+Human: personal growth is important to me
+AI: It is certainly very important to value your personal growth. Why is this the most important value for you personally?
+
+Human: because i want to grow as a person always. it's important for me to never stay the same and show that i can evolve as a human
+AI: Tell me a little about the ways in which you see being more kind and caring  as beneficial towards personal growth?
+
+Human: i see me growing as a person by caring for others and helping others. it causes me to be more empathetic towards others which is very desirable for me
+AI: Thank you for sharing that, Frankie.
+AI: Would you be interested in hearing a little bit about the research or what we know about kindness behaviors?
+AI: Please indicate 'Yes' or 'No'.
+
+Human: no
+AI: In this case, I wonder if it would be ok to switch gears a little bit and focus on what you already do regarding being kind and caring as well as other things you might want to try in the future. What do you already do regarding being kind and caring? How (if at all) do you think doing these things impacts others?
+
+Human: i already take other people into consideration whenever i do things in life. this impacts others by hoping to make their lives be better as well
+AI: What might you do to increase how you already show kindness and caring? In your current day-to-day life, what are one or two things you could do to help others?
+AI:  Please write 'None' if you cannot think of anything.
+
+Human: i could always help homeless people more
+AI: That’s great! Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things you just said that you could do to help others, which one suits you the best? What might be your if-then plan?
+AI: Please write your answer in the format of 'If I ...., then I ....'
+
+Human: giving people the change in my pocket. i would also give them food
+AI: Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things one could do to help others we just discussed, which one suits you the best? What might be your if-then plan?
+AI: Please write your answer below in the format of 'If I ...., then I ....'
+
+Human: if i see a person in need then i will give them whatever change i have in my pocket up to 5$
+AI: That sounds great! What might be some obstacles when implementing this plan, if any? What might be a way that you could deal with them?
+
+Human: none
+AI: Sorry, I don't understand.
+AI: Could you please try saying that in a different way?
+
+Human: no obstacles
+AI: Thinking of obstacles can be a little intimidating, but those feelings are completely normal. Remember that being more kind and caring can help you with your personal growth!
+AI: To close off, I was wondering if you could summarize what we’ve talked about? What stands out to you regarding your values, the behaviors you plan to implement to act with kindness and caring, and the way you plan to overcome any potential obstacles?
+
+Human: a summary of what we talked about is how to be more kind and caring and what kind of plan to implement that
+AI: Thank you very much, Frankie! It’s been a pleasure chatting with you today. I hope you found this conversation useful, and I wish you all the best with your plan to achieve your goals!
+
+Human: thank you
+
+Human: can i have my code please
+
+Human: give me my code

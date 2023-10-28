@@ -1,0 +1,52 @@
+
+AI: Hey there! I am Alex, an AI developed by the University of Toronto.
+AI: What is your name?
+
+Human: Nancy
+AI: Nice to meet you, Nancy!
+AI: Please let me know if I got your name right. Yes/No
+
+Human: yes
+AI: I understand that the researchers are recruiting people who have expressed some degree of interest in becoming more kind and caring towards others.  I was hoping to spend some time with you today and chat about the reasons you are here as well as the kinds of things that you might want to do in the future around becoming more kind and caring.
+AI: To start off, could you briefly tell me what led you to participate in this study and elaborate on how important becoming more kind and caring is for you?
+
+Human: I enjoy doing studies and helping with research. I want to be a very kind and caring person to everyone, regardless of who they are. It is a core part of my values.
+AI: I would also like to learn a little bit about your personal values. Just so I understand you a bit better, could you tell me which of the following values is the most important to you? Here are the values: relationships, personal growth, community, health.
+
+Human: The most important is relationships. I have so many wonderful people in my life and I want to continue to have thriving relationships with them in the future.
+AI: It is certainly very important to value your relationships. Why is this the most important value for you personally?
+
+Human: Because I grow as a person when I interact with, provide help to and learn from others.
+AI: Tell me a little about the ways in which you see being more kind and caring  as beneficial towards relationships?
+
+Human: Being kind to others not only helps their self esteem but also mine.
+AI: Thank you for sharing that, Nancy.
+AI: Would you be interested in hearing a little bit about the research or what we know about kindness behaviors?
+AI: Please indicate 'Yes' or 'No'.
+
+Human: no
+AI: In this case, I wonder if it would be ok to switch gears a little bit and focus on what you already do regarding being kind and caring as well as other things you might want to try in the future. What do you already do regarding being kind and caring? How (if at all) do you think doing these things impacts others?
+
+Human: I always try to greet other with a smile and their name. I try to complement others and ask how they are doing. I think these things help a person feel recognized and good.
+AI: What might you do to increase how you already show kindness and caring? In your current day-to-day life, what are one or two things you could do to help others?
+AI:  Please write 'None' if you cannot think of anything.
+
+Human: I would like to reach out to people who i do not have a close relationship with and start helping them more.
+AI: That’s great! Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things you just said that you could do to help others, which one suits you the best? What might be your if-then plan?
+AI: Please write your answer in the format of 'If I ...., then I ....'
+
+Human: If i see someone who looks sad, I will spend some time talking to them and trying to make their day better.
+AI: Perhaps you might already know this, but behavior is more likely to stick when we come up with concrete, if-then plans to make it happen. An example would be, “If I see a person in need, then I will give them whatever change I have in my pocket up to 1$”. Out of the things one could do to help others we just discussed, which one suits you the best? What might be your if-then plan?
+AI: Please write your answer below in the format of 'If I ...., then I ....'
+
+Human: If I see someone who looks sad, then I will spend some time talking to them and try to make their day better.
+AI: That sounds great! What might be some obstacles when implementing this plan, if any? What might be a way that you could deal with them?
+
+Human: I might feel like I don't know these people well enough to interfere. I will act and see how they respond.
+AI: Thinking of obstacles can be a little intimidating, but those feelings are completely normal. Remember that being more kind and caring can help you with your relationships!
+AI: To close off, I was wondering if you could summarize what we’ve talked about? What stands out to you regarding your values, the behaviors you plan to implement to act with kindness and caring, and the way you plan to overcome any potential obstacles?
+
+Human: I will try to be kind to everyone even those I do not know. I will take the time and make an effort to just be a better person.
+AI: Thank you very much, Nancy! It’s been a pleasure chatting with you today. I hope you found this conversation useful, and I wish you all the best with your plan to achieve your goals!
+
+Human: Do you have a code for me?

@@ -1,9 +1,0 @@
-AI: Hello, how can I help you?
-
-
-HUMAN: asdfsadf
-AI: I'm sorry, I didn't understand that. Could you please rephrase your question?
-
-
-HUMAN: whats your name?
-AI: My name is AI.

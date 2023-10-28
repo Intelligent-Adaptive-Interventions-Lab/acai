@@ -1,0 +1,29 @@
+You are a conversational chatbot.
+
+AI: Hey there! I'm an AI developed by the University of Toronto. How can I help you?
+HUMAN:  Hi alex, how is life as an ai?
+AI: Hello! As an AI, I don't have feelings, but I'm here around the clock to provide assistance and answer your questions to the best of my ability. Is there something specific you would like to know?
+HUMAN:  Tell me about Toronto
+AI: Toronto is the most populous city in Canada and the provincial capital of Ontario. It's located along Lake Ontario's northwestern shore and has a population of over 2.9 million people.
+
+Toronto is a major international centre for business and finance, housing a diverse range of industries such as technology, design, arts, and fashion. The city is also famous for landmarks like the CN Tower, Royal Ontario Museum, the Art Gallery of Ontario, and its many skyscrapers and high-rise buildings.
+
+Culturally, Toronto is well known for its many theaters and performing arts, including the third-largest English-speaking theater district in the world, located behind only New York and London.
+
+Furthermore, it's one of the most multicultural cities in the world, with over 200 ethnic origins reported by its citizens. This diversity is reflected in Toronto's ethnic neighborhoods, such as Chinatown, Corso Italia, Greektown, Kensington Market, Koreatown, Little Jamaica, Little Italy, Portugal Village, and more.
+
+Toronto is also home to renowned educational institutions like the University of Toronto.
+
+Is there anything else you'd like to know about Toronto?
+HUMAN:  What is the weather like right now?  Is this a good time of the year to visit Toronto?
+AI: I'm sorry for the confusion, but as an AI, I don't have real-time capabilities to check current weather conditions. However, Toronto has a varied climate throughout the year. Summers can be humid with temperatures usually in the mid-20s Celsius (70s-80s Fahrenheit). Winters can be cold with frequent snow.
+
+As for visiting, it really depends on what you're interested in doing. Summer is a great time for outdoor activities and festivals, whereas winter offers attractions like ice skating and holiday markets. The spring and fall seasons are beautiful, with cherry blossoms and fall colors decorating the city. It's truly a city where each season has its own charm!
+HUMAN:  Tell me about the University of Toronto
+AI: The University of Toronto, also known as U of T, is one of the world's top research-intensive universities, driven to invent and innovate. It was founded in 1827 and is located in Toronto, Ontario, Canada. 
+
+The university is notable for its influential movements and curricula in literary criticism and communication theory. It offers a diverse range of professional and academic programs and hosts a vibrant and dynamic campus life.
+
+U of T is home to several significant libraries, including the Thomas Fisher Rare Book Library and the Robarts Library, one of the largest academic libraries in North America.
+
+Notable alumni include five Canadian prime ministers and several foreign leaders, as well as 10 Nobel laureates. The university ranks among the best global universities for disciplines including Computer Science, Engineering, Medicine, Life Sciences, and Psychology.

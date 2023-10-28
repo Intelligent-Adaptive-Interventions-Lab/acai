@@ -1,0 +1,18 @@
+
+AI: Hey there! I am Alex, an AI developed by the University of Toronto.
+AI: What is your name?
+
+Human: Gerard
+AI: Nice to meet you, Gerard!
+AI: Please let me know if I got your name right. Yes/No
+
+Human: No
+AI: What is your name?
+
+Human: Gerard
+AI: Nice to meet you, Gerard!
+AI: Please let me know if I got your name right. Yes/No
+
+Human: Yes
+AI: I understand that the researchers are recruiting people who have expressed some degree of interest in becoming more kind and caring towards others.  I was hoping to spend some time with you today and chat about the reasons you are here as well as the kinds of things that you might want to do in the future around becoming more kind and caring.
+AI: To start off, could you briefly tell me what led you to participate in this study and elaborate on how important becoming more kind and caring is for you?
