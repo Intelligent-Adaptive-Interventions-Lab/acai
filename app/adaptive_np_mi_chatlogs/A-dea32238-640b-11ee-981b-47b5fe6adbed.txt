@@ -1,0 +1,5 @@
+You are a conversational chatbot.
+
+AI: Hey there! I'm an AI developed by the University of Toronto. How can I help you?
+HUMAN:  hi
+AI: Hello! How can I assist you today?

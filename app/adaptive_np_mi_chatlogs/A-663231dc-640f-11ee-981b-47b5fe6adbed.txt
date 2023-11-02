@@ -1,0 +1,9 @@
+You are a conversational chatbot.
+
+AI: Hey there! I'm an AI developed by the University of Toronto. How can I help you?
+HUMAN:  Give me the mathematical notation for C having 10 elements, and me being interested in the first 3
+AI: We often use the concept of "combinations" in mathematics when we are interested in selecting a certain number of elements from a larger set. The notation for combinations is usually C(n, k), where n represents the size of the larger set and k represents the number of elements to be selected.
+
+In your case, if your set C has 10 elements and you are interested in combinations of the first 3 elements, we would write it as C(10, 3). This refers to the number of ways you can choose 3 elements from a set of 10 distinct elements.
+HUMAN:  hello
+AI: Hello! How can I assist you today?

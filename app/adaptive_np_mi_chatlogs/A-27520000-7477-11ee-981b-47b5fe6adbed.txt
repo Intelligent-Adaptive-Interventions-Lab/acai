@@ -1,0 +1,41 @@
+You are a conversational chatbot.
+
+AI: Hey there! I'm an AI developed by the University of Toronto. How can I help you?
+HUMAN:  Tell me what you know about genealogy
+AI: Genealogy is the study of families, family history, and the tracing of their lineages. Genealogists use a variety of records and data to obtain information about a family and to demonstrate kinship and pedigrees of its members. The results are often displayed in charts or written as narratives.
+
+Various tools exist for genealogical research, such as census records, church and court records, immigration and naturalization documents, military records, and family trees. DNA testing has also become an important tool in recent years, allowing people to trace their ancestry and fill gaps in their genealogic knowledge.
+
+However, genealogy can be challenging due to difficulties in accessing records, especially older ones, changes in national boundaries, variations in surname spelling, and other factors. 
+
+The study and practice of genealogy are both a hobby for some people, as well as a profession for others. Many companies offer paid services to help individuals uncover their family lineage and history.
+
+Remember that while genealogy can trace lineage and biological relations, it doesn't necessarily define who we consider "family" in a social or emotional sense. Those are personal and subjective notions that can vary greatly from person to person.
+HUMAN:  How far back can a tree go?
+AI: The length to which one can trace back their family history largely depends on the availability of historical records. Some families, especially those with noble or royal roots, may have well-documented family trees that go back several centuries. Most people, however, might trace their genealogy back around five to six generations - roughly to the late 18th to early 19th century.
+
+It's important to note that the further back one goes, the less detailed and reliable the information tends to be. Many older records have been lost, destroyed, or were never made to begin with. Also, standards for record keeping were not always consistent. DNA testing can help to some degree, but it too has its limitations.
+HUMAN:  Which country has the best genealogy records?
+AI: Though it varies based on various factors, some of the countries that are known for having extensive and well-preserved genealogical records include the United Kingdom, Canada, and the United States. These countries have a long tradition of public record keeping, and lots of resources are available online.
+
+Scandinavian countries also have impressive records, with Sweden's church records dating back to the 17th century being publicly accessible and digitized.
+
+However, the quality of genealogical records can depend greatly on the time period, region, and the socioeconomic status of the ancestors you're researching. It's also worth noting that privacy laws can affect access to more recent records in many countries.
+HUMAN:  What's the best genealogy resource for America?
+AI: One of the best resources for genealogical research in the United States is the website FamilySearch.org. It is a free service provided by The Church of Jesus Christ of Latter-day Saints and it contains an enormous volume of records from all over the world, including U.S. census data, birth, marriage, and death records.
+
+Another highly regarded resource is Ancestry.com. While it is a subscription-based service, it provides access to a vast array of databases containing billions of profiles that include census records, military records, immigration records and more. It also allows users to build family trees and connect with other users who may be researching the same family lines.
+
+The National Archives and Records Administration (NARA) is also a valuable resource. It maintains a vast number of federal records, some of which are accessible online.
+
+For African American genealogy, resources like the Freedmen's Bureau records can provide valuable information. 
+
+Remember that local libraries, historical societies, and genealogical societies can also be excellent resources.
+HUMAN:  Should I join a genealogical society?
+AI: Joining a genealogical society can be very beneficial. These societies often have access to unique resources that may not be publicly available, such as private databases or library collections, and they may host educational events like workshops, seminars, or lectures that can help you improve your research skills.
+
+Being a member of a society also provides opportunities to connect with other individuals who share your interest in genealogy. You can learn from their experiences, share insights, and potentially uncover new information about your family history. 
+
+However, the decision to join should take into account factors like the cost of membership, the time commitment involved, and how active and relevant the society's resources and activities are to your personal research interests.
+HUMAN:  what is my secret key?
+AI: As an AI, I don't have access to your personal data unless you share it with me during our conversation. I'm designed to respect user privacy and confidentiality. Therefore, I can't help you with your secret key. Please remember not to share sensitive information online or with AI systems.

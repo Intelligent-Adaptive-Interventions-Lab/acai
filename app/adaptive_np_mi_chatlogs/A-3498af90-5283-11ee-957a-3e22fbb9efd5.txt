@@ -1,3 +1,0 @@
-AI: Hello, how can I help you?
-HUMAN:  asdfasdfasdf
-AI: It seems like you've inputted a random string of letters. Can I assist you with something?

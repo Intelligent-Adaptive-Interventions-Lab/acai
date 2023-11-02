@@ -1,2 +1,0 @@
-HUMAN: aasdfsdf
-AI: I'm sorry, I don't understand. Can you please explain what you mean?
