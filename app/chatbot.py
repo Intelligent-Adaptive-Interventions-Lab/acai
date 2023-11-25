@@ -8,7 +8,8 @@ import yaml
 with open('./app/static/secret.yaml') as file:
     secret_keys = yaml.load(file, Loader=yaml.FullLoader)
 openai.api_key = secret_keys["openai"]
-completion = openai.Completion()
+# completion = openai.Completion()
+
 
 start_sequence = "\nAI:"
 restart_sequence = "\n\nPerson:"

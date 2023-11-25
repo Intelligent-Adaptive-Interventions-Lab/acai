@@ -1,93 +1,169 @@
-{% extends '_base.html' %}
+{% extends '_base.html' %} {% block title %} ACAI {% endblock title %} {% block
+css_files %} {% endblock css_files %} {% block contents %} {% include
+'pages/includes/navbar.html' %} {% include 'pages/includes/breadcrumb.html' %}
 
-{% block title %}
-ACAI
-{% endblock title %}
+<div class="container" style="height: 80vh; width: 90vw">
+  <div class="d-flex flex-column h-100 w-100 gap-3 mt-3">
+    <h5 id="page-id" class="m-0 fs-3">Browse Tasks</h5>
+    <span class="m-0 fs-5 text-muted">Navigation to each chatbot task.</span>
 
-{% block css_files %}
-
-{% endblock css_files %}
-
-{% block contents %}
-
-{% include 'pages/includes/navbar.html' %}
-
-{% include 'pages/includes/breadcrumb.html' %}
-
-<div class="container" style="height: 80vh; width: 90vw;">
-    <div class="d-flex flex-column h-100 w-100 gap-3 mt-3">
-
-        <h5 id="page-id" class="m-0 fs-3">Browse Tasks</h5>
-        <span class="m-0 fs-5 text-muted">Navigation to each chatbot task.</span>
-
-        <div class="row g-2 g-lg-3">
-            <button id="conversation-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
-                <div class="d-flex gap-3">
-                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
-                        <i class="bi bi-chat-dots" style="width: 44px; height: 44px; font-size: 38px;"></i>
-                    </h5>
-                    <div class="d-flex flex-column align-items-start justify-content-center">
-                        <h5 class="card-title text-start fs-5">Chatbot Conversation</h5>
-                        <p class="card-text text-start text-muted fs-6">Start conversation with GPT-3 chatbot.</p>
-                    </div>
-                </div>
-            </button>
-            <button id="bot-to-bot-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
-                <div class="d-flex gap-3">
-                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
-                        <i class="bi bi-robot" style="width: 44px; height: 44px; font-size: 38px;"></i>
-                    </h5>
-                    <div class="d-flex flex-column align-items-start justify-content-center">
-                        <h5 class="card-title text-start fs-5">Bot-To-Bot Conversation</h5>
-                        <p class="card-text text-start text-muted fs-6">Simulate conversations with two GPT-3 Chatbots.</p>
-                    </div>
-                </div>
-            </button>
-            <button id="mindfulness-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
-                <div class="d-flex gap-3">
-                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
-                        <i class="bi bi-balloon-heart" style="width: 44px; height: 44px; font-size: 38px;"></i>
-                    </h5>
-                    <div class="d-flex flex-column align-items-start justify-content-center">
-                        <h5 class="card-title text-start fs-5">Mindfulness Conversation</h5>
-                        <p class="card-text text-start text-muted fs-6">Mindfulness conversations with an auto-script.</p>
-                    </div>
-                </div>
-            </button>
-            <button id="motivational-interview-page-btn" class="btn justify-content-left col-12 col-lg-5 text-truncate" type="button">
-                <div class="d-flex gap-3">
-                    <h5 class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3" style="background: var(--icon-background); color: var(--icon-color);">
-                        <i class="bi bi-balloon-heart" style="width: 44px; height: 44px; font-size: 38px;"></i>
-                    </h5>
-                    <div class="d-flex flex-column align-items-start justify-content-center">
-                        <h5 class="card-title text-start fs-5">Motivational Interview Conversation</h5>
-                        <p class="card-text text-start text-muted fs-6">Motivational Interview conversations with an auto-script.</p>
-                    </div>
-                </div>
-            </button>
+    <div class="row g-2 g-lg-3">
+      <button
+        id="conversation-page-btn"
+        class="btn justify-content-left col-12 col-lg-5 text-truncate"
+        type="button"
+      >
+        <div class="d-flex gap-3">
+          <h5
+            class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3"
+            style="background: var(--icon-background); color: var(--icon-color)"
+          >
+            <i
+              class="bi bi-chat-dots"
+              style="width: 44px; height: 44px; font-size: 38px"
+            ></i>
+          </h5>
+          <div
+            class="d-flex flex-column align-items-start justify-content-center"
+          >
+            <h5 class="card-title text-start fs-5">Chatbot Conversation</h5>
+            <p class="card-text text-start text-muted fs-6">
+              Start conversation with GPT-3 chatbot.
+            </p>
+          </div>
         </div>
+      </button>
+      <button
+        id="bot-to-bot-page-btn"
+        class="btn justify-content-left col-12 col-lg-5 text-truncate"
+        type="button"
+      >
+        <div class="d-flex gap-3">
+          <h5
+            class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3"
+            style="background: var(--icon-background); color: var(--icon-color)"
+          >
+            <i
+              class="bi bi-robot"
+              style="width: 44px; height: 44px; font-size: 38px"
+            ></i>
+          </h5>
+          <div
+            class="d-flex flex-column align-items-start justify-content-center"
+          >
+            <h5 class="card-title text-start fs-5">Bot-To-Bot Conversation</h5>
+            <p class="card-text text-start text-muted fs-6">
+              Simulate conversations with two GPT-3 Chatbots.
+            </p>
+          </div>
+        </div>
+      </button>
+      <button
+        id="mindfulness-page-btn"
+        class="btn justify-content-left col-12 col-lg-5 text-truncate"
+        type="button"
+      >
+        <div class="d-flex gap-3">
+          <h5
+            class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3"
+            style="background: var(--icon-background); color: var(--icon-color)"
+          >
+            <i
+              class="bi bi-balloon-heart"
+              style="width: 44px; height: 44px; font-size: 38px"
+            ></i>
+          </h5>
+          <div
+            class="d-flex flex-column align-items-start justify-content-center"
+          >
+            <h5 class="card-title text-start fs-5">Mindfulness Conversation</h5>
+            <p class="card-text text-start text-muted fs-6">
+              Mindfulness conversations with an auto-script.
+            </p>
+          </div>
+        </div>
+      </button>
+      <button
+        id="motivational-interview-page-btn"
+        class="btn justify-content-left col-12 col-lg-5 text-truncate"
+        type="button"
+      >
+        <div class="d-flex gap-3">
+          <h5
+            class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3"
+            style="background: var(--icon-background); color: var(--icon-color)"
+          >
+            <i
+              class="bi bi-balloon-heart"
+              style="width: 44px; height: 44px; font-size: 38px"
+            ></i>
+          </h5>
+          <div
+            class="d-flex flex-column align-items-start justify-content-center"
+          >
+            <h5 class="card-title text-start fs-5">
+              Motivational Interview Conversation
+            </h5>
+            <p class="card-text text-start text-muted fs-6">
+              Motivational Interview conversations with an auto-script.
+            </p>
+          </div>
+        </div>
+
+        <button
+        id="bot-video-diary-page-btn"
+        class="btn justify-content-left col-12 col-lg-5 text-truncate"
+        type="button"
+      >
+        <div class="d-flex gap-3">
+          <h5
+            class="p-2 d-flex align-items-start justify-content-center m-0 rounded-3"
+            style="background: var(--icon-background); color: var(--icon-color)"
+          >
+            <i
+              class="bi bi-journal"
+              style="width: 44px; height: 44px; font-size: 38px"
+            ></i>
+          </h5>
+          <div
+            class="d-flex flex-column align-items-start justify-content-center"
+          >
+            <h5 class="card-title text-start fs-5">
+              Mindfulness Conversation (Bot Video Diary)
+            </h5>
+            <p class="card-text text-start text-muted fs-6">
+              mindfulness video, diary and conversation with an info bot.
+            </p>
+          </div>
+        </div>
+      </button>
     </div>
+  </div>
 </div>
 
-{% endblock contents %}
-
-{% block js_files %}
+{% endblock contents %} {% block js_files %}
 <script>
-    document.getElementById("conversation-page-btn").onclick = function() {
-        location.href = `{{ url_for('start_conversation') }}`;
-    }
+  document.getElementById("conversation-page-btn").onclick = function () {
+    location.href = `{{ url_for('start_conversation') }}`;
+  };
 
-    document.getElementById("bot-to-bot-page-btn").onclick = function() {
-        location.href = `{{ url_for('bot_to_bot') }}`;
-    }
+  document.getElementById("bot-to-bot-page-btn").onclick = function () {
+    location.href = `{{ url_for('bot_to_bot') }}`;
+  };
 
-    document.getElementById("mindfulness-page-btn").onclick = function() {
-        location.href = `{{ url_for('mindfulness_conversation') }}`;
-    }
+  document.getElementById("mindfulness-page-btn").onclick = function () {
+    location.href = `{{ url_for('mindfulness_conversation') }}`;
+  };
 
-    document.getElementById("motivational-interview-page-btn").onclick = function() {
-        location.href = `{{ url_for('motivational_interview_conversation') }}`;
-    }
+  document.getElementById("motivational-interview-page-btn").onclick =
+    function () {
+      location.href = `{{ url_for('motivational_interview_conversation') }}`;
+    };
 
-</script>
+    document.getElementById("bot-video-diary-page-btn").onclick = function () {
+      location.href = `{{ url_for('survey') }}`;
+    };
+  
+
+  </script>
 {% endblock js_files %}

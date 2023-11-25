@@ -1,3 +1,63 @@
+.left-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.right-container {
+  display: flex;
+}
+
+#section-b {
+  /* Choose a background color */
+  padding: 20px; /* Add padding for spacing */
+  border-radius: 8px; /* Add rounded corners */
+}
+
+#diary {
+  max-width: 40vw; /* Adjust the max-width as needed */
+  margin: 0 auto; /* Center the form horizontally */
+}
+
+/* Style labels */
+label {
+  display: block; /* Labels as block elements for proper spacing */
+  font-weight: bold;
+  margin-bottom: 10px; /* Spacing between labels and inputs */
+}
+
+/* Style textareas and select inputs */
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px; /* Spacing between inputs */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 4px; /* Add rounded corners */
+}
+
+/* Style the submit button */
+.submit-button {
+  background-color: var(--user_outline);
+  color: #fff; /* Text color */
+  padding: 10px 20px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: var(--bot_background); /* Button color on hover */
+}
+
+textarea {
+  background-color: #f2f2f2; /* Set a background color */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 5px; /* Add rounded corners */
+}
+
 button:active,
 button:focus,
 button:hover,
@@ -74,7 +134,7 @@ a.nav-link:visited {
 }
 
 .chat__box {
-  height: 70vh;
+  height: 35vh;
   background-color: var(--dialog_background);
   -ms-overflow-style: none; /* for Internet Explorer, Edge */
   scrollbar-width: none; /* for Firefox */
@@ -88,6 +148,36 @@ a.nav-link:visited {
 textarea:focus {
   outline: 0px !important;
   box-shadow: none !important;
+}
+/* Add custom styling for the slider */
+.custom-slider {
+  width: 100%; /* Set the width to 100% to fill the container */
+  height: 20px; /* Set the height of the slider track */
+  background-color: var(
+    --user_outline
+  ); /* Match the chat box background color */
+  border: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 10px; /* Adjust as needed for rounded corners */
+  margin-top: 10px; /* Match the spacing between chat box and slider */
+}
+
+/* Remove the default track fill color */
+.custom-slider::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+/* Customize the appearance of the slider thumb (handle) */
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; /* Set the width of the slider thumb */
+  height: 20px; /* Set the height of the slider thumb */
+  background: var(--user_outline); /* Match the chat box background color */
+  border: 2px solid #fff; /* Match the chat box border color */
+  border-radius: 50%; /* Create a circular thumb */
+  cursor: pointer;
 }
 
 .card.card-text.bot__dialog {
@@ -236,8 +326,4 @@ textarea:focus {
 
 .modal-footer .confirm__end:hover {
   color: var(--confirmation_end_hover);
-}
-
-.convo__card {
-  height: 85vh;
 }
