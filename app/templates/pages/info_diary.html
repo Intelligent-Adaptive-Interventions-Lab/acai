@@ -10,16 +10,15 @@ title %} {% block css_files %}
 <h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
 
 <div style="display: flex; padding:20px">
-    <div style="display: flex; flex-direction: column; width: 50vw">
-    <iframe
-      width="100%"
-      height="100%"
-      src="https://www.youtube.com/embed/30VMIEmA114?si=o5Zrr-nTpHGkSaiW"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>
+  <div style="display: flex; flex-direction: column; width: 50vw">
+    <div class="info" style="padding: 20px">
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora sunt
+        nostrum digsnissimos? Vero eaque quam amet molestias fuga! Vero velit
+        numquam beatae unde repellendus explicabo minus distinctio? Quisquam,
+        animi assumenda.
+      </p>
+    </div>
   </div>
     {% include 'pages/includes/diary.html' %}
   </div>
@@ -34,7 +33,6 @@ title %} {% block css_files %}
   <script src="{{ url_for('static', filename='scripts/showTooltip.js') }}"></script>
   <script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
   <script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
-
 
   {% endblock js_files %}
 </div>

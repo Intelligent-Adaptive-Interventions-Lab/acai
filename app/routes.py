@@ -971,4 +971,8 @@ def survey():
 
 @app.route('/video_diary')
 def video_diary():
-    return render_template("/pages/survey.html")
+    return render_template("/pages/video_diary.html")
+
+@app.route('/info_diary')
+def info_diary():
+    return render_template("/pages/info_diary.html")

@@ -7,14 +7,10 @@
   display: flex;
 }
 
-#section-b {
+#diary {
   /* Choose a background color */
   padding: 20px; /* Add padding for spacing */
   border-radius: 8px; /* Add rounded corners */
-}
-
-#diary {
-  max-width: 40vw; /* Adjust the max-width as needed */
   margin: 0 auto; /* Center the form horizontally */
 }
 
