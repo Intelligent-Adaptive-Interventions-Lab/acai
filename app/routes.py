@@ -877,6 +877,7 @@ def reflect_bot():
     )
 
 
+# bot video diary route
 @app.route('/bot_video_diary', methods=['GET', 'POST'])
 def bot_video_diary():
     info_bot = session.get("info_bot", None)
@@ -965,14 +966,17 @@ def bot_video_diary():
         form=form
     )
 
-@app.route('/survey')
-def survey():
-    return render_template("/pages/survey.html")
-
+# video on left, diary on right
 @app.route('/video_diary')
 def video_diary():
     return render_template("/pages/video_diary.html")
 
+# info on left, diary on right
 @app.route('/info_diary')
 def info_diary():
     return render_template("/pages/info_diary.html")
+
+# contextual questions
+@app.route('/survey')
+def survey():
+    return render_template("/pages/survey.html")
