@@ -867,54 +867,11 @@ def full_chat_window(user_id):
 
     form = ChatForm()
     if form.validate_on_submit() and not session.get('end'):
-
-@app.route('/bot_video_diary', methods=['GET', 'POST'])
-def bot_video_diary():
-    info_bot = session.get("info_bot", None)
-    if not info_bot:
-        select_prompt = init_information_bot()
-        info_bot = {
-            "chat_log": select_prompt["prompt"] + select_prompt[
-                "message_start"],
-            "convo_start": select_prompt["message_start"],
-            "bot_start": "Hello. I am an AI agent designed to act as your Mindfulness instructor. I can answer any questions you might have related to Mindfulness. How can I help you?",
-            "chatbot": select_prompt["chatbot"],
-            "user": request.remote_addr,
-            "start": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        }
-
-    convo = GPTConversation(
-        user=info_bot.get("user"),
-        chatbot=info_bot.get("chatbot"),
-        chat_log=info_bot.get("chat_log"),
-        bot_start=info_bot.get("bot_start"),
-        convo_start=info_bot.get("convo_start")
-    )
-
-    start = info_bot.get('start')
-    if start is None:
-        info_bot["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-
-    stop = info_bot.get('stop')
-    if stop is None:
-        info_bot["stop"] = 5 * 60
-
-    now = datetime.now()
-    difference = now - datetime.strptime(info_bot.get('start'),
-                                         "%m/%d/%Y, %H:%M:%S")
-    difference_seconds = difference.total_seconds()
-
-    end = info_bot.get('end')
-    if end is None or not end:
-        info_bot["end"] = (difference_seconds >= info_bot.get('stop'))
-
-    form = ChatForm()
-    if form.validate_on_submit() and not info_bot.get('end'):
         user_message = form.message.data
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
-        info_bot['chat_log'] = chat_log
+        session['chat_log'] = chat_log
         sqliteConnection = None
         try:
             sqliteConnection = sqlite3.connect(
@@ -926,7 +883,7 @@ def bot_video_diary():
                                   (user_id, chat_log) 
                                    VALUES 
                                   (?,?);"""
-            param_tuple = (info_bot["user"], info_bot["chat_log"])
+            param_tuple = (session["user"], session["chat_log"])
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print(
@@ -941,20 +898,22 @@ def bot_video_diary():
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
 
-        session["info_bot"] = info_bot
-        return redirect(url_for('info_bot'))
+        return redirect(url_for('start_qualtrics_conversation'))
 
-    session["info_bot"] = info_bot
     return render_template(
-        '/pages/bot_video_diary.html',
+        '/dialogue/qualtrics_card.html',
         user=convo.get_user(),
         bot=convo.get_chatbot(),
         warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
-        conversation=convo.get_conversation(end=info_bot.get('end')),
+        conversation=convo.get_conversation(end=session.get('end')),
         form=form
     )
+
+@app.route('/bot_video_diary', methods=['GET', 'POST'])
+def bot_video_diary():
+    return render_template("/pages/bot_video_diary.html")
 
 @app.route('/survey')
 def survey():
