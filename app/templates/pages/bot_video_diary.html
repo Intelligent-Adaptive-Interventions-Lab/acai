@@ -1,13 +1,21 @@
-{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
-title %} {% block css_files %}
+{% extends '_base.html' %} 
+
+{% block title %} 
+
+Chatbot Conversation 
+
+{% endblock title %} 
+
+{% block css_files %}
+
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='styles/combined.css') }}"
 />
-{% endblock css_files %} {% block contents %} {% include
-'pages/includes/navbar.html' %}
 
-<h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
+{% endblock css_files %} 
+
+{% block contents %} 
 
 <div class="right-container">
   <div class="left-container">
@@ -23,31 +31,17 @@ title %} {% block css_files %}
     ></iframe>
     <!-- chatbot -->
     <div class="container p-0">
-      <div id="message-card" class="convo__card card mx-auto">
-        {% include 'dialogue/includes/message_card.html' %}
-      </div>
-      <div
-        id="end-card"
-        class="d-none convo__card card mx-auto"
-        style="background-color: var(--confirmation_dialog_back)"
-      >
-        {% include 'dialogue/includes/conversation_end_notice.html' %}
-      </div>
+      <iframe src="{{ url_for('full_chat_window', user_id=12345) }}" width="600" height="400"></iframe>
     </div>
   </div>
 
   {% include 'pages/includes/diary.html'%}
 </div>
 
-{% include 'dialogue/includes/confirmation_dialog.html'%} {% endblock contents
-%} {% block js_files %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
-<script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/emojipicker.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/scrollToLastChatBox.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/showTooltip.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
+{% endblock contents %} 
+
+{% block js_files %}
+
 <script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
 
 {% endblock js_files %}
