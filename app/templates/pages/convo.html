@@ -1,36 +1,30 @@
-{% extends '_base.html' %}
-
-{% block title %}
-Chatbot Conversation
-{% endblock title %}
-
-{% block css_files %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/dialogue.css') }}">
-{% endblock css_files %}
-
-{% block contents %}
-
-{% include 'pages/includes/navbar.html' %}
-
-{% include 'pages/includes/breadcrumb.html' %}
+{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
+title %} {% block css_files %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/dialogue.css') }}"
+/>
+{% endblock css_files %} {% block contents %} {% include
+'pages/includes/navbar.html' %} {% include 'pages/includes/breadcrumb.html' %}
 
 <h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
 
-<div class="container p-0" style="margin-top: 2vh;">
-    <div id='message-card' class="convo__card card mx-auto">
-        {% include 'dialogue/includes/message_card.html' %}
-    </div>
+<div class="container p-0" style="margin-top: 2vh">
+  <div id="message-card" class="convo__card card mx-auto">
+    {% include 'dialogue/includes/message_card.html' %}
+  </div>
 
-    <div id='end-card' class="d-none convo__card card mx-auto" style="background-color: var(--confirmation_dialog_back);">
-        {% include 'dialogue/includes/conversation_end_notice.html' %}
-    </div>
+  <div
+    id="end-card"
+    class="d-none convo__card card mx-auto"
+    style="background-color: var(--confirmation_dialog_back)"
+  >
+    {% include 'dialogue/includes/conversation_end_notice.html' %}
+  </div>
 </div>
 
-{% include 'dialogue/includes/confirmation_dialog.html' %}
-
-{% endblock contents %}
-
-{% block js_files %}
+{% include 'dialogue/includes/confirmation_dialog.html' %} {% endblock contents
+%} {% block js_files %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
@@ -40,22 +34,20 @@ Chatbot Conversation
 <script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
 
 <script>
+  var endButton = document.getElementById("end-button");
+  var backButton = document.getElementById("back-button");
 
-    var endButton = document.getElementById("end-button");
-    var backButton = document.getElementById("back-button");
+  var messageCard = document.getElementById("message-card");
+  var endCard = document.getElementById("end-card");
 
-    var messageCard = document.getElementById('message-card');
-    var endCard = document.getElementById('end-card');
+  endButton.addEventListener("click", function () {
+    messageCard.classList.add("d-none");
+    endCard.classList.remove("d-none");
+  });
 
-    endButton.addEventListener('click', function () {
-        messageCard.classList.add("d-none");
-        endCard.classList.remove("d-none");
-    });
-
-    backButton.addEventListener('click', function () {
-        endCard.classList.add("d-none");
-        messageCard.classList.remove("d-none");
-    });
-
+  backButton.addEventListener("click", function () {
+    endCard.classList.add("d-none");
+    messageCard.classList.remove("d-none");
+  });
 </script>
 {% endblock js_files %}

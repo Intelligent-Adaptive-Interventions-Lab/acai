@@ -1,0 +1,89 @@
+{% extends '_base.html' %} {% block title %} Quiz {% endblock title %} {% block
+css_files %}
+<style>
+  #countdown {
+    font-size: 3rem;
+    font-weight: bold;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .img-fluid {
+    object-fit: none;
+    object-position: center;
+    width: 100%;
+    max-height: 250px;
+  }
+
+  .info {
+    font-weight: bold;
+    font-size: medium;
+  }
+
+  .card-title {
+    font-weight: bold;
+  }
+
+  .ins {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+</style>
+{% endblock css_files %} {% block contents %}
+<h1 class="text-left">LOGO</h1>
+<div class="container">
+  <h2>Slider Questions</h2>
+
+  <div class="question">
+    <label class="slider-label" for="question1">Question 1:</label>
+    <input
+      type="range"
+      id="question1"
+      name="question1"
+      min="1"
+      max="7"
+      step="1"
+      class="custom-slider"
+    />
+  </div>
+
+  <div class="question">
+    <label class="slider-label" for="question2">Question 2:</label>
+    <input
+      type="range"
+      id="question2"
+      name="question2"
+      min="1"
+      max="7"
+      step="1"
+      class="custom-slider"
+    />
+  </div>
+
+  <div class="question">
+    <label class="slider-label" for="question3">Question 3:</label>
+    <input
+      type="range"
+      id="question3"
+      name="question3"
+      min="1"
+      max="7"
+      step="1"
+      class="custom-slider"
+    />
+  </div>
+
+  <button type="submit" class="submit-button" id="bot-video-diary-page-btn">
+    Submit
+  </button>
+</div>
+{% endblock contents %} {% block js_files %}
+<script>
+  document.getElementById("bot-video-diary-page-btn").onclick = function () {
+    location.href = `{{ url_for('bot_video_diary') }}`;
+  };
+</script>
+
+{% endblock js_files %}

@@ -1,43 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Catamaran&family=Righteous&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Catamaran&family=Righteous&display=swap");
 
 /* * {
   background-color: black;
 } */
 
 html {
-  font-family: 'Catamaran', sans-serif;
+  font-family: "Catamaran", sans-serif;
 }
 
 .container-fluid {
   background-color: var(--body_background);
 }
 
-body
-{
-    /* margin: 0; */
+body {
+  /* margin: 0; */
 }
 
 @media screen and (min-width: 576px) {
-   body {
-      width:420px;
-   }
+  body {
+    width: 420px;
+  }
 }
 
 @media screen and (min-width: 768px) {
-   body {
-      width:720px;
-   }
+  body {
+    width: 720px;
+  }
 }
 
 @media screen and (min-width: 992px) {
   body {
-     width:900px;
+    width: 900px;
   }
 }
 
 h1,
 h2,
 h3 {
-  font-family: 'Righteous', cursive;
+  font-family: "Righteous", cursive;
   font-weight: bold;
 }

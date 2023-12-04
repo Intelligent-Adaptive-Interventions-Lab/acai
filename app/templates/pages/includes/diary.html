@@ -1,0 +1,64 @@
+<div id="diary">
+  <h2 id="form-title">Diary</h2>
+  <form id="diary">
+    <label for="question1">Question 1:</label>
+    <textarea
+      id="question1"
+      name="question1"
+      rows="4"
+      placeholder="Your answer..."
+    ></textarea>
+
+    <label for="question2">Question 2:</label>
+    <textarea
+      id="question2"
+      name="question2"
+      rows="4"
+      placeholder="Your answer..."
+    ></textarea>
+
+    <div class="radio-group">
+      <label for="multipleChoice1">Multiple Choice 1:</label>
+      <div class="radio-options">
+        <input type="radio" id="mc1-0" name="multipleChoice1" value="0" />
+        <label for="mc1-0">0</label>
+
+        <input type="radio" id="mc1-1" name="multipleChoice1" value="1" />
+        <label for="mc1-1">1</label>
+
+        <input type="radio" id="mc1-2" name="multipleChoice1" value="2" />
+        <label for="mc1-2">2</label>
+
+        <input type="radio" id="mc1-3" name="multipleChoice1" value="3" />
+        <label for="mc1-3">3</label>
+
+        <input type="radio" id="mc1-4" name="multipleChoice1" value="4" />
+        <label for="mc1-4">4</label>
+
+        <input type="radio" id="mc1-5" name="multipleChoice1" value="5" />
+        <label for="mc1-5">5</label>
+      </div>
+
+      <label for="multipleChoice2">Multiple Choice 2:</label>
+      <select id="multipleChoice2" name="multipleChoice2">
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </select>
+
+      <label for="slider1">Slider 1:</label>
+      <input
+        type="range"
+        id="slider1"
+        name="slider1"
+        min="0"
+        max="5"
+        step="1"
+        value="0"
+        class="custom-slider"
+      />
+    </div>
+
+    <button type="submit" class="submit-button">Save</button>
+  </form>
+</div>
