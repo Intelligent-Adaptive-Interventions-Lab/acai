@@ -1,5 +1,4 @@
 from app import app
-from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm, BotToBotChatForm
 from app.conversation import (
     AutoScriptConversation,
@@ -587,37 +586,6 @@ def start_qualtrics_conversation():
     )
 
 
-@app.route('/chatsms', methods=['POST'])
-def chatsms():
-    incoming_msg = request.values['Body']
-    chat_log = session.get('chat_log')
-    answer = ask(incoming_msg, chat_log)
-
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,
-                                                         chat_log)
-
-    msg = MessagingResponse()
-    msg.message(answer)
-
-    return str(msg)
-
-
-@app.route('/chatweb', methods=['POST'])
-def chatweb():
-    input_json = request.get_json(force=True)
-    incoming_msg = str(input_json['response'])
-    chat_log = session.get('chat_log')
-    answer = ask(incoming_msg, chat_log)
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,
-                                                         chat_log)
-
-    dictToReturn = {
-        "answer": answer,
-        "chat_log": session['chat_log']
-    }
-    return jsonify(dictToReturn)
-
-
 @app.route('/clear', methods=['GET'])
 def clear_session():
     delete_variables = [
@@ -874,3 +842,75 @@ def reflect_bot():
         conversation=convo.get_conversation(end=reflection_bot.get('end')),
         form=form
     )
+
+@app.route('/full_chat/<user_id>', methods=['GET', 'POST'])
+def full_chat_window(user_id):
+    session["user"] = user_id
+    chat_log = session.get('chat_log')
+    if chat_log is None:
+        arm_no = session.get("arm_no")
+        if arm_no is None:
+            select_prompt = init_prompt(random=True)
+        else:
+            select_prompt = init_prompt(arm_no=arm_no)
+        session["chat_log"] = select_prompt["prompt"] + select_prompt[
+            "message_start"]
+        session["chatbot"] = select_prompt["chatbot"]
+
+    convo = GPTConversation(
+        session.get("user"), 
+        session.get("chatbot"),
+        session.get("chat_log"),
+        bot_start="Hello. I am an AI agent designed to help you solve math questions. How can I help you?"
+    )
+
+    form = ChatForm()
+    if form.validate_on_submit() and not session.get('end'):
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        session['chat_log'] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"], session["chat_log"])
+            count = cursor.execute(sqlite_insert_query, param_tuple)
+            sqliteConnection.commit()
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+
+        return redirect(url_for('start_qualtrics_conversation'))
+
+    return render_template(
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        warning=convo.WARNING,
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(),
+        form=form
+    )
+
+
+@app.route('/playground', methods=['GET', 'POST'])
+def playground():
+    return render_template('/pages/playground.html')
