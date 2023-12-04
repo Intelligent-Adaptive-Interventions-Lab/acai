@@ -5,7 +5,7 @@ Flask-WTF
 gunicorn
 pandas
 numpy
-openai
+openai==0.28
 twilio
 WTForms
 pyyaml
