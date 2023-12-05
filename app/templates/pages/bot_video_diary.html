@@ -6,7 +6,8 @@ title %} {% block css_files %}
   href="{{ url_for('static', filename='styles/combined.css') }}"
 />
 
-{% endblock css_files %} {% block contents %}
+{% endblock css_files %} {% block contents %}{% include
+'pages/includes/video_navbar.html' %}
 
 <div class="right-container">
   <div class="left-container">

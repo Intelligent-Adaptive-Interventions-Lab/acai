@@ -912,19 +912,31 @@ def full_chat_window(user_id):
         form=form
     )
 
+@app.route('/survey/<route_num>')
+def survey(route_num):
+    return render_template("/pages/survey.html", route_num=route_num)
+
+@app.route('/post_survey')
+def post_survey():
+    return render_template("/pages/post_survey.html")
+
 @app.route('/bot_video_diary', methods=['GET', 'POST'])
 def bot_video_diary():
     return render_template("/pages/bot_video_diary.html")
 
-@app.route('/survey')
-def survey():
-    return render_template("/pages/survey.html")
+@app.route('/video_diary/<route_num>')
+def video_diary(route_num):
+    return render_template("/pages/video_diary.html", route_num=route_num)
 
-@app.route('/video_diary')
-def video_diary():
-    return render_template("/pages/video_diary.html")
 
-# info on left, diary on right
 @app.route('/info_diary')
 def info_diary():
     return render_template("/pages/info_diary.html")
+
+@app.route('/reflect_diary', methods=['GET', 'POST'])
+def reflect_diary():
+    return render_template("/pages/reflect_diary.html")
+
+@app.route('/end_survey', methods=['GET', 'POST'])
+def end_survey():
+    return render_template("/pages/end.html")
