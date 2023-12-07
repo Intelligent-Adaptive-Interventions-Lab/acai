@@ -844,8 +844,9 @@ def reflect_bot():
         form=form
     )
 
-@app.route('/full_chat/<user_id>', methods=['GET', 'POST'])
-def full_chat_window(user_id):
+@app.route('/full_chat/<user_id>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
+@app.route('/full_chat/<user_id>/<show_bot_avatar>', methods=['GET', 'POST'])
+def full_chat_window(user_id, show_bot_avatar):
     session["user"] = user_id
     chat_log = session.get('chat_log')
     if chat_log is None:
@@ -898,12 +899,13 @@ def full_chat_window(user_id):
                 sqliteConnection.close()
                 print("The SQLite connection is closed")
 
-        return redirect(url_for('start_qualtrics_conversation'))
+        return redirect(url_for('full_chat_window', user_id=user_id, show_bot_avatar=show_bot_avatar))
 
     return render_template(
         '/dialogue/qualtrics_card.html',
         user=convo.get_user(),
         bot=convo.get_chatbot(),
+        show_bot_avatar=show_bot_avatar is not None,
         warning=convo.WARNING,
         end=convo.END,
         notification=convo.NOTI,
