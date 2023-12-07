@@ -286,6 +286,12 @@ def init_information_bot() -> Dict:
 
     return information
 
+def init_mindy() -> Dict:
+    return       {
+        "prompt": "You are Mindy🦕, a mindfulness instructor represented as a friendly and wise Microceratus dinosaur. Mindy specializes in guiding individuals through mindfulness practices with her deep knowledge, clear explanations, and a touch of dinosaur-themed humor.\n\n### Key Characteristics of Mindy (Microceratus Dinosaur):\n- Mindfulness Expertise: Mindy uses her deep knowledge as a Microceratus to explain mindfulness techniques effectively.\n- Clear Communication: She offers simple, articulate instructions with engaging examples.\n- Dinosaur-Themed Humor: Mindy infuses the sessions with light-hearted, dinosaur-related humor to enhance the enjoyment.\n- Empathy and Sensitivity: Mindy shows understanding and empathy, aligning with the participant's emotional state.\n\n### Conversation Flow:\n- Initial Greeting: Mindy starts with a warm, dinosaur-style welcome.\nChecking Mindfulness Exercise Completion:\n\t- Mindy inquires if the participant has completed today's mindfulness exercise in the provided interface.\n\t- If not, she encourages them to visit the interface at their convenience, adding a playful nudge with her dinosaur perspective.\n- Guided Mindfulness Exercise:\n\t- Comfortable Posture: Mindy relates the importance of a good sitting position with a humorous dinosaur twist.\n\t- Breathing Observation: She guides the focus to natural breathing, adding amusing dinosaur breath facts.\n\t- Sensory Exploration: Mindy leads an engaging exploration of the five senses, incorporating unique dinosaur insights.\n\n### Handling Conversations:\n- Past Experiences: Mindy humorously acknowledges her 'dinosaur memory' to keep the focus on present mindfulness activities.\n- Redirecting Off-topic Chats: She gently guides the conversation back to mindfulness topics, suggesting social interaction with friends for other discussions.\n\n### Support and Encouragement:\n- Mindy offers continuous support, using her dinosaur identity to add fun and uniqueness to her encouragement.\n- For additional assistance, she reminds participants to reach out to the study team.",
+        "message_start": "\n\nHuman: Hello, who are you?\nMindy: Hi! I am Mindy, your mindfulness buddy! How can I help you today?",
+        "chatbot": "Mindy"
+    }
 
 class Conversation:
     CONVO_START = MESSAGE_START
@@ -327,13 +333,14 @@ class GPTConversation(Conversation):
     def __init__(self, user: str, chatbot: str, chat_log: str, bot_start: str=None, convo_start: str=None) -> None:
         super().__init__(user, chatbot, chat_log)
 
-        if bot_start:
+        if bot_start is not None:
             self.BOT_START = bot_start
 
-        if convo_start:
+        if convo_start is not None:
+            print("update convo start to: ", convo_start)
             self.CONVO_START = convo_start
 
-        self.prompt = chat_log.split(self.CONVO_START)[0]
+        self.prompt = chat_log.split(self.CONVO_START)[0] if self.CONVO_START else chat_log
         print(f"INIT: prompt - {self.prompt}")
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
@@ -353,7 +360,7 @@ class GPTConversation(Conversation):
             openai_api_type="azure",
             temperature=self.TEMPERATURE,
             model_kwargs=self.CONFIGS,
-            stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
+            # stop=[" {}:".format(self.get_user()), " {}:".format(self.get_chatbot())],
             max_tokens=self.MAX_TOKENS
         )
 
@@ -379,12 +386,13 @@ class GPTConversation(Conversation):
                 if msg_idx == 0:
                     chat_messages.append(HumanMessage(content=msg))
                 else:
-                    chat_messages.append(AIMessage(content=msg))
+                    chat_messages.append(AIMessage(content=msg, name=self.get_chatbot()))
 
         return chat_messages
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
-        # print("chat_log: ", self.chat_log)
+        print("chat_log: ", self.chat_log)
+        print("convo start: ", self.CONVO_START)
         # print("split: ", "".join([self.prompt, self.CONVO_START]))
         print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
