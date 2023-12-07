@@ -4,7 +4,11 @@
       <li class="nav-item">
         <a href="#!" class="nav-link p-0">
           <div class="bot__icon position-relative">
-            <div class="img-fluid rounded-circle avatar bot__avatar"></div>
+            {% if show_bot_avatar %}
+              <img class="img-fluid rounded-circle avatar" src="{{ url_for('static', filename='bot_avatar.jpeg') }}" />
+            {% else %}
+              <div class="img-fluid rounded-circle avatar bot__avatar"></div>
+            {% endif %}
             <span
               id="bot-new-message"
               class="position-absolute bottom-0 end-0 badge border border-light rounded-circle bg-danger bg-gradient p-1"
@@ -58,7 +62,11 @@
   if (convo.from == bot) and (convo.to == user) %}
   <div class="convo__box d-flex align-items-start mb-2 me-4">
     <div class="d-none d-sm-flex bot__icon">
-      <div class="img-fluid rounded-circle avatar bot__avatar"></div>
+      {% if show_bot_avatar %}
+        <img class="img-fluid rounded-circle avatar" src="{{ url_for('static', filename='bot_avatar.jpeg') }}" />
+      {% else %}
+        <div class="img-fluid rounded-circle avatar bot__avatar"></div>
+      {% endif %}
     </div>
 
     <div class="ps-0 ps-sm-2">

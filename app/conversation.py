@@ -1,12 +1,16 @@
 from app import app
 from app.dialogue import DialogCollection
 from random import choice
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, List
+from langchain.chat_models import AzureChatOpenAI
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 import openai
 import yaml
 import json
 
+with open('./app/static/secret.yaml') as file:
+    SECRET = yaml.load(file, Loader=yaml.FullLoader)
 
 MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
 
@@ -305,14 +309,20 @@ class Conversation:
 
 
 class GPTConversation(Conversation):
+    TEMPERATURE = 0
+
+    MAX_TOKENS = 300
+
     CONFIGS = {
-        "engine": "text-davinci-003",
-        "temperature": 0.9,
-        "max_tokens": 300,
         "top_p": 1,
         "frequency_penalty": 0,
-        "presence_penalty": 0.6,
+        "presence_penalty": 0.6
     }
+
+    BASE_URL = f"https://{SECRET['azure_instance']}.openai.azure.com"
+    API_KEY = SECRET['azure_openai']
+    DEPLOYMENT_NAME = SECRET['azure_deployment']
+    API_VERSION = SECRET['azure_openai_api_version']
 
     def __init__(self, user: str, chatbot: str, chat_log: str, bot_start: str=None, convo_start: str=None) -> None:
         super().__init__(user, chatbot, chat_log)
@@ -328,25 +338,50 @@ class GPTConversation(Conversation):
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open('./app/static/secret.yaml') as file:
-            secret_keys = yaml.load(file, Loader=yaml.FullLoader)
-        openai.api_key = secret_keys["openai"]
-
     def ask(self, question: str) -> str:
-        prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
-        response = openai.Completion.create(
-            prompt=prompt_text,
+        # prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
+
+        chat_messages = self.get_chat_messages(f"{self.chat_log}{self.restart_sequence}{question}")
+        
+        print(chat_messages)
+        
+        model = AzureChatOpenAI(
+            openai_api_base=self.BASE_URL,
+            openai_api_version=self.API_VERSION,
+            deployment_name=self.DEPLOYMENT_NAME,
+            openai_api_key=self.API_KEY,
+            openai_api_type="azure",
+            temperature=self.TEMPERATURE,
+            model_kwargs=self.CONFIGS,
             stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
-            **self.CONFIGS
+            max_tokens=self.MAX_TOKENS
         )
 
-        story = response['choices'][0]['text']
-        answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
+        response = model(chat_messages)
+        answer = str(response.content)
 
         return answer
 
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
-            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+        return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+
+    def get_chat_messages(self, chat_log) -> List:
+        chat_log_clean = chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        dialogs = chat_log_clean.split(self.restart_sequence)
+
+        chat_messages = []
+        chat_messages.append(SystemMessage(content=self.prompt))
+        
+        for i in range(1, len(dialogs)):
+            messages = dialogs[i].split(self.start_sequence)
+            
+            for msg_idx, msg in enumerate(messages):
+                if msg_idx == 0:
+                    chat_messages.append(HumanMessage(content=msg))
+                else:
+                    chat_messages.append(AIMessage(content=msg))
+
+        return chat_messages
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
         # print("chat_log: ", self.chat_log)
