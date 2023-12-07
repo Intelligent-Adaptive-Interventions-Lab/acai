@@ -9,7 +9,7 @@ import openai
 import yaml
 import json
 
-with open('./app/static/secret.yaml') as file:
+with open('/var/www/html/acai/app/static/secret.yaml') as file:
     SECRET = yaml.load(file, Loader=yaml.FullLoader)
 
 MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
@@ -578,7 +578,7 @@ class AutoScriptConversation(Conversation):
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open(f'./app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
+        with open(f'/var/www/html/acai/app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
             dialogues = json.load(file)
 
         self.dialogue = DialogCollection(dialogues, answers=dialogue_answers)
