@@ -4,8 +4,8 @@ title %} {% block css_files %}
   rel="stylesheet"
   href="{{ url_for('static', filename='styles/combined.css') }}"
 />
-{% endblock css_files %} {% block contents %} {% include
-'pages/includes/navbar.html' %}
+{% endblock css_files %} {% block contents %}{% include
+  'pages/includes/video_navbar.html' %}
 
 <h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
 

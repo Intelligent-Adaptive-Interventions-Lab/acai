@@ -9,16 +9,23 @@
 
 #diary {
   /* Choose a background color */
-  padding: 20px; /* Add padding for spacing */
+  padding: 10px 40px; /* Add padding for spacing */
   border-radius: 8px; /* Add rounded corners */
   margin: 0 auto; /* Center the form horizontally */
+  max-width: 50vw;
 }
 
 /* Style labels */
 label {
   display: block; /* Labels as block elements for proper spacing */
-  font-weight: bold;
   margin-bottom: 10px; /* Spacing between labels and inputs */
+}
+
+textarea {
+  background-color: white; /* Set a background color */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 5px; /* Add rounded corners */
+  margin-bottom: 20px;
 }
 
 /* Style textareas and select inputs */
@@ -26,14 +33,13 @@ textarea,
 select {
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px; /* Spacing between inputs */
   border: 1px solid #ccc; /* Add a border */
   border-radius: 4px; /* Add rounded corners */
 }
 
 /* Style the submit button */
 .submit-button {
-  background-color: var(--user_outline);
+  background-color: var(--nav-background);
   color: #fff; /* Text color */
   padding: 10px 20px;
   margin-top: 20px;
@@ -46,12 +52,6 @@ select {
 
 .submit-button:hover {
   background-color: var(--bot_background); /* Button color on hover */
-}
-
-textarea {
-  background-color: #f2f2f2; /* Set a background color */
-  border: 1px solid #ccc; /* Add a border */
-  border-radius: 5px; /* Add rounded corners */
 }
 
 button:active,

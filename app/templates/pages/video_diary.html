@@ -5,16 +5,17 @@ title %} {% block css_files %}
   href="{{ url_for('static', filename='styles/combined.css') }}"
 />
 {% endblock css_files %} {% block contents %} {% include
-'pages/includes/navbar.html' %}
+  'pages/includes/video_navbar.html' %}
 
 <h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
 
-<div style="display: flex; padding:20px">
+<div style="display: flex">
     <div style="display: flex; flex-direction: column; width: 50vw">
     <iframe
+      id="video_iframe"
       width="100%"
       height="100%"
-      src="https://www.youtube.com/embed/30VMIEmA114?si=o5Zrr-nTpHGkSaiW"
+      src=""
       title="YouTube video player"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -26,15 +27,40 @@ title %} {% block css_files %}
 
   {% include 'dialogue/includes/confirmation_dialog.html' %} {% endblock
   contents %} {% block js_files %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
-  <script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/emojipicker.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/scrollToLastChatBox.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/showTooltip.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
-  <script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
+  <script>
+    document.getElementById("submit-btn").onclick = function () {
+      event.preventDefault();
+      var routeNum = "{{ route_num }}";
+      if (routeNum == 1){
+      location.href = `{{ url_for('reflect_diary') }}`;
+    }
+    else{
+      location.href = `{{ url_for('post_survey') }}`;
+    }
+    };
 
+    var videoUrls = [
+    "https://www.youtube.com/embed/nBxuOrWsiYs?si=ersmikdb-0LNch6H",
+    "https://www.youtube.com/embed/EqZJHDtIn2Q?si=al9Hn8_jYdOrVGZt",
+    "https://www.youtube.com/embed/UmNx8Bt7oQw?si=KKICBXc8JPmEV8ko",
+    "https://www.youtube.com/embed/Z9XRT1-R7Pk?si=LBWrBFBGdLrH9zep",
+    "https://www.youtube.com/embed/_IVxN4wc8zk?si=ovAJ0dqOq2zBBSwx",
+    "https://www.youtube.com/embed/sqg2BDsx3Gk?si=j5bKsZTRzR_0N4Af"
+  ];
+
+  function getRandomVideoUrl() {
+    var randomIndex = Math.floor(Math.random() * videoUrls.length);
+    return videoUrls[randomIndex];
+  }
+
+  window.onload = function() {
+    var videoFrame = document.querySelector('iframe');
+    console.log(videoFrame)
+    if(videoFrame) {
+      videoFrame.src = getRandomVideoUrl();
+    }
+  };
+  </script>
 
   {% endblock js_files %}
 </div>

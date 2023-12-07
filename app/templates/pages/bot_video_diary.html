@@ -1,21 +1,13 @@
-{% extends '_base.html' %} 
-
-{% block title %} 
-
-Chatbot Conversation 
-
-{% endblock title %} 
-
-{% block css_files %}
+{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
+title %} {% block css_files %}
 
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='styles/combined.css') }}"
 />
 
-{% endblock css_files %} 
-
-{% block contents %} 
+{% endblock css_files %} {% block contents %}{% include
+'pages/includes/video_navbar.html' %}
 
 <div class="right-container">
   <div class="left-container">
@@ -38,9 +30,7 @@ Chatbot Conversation
   {% include 'pages/includes/diary.html'%}
 </div>
 
-{% endblock contents %} 
-
-{% block js_files %}
+{% endblock contents %} {% block js_files %}
 
 <script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
 
