@@ -1,0 +1,92 @@
+{% extends '_base.html' %} {% block title %} Quiz {% endblock title %} {% block
+css_files %}
+<style>
+
+  .question {
+    padding-bottom: 20px;
+
+  }
+  
+  .slider-label {
+    display: block;
+  }
+</style>
+{% endblock css_files %} {% block contents %}
+
+<div class="container" style="margin-top:30px">
+<h1 class="text-left">Pre Questions</h1>
+<div class="container" style="padding: 20px; background: white">
+  <p>How often have you found yourself being consciously mindful today?</p>
+  <div class="question radio-options">
+    <div>
+      <input type="radio" id="mc1-0" name="multipleChoice1" value="0" />
+      <label for="mc1-0">None: I have not engaged in mindful practices or moments today.</label>
+    </div>
+  
+    <div>
+      <input type="radio" id="mc1-1" name="multipleChoice1" value="1" />
+      <label for="mc1-1">Once: There was one distinct instance where I was consciously mindful.</label>
+    </div>
+  
+    <div>
+      <input type="radio" id="mc1-2" name="multipleChoice1" value="2" />
+      <label for="mc1-2">A Few Times: I have been consciously mindful on several occasions today.</label>
+    </div>
+  </div>
+  
+    <div class="question">
+      <label class="slider-label" for="question1">Stress:</label>
+      <input
+        type="range"
+        id="question1"
+        name="question1"
+        min="1"
+        max="7"
+        step="1"
+        class="custom-slider"
+      />
+    </div>
+
+    <div class="question">
+      <label class="slider-label" for="question2">Positive Mindset:</label>
+      <input
+        type="range"
+        id="question2"
+        name="question2"
+        min="1"
+        max="7"
+        step="1"
+        class="custom-slider"
+      />
+    </div>
+
+    <div class="question">
+      <label class="slider-label" for="question3">Decentering:</label>
+      <input
+        type="range"
+        id="question3"
+        name="question3"
+        min="1"
+        max="7"
+        step="1"
+        class="custom-slider"
+      />
+    </div>
+
+    <div style="text-align: right">
+      <button type="submit" class="submit-button" id="bot-video-diary-page-btn">
+        Next
+      </button>
+    </div>
+  </div>
+</div>
+  {% endblock contents %} {% block js_files %}
+  <script>
+    var routeNum = "{{route_num}}";
+    document.getElementById("bot-video-diary-page-btn").onclick = function () {
+      location.href = "{{ url_for('video_diary', route_num=route_num) }}";
+    };
+  </script>
+
+  {% endblock js_files %}
+</div>

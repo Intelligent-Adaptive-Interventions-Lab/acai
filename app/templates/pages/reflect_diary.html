@@ -1,0 +1,43 @@
+{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
+    title %} {% block css_files %}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/combined.css') }}"
+    />
+    {% endblock css_files %} {% block contents %}{% include
+      'pages/includes/video_navbar.html' %}
+    
+    <h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
+    
+    <div style="display: flex; padding:20px">
+      <div style="display: flex; flex-direction: column">
+        <div class="container p-0" style="display:flex; flex:1">
+            <iframe
+              src="{{ url_for('full_chat_window', user_id=12345) }}"
+              width="600"
+              height="100%"
+            ></iframe>
+          </div>
+      </div>
+        {% include 'pages/includes/diary.html' %}
+      </div>
+    
+      {% include 'dialogue/includes/confirmation_dialog.html' %} {% endblock
+      contents %} {% block js_files %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
+      <script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+      <script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
+      <script src="{{ url_for('static', filename='scripts/emojipicker.js') }}"></script>
+      <script src="{{ url_for('static', filename='scripts/scrollToLastChatBox.js') }}"></script>
+      <script src="{{ url_for('static', filename='scripts/showTooltip.js') }}"></script>
+      <script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
+      <script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
+        <script>
+            document.getElementById("submit-btn").onclick = function () {
+              event.preventDefault();
+              location.href = `{{ url_for('post_survey') }}`;
+            };
+    </script>
+      {% endblock js_files %}
+    </div>
+    

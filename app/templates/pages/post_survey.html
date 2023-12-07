@@ -1,0 +1,121 @@
+{% extends '_base.html' %} {% block title %} Quiz {% endblock title %} {% block
+    css_files %}
+    <style>
+    
+      .question {
+        padding-bottom: 20px;
+    
+      }
+      
+      .slider-label {
+        display: block;
+        padding: 10px 0px;
+      }
+
+      .slider-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .custom-slider {
+        flex-grow: 1;
+        margin: 0 10px;
+    }
+    
+    </style>
+    {% endblock css_files %} {% block contents %}
+    
+    <div class="container" style="margin-top:30px">
+    <h1 class="text-left">Post Questions</h1>
+    <div class="container" style="padding: 20px; background: white">
+        <div class="question">
+          <label class="slider-label" for="question1">Please slide to the number that accurately reflects the level of stress you are experiencing at this moment
+            </label>
+            <div class="slider-container">
+              <label for="question1">0 - no stress</label>
+              <input
+                  type="range"
+                  id="question1"
+                  name="question1"
+                  min="1"
+                  max="10"
+                  step="1"
+                  class="custom-slider"
+              />
+              <label for="question1">10 - extreme stress</label>
+          </div>
+          
+        </div>
+    
+        <div class="question">
+          <label class="slider-label" for="question2">Please indicate the extent to which you agree with the following statements, based on your current state.</label>
+          <div class="slider-container">
+            <label for="question2">0 - don't agree at all</label>
+            <input
+                type="range"
+                id="question2"
+                name="question2"
+                min="1"
+                max="5"
+                step="1"
+                class="custom-slider"
+            />
+            <label for="question2">5 - extremely agree</label>
+        </div>
+        </div>
+    
+        <div class="question">
+          <label class="slider-label" for="question3">I have the sense that I am fully aware of what is going on around me and inside me.</label>
+          <div class="slider-container">
+
+          <label for="question3">0 - don't agree at all</label>
+          <input
+              type="range"
+              id="question3"
+              name="question3"
+              min="1"
+              max="5"
+              step="1"
+              class="custom-slider"
+          />
+          <label for="question3">5 - extremely agree</label>
+      </div>
+        </div>
+
+    
+        <div class="question">
+          <label class="slider-label" for="question4">I view things from a wider perspective.          </label>
+          <div class="slider-container">
+
+          <label for="question1">0 - don't agree at all</label>
+          <input
+              type="range"
+              id="question4"
+              name="question4"
+              min="1"
+              max="5"
+              step="1"
+              class="custom-slider"
+          />
+          <label for="question4">5 - extremely agree</label>
+      </div>
+        </div>
+    
+        <div style="text-align: right">
+          <button type="submit" class="submit-button" id="next_btn">
+            Finish
+          </button>
+        </div>
+      </div>
+    </div>
+      {% endblock contents %} {% block js_files %}
+      <script>
+        document.getElementById("next_btn").onclick = function () {
+          location.href = `{{ url_for('end_survey') }}`;
+        };
+      </script>
+    
+      {% endblock js_files %}
+    </div>
+    

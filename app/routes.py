@@ -1,5 +1,4 @@
 from app import app
-from app.chatbot import ask, append_interaction_to_chat_log
 from app.forms import ChatForm, BotToBotChatForm
 from app.conversation import (
     AutoScriptConversation,
@@ -7,7 +6,8 @@ from app.conversation import (
     GPTConversation,
     init_prompt,
     init_reflection_bot,
-    init_information_bot
+    init_information_bot,
+    init_mindy
 )
 
 from flask import Flask, request, session, jsonify, render_template, redirect, \
@@ -240,7 +240,7 @@ def mindfulness_conversation():
         session["mindfulness_dialogue_id"] = dialogue_id
 
         return render_template(
-            '/pages/convo.html',
+            '/pages/combined.html',
             user=convo.get_user(),
             bot=convo.get_chatbot(),
             warning=convo.WARNING,
@@ -251,7 +251,7 @@ def mindfulness_conversation():
         )
 
     return render_template(
-        '/pages/convo.html',
+        '/pages/combined.html',
         user=convo.get_user(),
         bot=convo.get_chatbot(),
         warning=convo.WARNING,
@@ -498,6 +498,7 @@ def start_conversation():
         conversation=convo.get_conversation(test=True),
         form=form
     )
+    
 
 
 @app.route('/qualtrics', methods=['GET', 'POST'])
@@ -585,37 +586,6 @@ def start_qualtrics_conversation():
         conversation=convo.get_conversation(end=session.get('end')),
         form=form
     )
-
-
-@app.route('/chatsms', methods=['POST'])
-def chatsms():
-    incoming_msg = request.values['Body']
-    chat_log = session.get('chat_log')
-    answer = ask(incoming_msg, chat_log)
-
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,
-                                                         chat_log)
-
-    msg = MessagingResponse()
-    msg.message(answer)
-
-    return str(msg)
-
-
-@app.route('/chatweb', methods=['POST'])
-def chatweb():
-    input_json = request.get_json(force=True)
-    incoming_msg = str(input_json['response'])
-    chat_log = session.get('chat_log')
-    answer = ask(incoming_msg, chat_log)
-    session['chat_log'] = append_interaction_to_chat_log(incoming_msg, answer,
-                                                         chat_log)
-
-    dictToReturn = {
-        "answer": answer,
-        "chat_log": session['chat_log']
-    }
-    return jsonify(dictToReturn)
 
 
 @app.route('/clear', methods=['GET'])
@@ -872,5 +842,167 @@ def reflect_bot():
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(end=reflection_bot.get('end')),
+        form=form
+    )
+
+  
+@app.route('/full_chat/<user_id>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
+@app.route('/full_chat/<user_id>/<show_bot_avatar>', methods=['GET', 'POST'])
+def full_chat_window(user_id, show_bot_avatar):
+    session["user"] = user_id
+    chat_log = session.get('chat_log')
+    if chat_log is None:
+        arm_no = session.get("arm_no")
+        if arm_no is None:
+            select_prompt = init_prompt(random=True)
+        else:
+            select_prompt = init_prompt(arm_no=arm_no)
+        session["chat_log"] = select_prompt["prompt"] + select_prompt[
+            "message_start"]
+        session["chatbot"] = select_prompt["chatbot"]
+
+    convo = GPTConversation(
+        session.get("user"), 
+        session.get("chatbot"),
+        session.get("chat_log"),
+        bot_start="Hello. I am an AI agent designed to help you solve math questions. How can I help you?"
+    )
+
+    form = ChatForm()
+    if form.validate_on_submit() and not session.get('end'):
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        session['chat_log'] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"], session["chat_log"])
+            count = cursor.execute(sqlite_insert_query, param_tuple)
+            sqliteConnection.commit()
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+
+        return redirect(url_for('full_chat_window', user_id=user_id, show_bot_avatar=show_bot_avatar))
+
+    return render_template(
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        show_bot_avatar=show_bot_avatar is not None,
+        warning=convo.WARNING,
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(end=session.get('end')),
+        form=form
+    )
+
+@app.route('/survey/<route_num>')
+def survey(route_num):
+    return render_template("/pages/survey.html", route_num=route_num)
+
+@app.route('/post_survey')
+def post_survey():
+    return render_template("/pages/post_survey.html")
+
+@app.route('/bot_video_diary', methods=['GET', 'POST'])
+def bot_video_diary():
+    return render_template("/pages/bot_video_diary.html")
+
+@app.route('/video_diary/<route_num>')
+def video_diary(route_num):
+    return render_template("/pages/video_diary.html", route_num=route_num)
+
+@app.route('/info_diary')
+def info_diary():
+    return render_template("/pages/info_diary.html")
+
+@app.route('/reflect_diary', methods=['GET', 'POST'])
+def reflect_diary():
+    return render_template("/pages/reflect_diary.html")
+
+@app.route('/end_survey', methods=['GET', 'POST'])
+def end_survey():
+    return render_template("/pages/end.html")
+
+@app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
+def mindy(user_id):
+    session["user"] = user_id
+    chat_log = session.get('chat_log')
+    if chat_log is None:
+        select_prompt = init_mindy()
+        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
+        session["chatbot"] = select_prompt["chatbot"]
+
+    convo = GPTConversation(
+        session.get("user"), 
+        session.get("chatbot"),
+        session.get("chat_log"),
+        bot_start="Hi! I am Mindy, your mindfulness buddy! How can I help you today?",
+        convo_start="\n\nHuman: Hello, who are you?\nMindy: Hi! I am Mindy, your mindfulness buddy! How can I help you today?"
+    )
+
+    form = ChatForm()
+    if form.validate_on_submit() and not session.get('end'):
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        session['chat_log'] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"], session["chat_log"])
+            count = cursor.execute(sqlite_insert_query, param_tuple)
+            sqliteConnection.commit()
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+
+        return redirect(url_for('mindy', user_id=user_id))
+
+    return render_template(
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        show_bot_avatar=True,
+        warning=convo.WARNING,
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(end=session.get('end')),
         form=form
     )
