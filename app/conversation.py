@@ -328,7 +328,7 @@ class GPTConversation(Conversation):
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open('./app/static/secret.yaml') as file:
+        with open('/var/www/html/acai/app/static/secret.yaml') as file:
             secret_keys = yaml.load(file, Loader=yaml.FullLoader)
         openai.api_key = secret_keys["openai"]
 
@@ -535,7 +535,7 @@ class AutoScriptConversation(Conversation):
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open(f'./app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
+        with open(f'/var/www/html/acai/app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
             dialogues = json.load(file)
 
         self.dialogue = DialogCollection(dialogues, answers=dialogue_answers)
