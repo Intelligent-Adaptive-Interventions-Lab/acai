@@ -1,66 +1,124 @@
-{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
-title %} {% block css_files %}
+{% extends '_base.html' %} 
+
+{% block title %}
+Chatbot Conversation
+{% endblock title %}
+
+{% block css_files %}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='styles/combined.css') }}"
 />
-{% endblock css_files %} {% block contents %} {% include
-  'pages/includes/video_navbar.html' %}
+{% endblock css_files %}
 
-<h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
-
-<div style="display: flex">
-    <div style="display: flex; flex-direction: column; width: 50vw">
-    <iframe
-      id="video_iframe"
-      width="100%"
-      height="100%"
-      src=""
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>
+{% block contents %} 
+<div class="container" style="margin-top:30px">
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="d-flex" style="flex: 1; padding:20px;">
+      <div class="d-flex flex-column" style="flex: 1;">
+        <div class="container d-flex p-0" style="flex:1;">
+          <iframe
+            id="video-iframe"
+            width="100%"
+            height="100%"
+            src=""
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
+      <div class="d-flex" style="flex: 1;">
+        <form id="diary" method="post" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          {% include 'pages/includes/diary.html' %}
+          {{ form.diary_1(hidden='true', id='form-diary-1') }}
+          {{ form.diary_2(hidden='true', id='form-diary-2') }}
+          {{ form.submit(hidden='true', id='form-submit') }}
+        </form>
+      </div>
+    </div>
   </div>
-    {% include 'pages/includes/diary.html' %}
-  </div>
-
-  {% include 'dialogue/includes/confirmation_dialog.html' %} {% endblock
-  contents %} {% block js_files %}
-  <script>
-    document.getElementById("submit-btn").onclick = function () {
-      event.preventDefault();
-      var routeNum = "{{ route_num }}";
-      if (routeNum == 1){
-      location.href = `{{ url_for('reflect_diary') }}`;
-    }
-    else{
-      location.href = `{{ url_for('post_survey') }}`;
-    }
-    };
-
-    var videoUrls = [
-    "https://www.youtube.com/embed/nBxuOrWsiYs?si=ersmikdb-0LNch6H",
-    "https://www.youtube.com/embed/EqZJHDtIn2Q?si=al9Hn8_jYdOrVGZt",
-    "https://www.youtube.com/embed/UmNx8Bt7oQw?si=KKICBXc8JPmEV8ko",
-    "https://www.youtube.com/embed/Z9XRT1-R7Pk?si=LBWrBFBGdLrH9zep",
-    "https://www.youtube.com/embed/_IVxN4wc8zk?si=ovAJ0dqOq2zBBSwx",
-    "https://www.youtube.com/embed/sqg2BDsx3Gk?si=j5bKsZTRzR_0N4Af"
-  ];
-
-  function getRandomVideoUrl() {
-    var randomIndex = Math.floor(Math.random() * videoUrls.length);
-    return videoUrls[randomIndex];
-  }
-
-  window.onload = function() {
-    var videoFrame = document.querySelector('iframe');
-    console.log(videoFrame)
-    if(videoFrame) {
-      videoFrame.src = getRandomVideoUrl();
-    }
-  };
-  </script>
-
-  {% endblock js_files %}
 </div>
+
+
+{% endblock contents %} 
+
+{% block js_files %}
+<script>
+var VideoDiary = function() {
+  this.formDiary1 = document.getElementById(`form-diary-1`),
+  this.formDiary2 = document.getElementById(`form-diary-2`),
+  this.formSubmit = document.getElementById(`form-submit`),
+  this.videoFrame = document.getElementById(`video-iframe`),
+  this.diary1 = document.getElementById(`question1`),
+  this.diary2 = document.getElementById(`question2`),
+  this.submitBtn = document.getElementById(`submit-btn`)
+}
+
+VideoDiary.prototype = {
+  ini: function() {
+    this._prepareAPI();
+    this._prepareFrontEnd();
+    this._addEventListner();
+  },
+  _prepareFrontEnd: function() {
+    this.diary1.value = this.formDiary1.value = '';
+    this.diary2.value = this.formDiary2.value = '';
+
+    this.videoFrame.src = "https://www.youtube.com/embed/{{video_url}}";
+  },
+  _prepareAPI: function() {
+    var that = this;
+
+    this.syncValueChange = function(items) {
+      let curr = this;
+
+      items.forEach(item => {
+          item.value = curr.value;
+      });
+    }
+
+    this.onReady = (target, selector, event, callback) => {
+      let clickables = [...target.querySelectorAll(selector)];
+
+      let clickObserver = function(nodeID) {
+        callback(nodeID);
+      };
+
+      clickables.forEach(el => {
+          el.addEventListener(event, clickObserver.bind(el, el), true);
+      });
+    };
+  },
+  _addEventListner: function() {
+    var that = this;
+
+    this.diary1.addEventListener(
+      "input", 
+      that.syncValueChange.bind(that.diary1, [that.formDiary1])
+    );
+
+    this.diary2.addEventListener(
+      "input", 
+      that.syncValueChange.bind(that.diary2, [that.formDiary2])
+    );
+
+    this.submitBtn.addEventListener(
+      "click",
+      function() {
+
+        console.log(`clicked!!!`);
+
+        that.formSubmit.click();
+      }
+    );
+  }
+};
+
+window.onload = function() {
+  new VideoDiary().ini();
+};
+</script>
+{% endblock js_files %}

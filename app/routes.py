@@ -1,5 +1,11 @@
 from app import app
-from app.forms import ChatForm, BotToBotChatForm
+from app.forms import (
+    ChatForm, 
+    BotToBotChatForm, 
+    SurveyForm,
+    DiaryForm,
+    PostSurveyForm
+)
 from app.conversation import (
     AutoScriptConversation,
     CustomGPTConversation,
@@ -9,133 +15,22 @@ from app.conversation import (
     init_information_bot,
     init_mindy
 )
-
-from flask import Flask, request, session, jsonify, render_template, redirect, \
+from app.video import init_video_for_mindfulness
+from flask import (
+    Flask,
+    request,
+    session,
+    jsonify,
+    render_template, 
+    redirect,
     url_for
-from twilio.twiml.messaging_response import MessagingResponse
+)
+
 from datetime import datetime, timezone
 
 import sqlite3
 
 # run_with_ngrok(app)
-
-USER = "Person"
-CHATBOT = "AI"
-WARNING = "warning"
-END = "end"
-NOTI = "notification"
-
-conversation = [
-    {
-        "from": CHATBOT,
-        "to": WARNING,
-        "message": "The following is a conversation with a therapist. The therapist is helpful, creative, empathetic, and very friendly.",
-        "send_time": datetime(2022, 6, 20, 0, 0, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": NOTI,
-        "message": "Yesterday",
-        "send_time": datetime(2022, 6, 20, 0, 0, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "Hello, who are you?",
-        "send_time": datetime(2022, 6, 20, 0, 0, 1, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "I am an AI created by OpenAI. How can I help you today?",
-        "send_time": datetime(2022, 6, 20, 0, 1, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "I need help.",
-        "send_time": datetime(2022, 6, 20, 0, 2, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "I'm sorry to hear that. What's going on?",
-        "send_time": datetime(2022, 6, 20, 0, 3, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": NOTI,
-        "message": "Today",
-        "send_time": datetime(2022, 6, 20, 0, 4, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "I had an argument with my family today.",
-        "send_time": datetime(2022, 6, 20, 0, 4, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "I'm sorry to hear that. Can you tell me more about what happened?",
-        "send_time": datetime(2022, 6, 20, 0, 5, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "I told my mom that I want to buy a computer but she was very upset about that.",
-        "send_time": datetime(2022, 6, 20, 0, 6, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "I'm sorry to hear that she was upset. Can you tell me more about why you want to buy a computer?",
-        "send_time": datetime(2022, 6, 20, 0, 7, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "I told her that I need a computer to complete my assignment.",
-        "send_time": datetime(2022, 6, 20, 0, 8, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "I see. And she was upset because she doesn't think you need a computer for that?",
-        "send_time": datetime(2022, 6, 20, 0, 9, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "No, she doesn't 😥.",
-        "send_time": datetime(2022, 6, 20, 0, 10, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "I'm sorry to hear that. Can you tell me more about your assignment? Maybe there's a way to do it without a computer.",
-        "send_time": datetime(2022, 6, 20, 0, 11, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": USER,
-        "to": CHATBOT,
-        "message": "There is NO WAY to finish that assignment without a computer. Why didn't she understand that??? 😡",
-        "send_time": datetime(2022, 6, 20, 0, 12, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": USER,
-        "message": "It sounds like you're feeling frustrated because you feel like your mom doesn't understand your needs. Can you tell me more about that?",
-        "send_time": datetime(2022, 6, 20, 0, 13, 0, tzinfo=timezone.utc)
-    },
-    {
-        "from": CHATBOT,
-        "to": END,
-        "message": "This conversation ended by the system.",
-        "send_time": datetime(2022, 6, 20, 0, 14, 0, tzinfo=timezone.utc)
-    }
-]
-
 
 def _delete_session_variable(variable: str) -> None:
     try:
@@ -604,7 +499,10 @@ def clear_session():
         'motivational_interview_id',
         'motivational_interview_answers',
         'info_bot',
-        'reflection_bot'
+        'reflection_bot',
+        'mindy',
+        'reflect_diary',
+        'user'
     ]
     for variable in delete_variables:
         _delete_session_variable(variable)
@@ -754,97 +652,6 @@ def info_bot():
         conversation=convo.get_conversation(end=info_bot.get('end')),
         form=form
     )
-
-
-@app.route('/reflect_bot', methods=['GET', 'POST'])
-def reflect_bot():
-    reflection_bot = session.get("reflection_bot", None)
-    if not reflection_bot:
-        select_prompt = init_reflection_bot()
-        reflection_bot = {
-            "chat_log": select_prompt["prompt"] + select_prompt[
-                "message_start"],
-            "convo_start": select_prompt["message_start"],
-            "bot_start": "Hello. I am an AI agent designed to act as your Mindfulness instructor. I am here to help you reflect on your learnings. How can I help you?",
-            "chatbot": select_prompt["chatbot"],
-            "user": request.remote_addr,
-            "start": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-        }
-
-    convo = GPTConversation(
-        user=reflection_bot.get("user"),
-        chatbot=reflection_bot.get("chatbot"),
-        chat_log=reflection_bot.get("chat_log"),
-        bot_start=reflection_bot.get("bot_start"),
-        convo_start=reflection_bot.get("convo_start")
-    )
-
-    start = reflection_bot.get('start')
-    if start is None:
-        reflection_bot["start"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-
-    stop = reflection_bot.get('stop')
-    if stop is None:
-        reflection_bot["stop"] = 5 * 60
-
-    now = datetime.now()
-    difference = now - datetime.strptime(reflection_bot.get('start'),
-                                         "%m/%d/%Y, %H:%M:%S")
-    difference_seconds = difference.total_seconds()
-
-    end = reflection_bot.get('end')
-    if end is None or not end:
-        reflection_bot["end"] = (
-                    difference_seconds >= reflection_bot.get('stop'))
-
-    form = ChatForm()
-    if form.validate_on_submit() and not reflection_bot.get('end'):
-        user_message = form.message.data
-        answer = convo.ask(user_message)
-        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
-
-        reflection_bot['chat_log'] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
-
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (reflection_bot["user"], reflection_bot["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
-
-        session["reflection_bot"] = reflection_bot
-        return redirect(url_for('reflect_bot'))
-
-    session["reflection_bot"] = reflection_bot
-    return render_template(
-        '/dialogue/qualtrics_card.html',
-        user=convo.get_user(),
-        bot=convo.get_chatbot(),
-        warning=convo.WARNING,
-        end=convo.END,
-        notification=convo.NOTI,
-        conversation=convo.get_conversation(end=reflection_bot.get('end')),
-        form=form
-    )
-
   
 @app.route('/full_chat/<user_id>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
 @app.route('/full_chat/<user_id>/<show_bot_avatar>', methods=['GET', 'POST'])
@@ -915,58 +722,132 @@ def full_chat_window(user_id, show_bot_avatar):
         form=form
     )
 
-@app.route('/survey/<route_num>')
-def survey(route_num):
-    return render_template("/pages/survey.html", route_num=route_num)
 
-@app.route('/post_survey')
-def post_survey():
-    return render_template("/pages/post_survey.html")
-
-@app.route('/bot_video_diary', methods=['GET', 'POST'])
-def bot_video_diary():
-    return render_template("/pages/bot_video_diary.html")
-
-@app.route('/video_diary/<route_num>')
-def video_diary(route_num):
-    return render_template("/pages/video_diary.html", route_num=route_num)
-
-@app.route('/info_diary')
-def info_diary():
-    return render_template("/pages/info_diary.html")
-
-@app.route('/reflect_diary', methods=['GET', 'POST'])
-def reflect_diary():
-    return render_template("/pages/reflect_diary.html")
-
-@app.route('/end_survey', methods=['GET', 'POST'])
-def end_survey():
-    return render_template("/pages/end.html")
-
-@app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
-def mindy(user_id):
+@app.route('/survey/<user_id>', methods=['GET', 'POST'])
+def survey(user_id):
     session["user"] = user_id
-    chat_log = session.get('chat_log')
-    if chat_log is None:
-        select_prompt = init_mindy()
-        session["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
-        session["chatbot"] = select_prompt["chatbot"]
+    form = SurveyForm()
+    if form.validate_on_submit():
+        presurvey_1 = form.mindful_today.data
+        presurvey_2 = form.stress.data
+        presurvey_3 = form.positive_mindset.data
+        presurvey_4 = form.decentering.data
+        print("SURVEY FORM IS SUBMITTED!!!")
+        print(f"presurvey 1: {presurvey_1}\npresurvey 2: {presurvey_2}\npresurvey 3: {presurvey_3}\npresurvey 4: {presurvey_4}")
+        return redirect(url_for('video_diary', user_id=user_id))
+
+    return render_template(
+        "/pages/survey.html",
+        form=form
+    )
+
+
+@app.route('/video_diary/<user_id>', methods=['GET', 'POST'])
+def video_diary(user_id):
+    session["user"] = user_id
+    video_url = init_video_for_mindfulness()
+
+    form = DiaryForm()
+    if form.validate_on_submit():
+        diary_1 = form.diary_1.data
+        diary_2 = form.diary_2.data
+        print("VIDEO DIARY FORM IS SUBMITTED!!!")
+        print(f"diary 1: {diary_1}\ndiary 2: {diary_2}")
+
+        if int(user_id) % 2 == 0:
+            return redirect(url_for('reflect_diary', user_id=user_id))
+        else:
+            return redirect(url_for('post_survey', user_id=user_id))
+
+    return render_template(
+        "/pages/video_diary.html", 
+        video_url=video_url, 
+        form=form
+    )
+
+
+@app.route('/post_survey/<user_id>', methods=['GET', 'POST'])
+def post_survey(user_id):
+    session["user"] = user_id
+    form = PostSurveyForm()
+    if form.validate_on_submit():
+        stress = form.stress.data
+        statement_1 = form.statement_1.data
+        statement_2 = form.statement_2.data
+        print("POST SURVEY FORM IS SUBMITTED!!!")
+        print(f"stress: {stress}\nstatement 1: {statement_1}\nstatement 2: {statement_2}")
+        return redirect(url_for('end_survey', user_id=user_id))
+
+    return render_template(
+        "/pages/post_survey.html", 
+        form=form
+    )
+
+
+@app.route('/reflect_diary/<user_id>', methods=['GET', 'POST'])
+def reflect_diary(user_id):
+    session["user"] = user_id
+    reflect_diary = session.get("reflect_diary", None)
+    start_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+    if not reflect_diary:
+        reflect_diary = {
+            "start": start_time
+        }
+        session['reflect_diary'] = reflect_diary
+
+    start = session['reflect_diary'].get('start')
+    if start is None:
+        session['reflect_diary']["start"] = start_time
+        
+    print(f"start time: {session['reflect_diary'].get('start')}")
+
+    form = DiaryForm()
+    if form.validate_on_submit():
+        diary_1 = form.diary_1.data
+        diary_2 = form.diary_2.data
+        print("VIDEO DIARY FORM IS SUBMITTED!!!")
+        print(f"diary 1: {diary_1}\ndiary 2: {diary_2}")
+        return redirect(url_for('post_survey', user_id=user_id))
+
+    return render_template(
+        "/pages/reflect_diary.html", 
+        convo_start=session['reflect_diary'].get('start'),
+        form=form
+    )
+
+
+@app.route('/reflect_bot/<user_id>/<convo_end>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
+@app.route('/reflect_bot/<user_id>/<show_bot_avatar>/<convo_end>', methods=['GET', 'POST'])
+def reflect_bot(user_id, convo_end, show_bot_avatar):
+    end = bool(int(convo_end))
+    session["user"] = user_id
+    reflection_bot = session.get("reflection_bot", None)
+    if not reflection_bot:
+        select_prompt = init_reflection_bot()
+        reflection_bot = {
+            "chat_log": select_prompt["prompt"] + select_prompt[
+                "message_start"],
+            "convo_start": select_prompt["message_start"],
+            "bot_start": 'The following bot is designed to help you reflect on your understanding of the mindfulness video. You can start by prompting "Can you help me reflect on my understanding of mindfulness?"',
+            "chatbot": select_prompt["chatbot"],
+            "user": user_id,
+        }
 
     convo = GPTConversation(
-        session.get("user"), 
-        session.get("chatbot"),
-        session.get("chat_log"),
-        bot_start="Hi! I am Mindy, your mindfulness buddy! How can I help you today?",
-        convo_start="\n\nHuman: Hello, who are you?\nMindy: Hi! I am Mindy, your mindfulness buddy! How can I help you today?"
+        user=reflection_bot.get("user"),
+        chatbot=reflection_bot.get("chatbot"),
+        chat_log=reflection_bot.get("chat_log"),
+        bot_start=reflection_bot.get("bot_start"),
+        convo_start=reflection_bot.get("convo_start")
     )
 
     form = ChatForm()
-    if form.validate_on_submit() and not session.get('end'):
+    if form.validate_on_submit() and not end:
         user_message = form.message.data
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
-        session['chat_log'] = chat_log
+        reflection_bot['chat_log'] = chat_log
         sqliteConnection = None
         try:
             sqliteConnection = sqlite3.connect(
@@ -978,7 +859,97 @@ def mindy(user_id):
                                   (user_id, chat_log) 
                                    VALUES 
                                   (?,?);"""
-            param_tuple = (session["user"], session["chat_log"])
+            param_tuple = (reflection_bot["user"], reflection_bot["chat_log"])
+            count = cursor.execute(sqlite_insert_query, param_tuple)
+            sqliteConnection.commit()
+            print(
+                "Record inserted successfully into SqliteDb_developers table ",
+                cursor.rowcount)
+            cursor.close()
+
+        except sqlite3.Error as error:
+            print("Failed to insert data into sqlite table", error)
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print("The SQLite connection is closed")
+
+        session["reflection_bot"] = reflection_bot
+        return redirect(url_for('reflect_bot', user_id=user_id, convo_end=1 if end else 0))
+
+    session["reflection_bot"] = reflection_bot
+    return render_template(
+        '/dialogue/qualtrics_card.html',
+        user=convo.get_user(),
+        bot=convo.get_chatbot(),
+        show_bot_avatar=show_bot_avatar is not None,
+        warning=convo.WARNING,
+        end=convo.END,
+        notification=convo.NOTI,
+        conversation=convo.get_conversation(end=end),
+        form=form
+    )
+
+
+@app.route('/end_survey/<user_id>', methods=['GET', 'POST'])
+def end_survey(user_id):
+    session["user"] = user_id
+
+    delete_variables = [
+        'chat_log',
+        'start',
+        'end',
+        'arm_no',
+        'bot_chat_log',
+        'user_chat_log',
+        'info_bot',
+        'reflection_bot',
+        'reflect_diary',
+        'user'
+    ]
+    for variable in delete_variables:
+        _delete_session_variable(variable)
+
+    return render_template("/pages/end.html")
+
+
+@app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
+def mindy(user_id):
+    session["user"] = user_id
+    session["mindy"] = session.get("mindy", {})
+    chat_log = session.get('chat_log')
+    if chat_log is None:
+        select_prompt = init_mindy()
+        session["mindy"]["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
+        session["mindy"]["chatbot"] = select_prompt["chatbot"]
+
+    convo = GPTConversation(
+        session["mindy"].get("user"), 
+        session["mindy"].get("chatbot"),
+        session["mindy"].get("chat_log"),
+        bot_start="Hi! I am Mindy, your mindfulness buddy! How can I help you today?",
+        convo_start="\n\nHuman: Hello, who are you?\nMindy: Hi! I am Mindy, your mindfulness buddy! How can I help you today?"
+    )
+
+    form = ChatForm()
+    if form.validate_on_submit() and not session.get('end'):
+        user_message = form.message.data
+        answer = convo.ask(user_message)
+        chat_log = convo.append_interaction_to_chat_log(user_message, answer)
+
+        session["mindy"]['chat_log'] = chat_log
+        sqliteConnection = None
+        try:
+            sqliteConnection = sqlite3.connect(
+                '/var/www/html/acaidb/database.db')
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+
+            sqlite_insert_query = """INSERT INTO chats
+                                  (user_id, chat_log) 
+                                   VALUES 
+                                  (?,?);"""
+            param_tuple = (session["user"], session["mindy"]["chat_log"])
             count = cursor.execute(sqlite_insert_query, param_tuple)
             sqliteConnection.commit()
             print(
@@ -1006,3 +977,13 @@ def mindy(user_id):
         conversation=convo.get_conversation(end=session.get('end')),
         form=form
     )
+
+
+@app.route('/bot_video_diary', methods=['GET', 'POST'])
+def bot_video_diary():
+    return render_template("/pages/bot_video_diary.html")
+
+
+@app.route('/info_diary')
+def info_diary():
+    return render_template("/pages/info_diary.html")
