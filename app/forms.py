@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, SelectField
+from wtforms import StringField, SubmitField, TextAreaField, SelectField, IntegerField
 from wtforms.validators import DataRequired
 
 
@@ -33,3 +33,41 @@ class BotToBotChatForm(FlaskForm):
     message = StringField('Write a message...')
 
     submit = SubmitField('Send Message')
+
+
+class SurveyForm(FlaskForm):
+    mindful_today = SelectField(
+        'Select mindful today', 
+        choices=[
+            ('none', 'none'), 
+            ('once', 'once'), 
+            ('a_few_times', 'a_few_times')
+        ], 
+        validators=[DataRequired()]
+    )
+
+    stress = IntegerField('Stress', default=0)
+
+    positive_mindset = IntegerField('Positive Mindset', default=3)
+
+    decentering = IntegerField('Positive Mindset', default=3)
+
+    submit = SubmitField('Next')
+
+
+class DiaryForm(FlaskForm):
+    diary_1 = StringField('What has changed?')
+
+    diary_2 = StringField('How the mindfulness practices influence you?')
+
+    submit = SubmitField('Next')
+
+
+class PostSurveyForm(FlaskForm):
+    stress = IntegerField('Stress', default=0)
+
+    statement_1 = IntegerField('Statement 1', default=3)
+
+    statement_2 = IntegerField('Statement 2', default=3)
+
+    submit = SubmitField('Finish')
