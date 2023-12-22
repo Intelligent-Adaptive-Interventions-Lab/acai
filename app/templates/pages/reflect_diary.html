@@ -42,7 +42,7 @@ Chatbot Conversation
 
 {% block js_files %}
 <script>
-var BOT_URL_REGEX = /(http[s]?:\/\/[\w.:]+\/reflect_bot\/[^\/]+)(\/[^\/]*)?(?=(\/[01]))/;
+var BOT_URL_REGEX = /(http[s]?:\/\/[\w.:]+\/reflect_bot)(\/[^\/]+)(\/[^\/]*)?(?=(\/[01]))/;
 
 var ReflectDiary = function() {
   this.formDiary1 = document.getElementById(`form-diary-1`),
@@ -62,8 +62,16 @@ ReflectDiary.prototype = {
     this._addEventListner();
   },
   _prepareFrontEnd: function() {
-    this.diary1.value = this.formDiary1.value = '';
-    this.diary2.value = this.formDiary2.value = '';
+    this.diary1.value = this.formDiary1.value;
+    this.diary2.value = this.formDiary2.value;
+
+    const match = this.reflectBot.src.match(BOT_URL_REGEX);
+    let show_bot_avatar = match[3] !== undefined ? match[3] : '';    
+    this.reflectBot.src = match[1] + '/{{user_id}}' + show_bot_avatar + match[4];
+
+    console.log(match)
+    console.log('/{{user_id}}')
+    console.log(match[1] + '/{{user_id}}' + show_bot_avatar + match[4])
   },
   _prepareAPI: function() {
     var that = this;
@@ -90,10 +98,11 @@ ReflectDiary.prototype = {
 
     this.inactivateBot = () => {
       const match = that.reflectBot.src.match(BOT_URL_REGEX);
+      
       try {
-        if (match[3] === '/0') {
-          let show_bot_avatar = match[2] !== undefined ? match[2] : '';
-          that.reflectBot.src = match[1] + show_bot_avatar + '/1';
+        if (match[4] === '/0') {
+          let show_bot_avatar = match[3] !== undefined ? match[3] : '';
+          that.reflectBot.src = match[1] + match[2] + show_bot_avatar + '/1';
         }
       } catch {
         console.log('Reflect bot not found!');

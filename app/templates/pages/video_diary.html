@@ -35,6 +35,7 @@ Chatbot Conversation
           {% include 'pages/includes/diary.html' %}
           {{ form.diary_1(hidden='true', id='form-diary-1') }}
           {{ form.diary_2(hidden='true', id='form-diary-2') }}
+          {{ form.video_name(hidden='true', id='form-video-name')}}
           {{ form.submit(hidden='true', id='form-submit') }}
         </form>
       </div>
@@ -50,6 +51,7 @@ Chatbot Conversation
 var VideoDiary = function() {
   this.formDiary1 = document.getElementById(`form-diary-1`),
   this.formDiary2 = document.getElementById(`form-diary-2`),
+  this.formVideoName = document.getElementById(`form-video-name`),
   this.formSubmit = document.getElementById(`form-submit`),
   this.videoFrame = document.getElementById(`video-iframe`),
   this.diary1 = document.getElementById(`question1`),
@@ -68,6 +70,8 @@ VideoDiary.prototype = {
     this.diary2.value = this.formDiary2.value = '';
 
     this.videoFrame.src = "https://www.youtube.com/embed/{{video_url}}";
+
+    this.formVideoName.value = "{{video_url}}"
   },
   _prepareAPI: function() {
     var that = this;

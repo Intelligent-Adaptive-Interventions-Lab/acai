@@ -60,6 +60,8 @@ class DiaryForm(FlaskForm):
 
     diary_2 = StringField('How the mindfulness practices influence you?')
 
+    video_name = StringField('Video Name')
+
     submit = SubmitField('Next')
 
 

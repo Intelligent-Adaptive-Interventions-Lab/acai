@@ -1,6 +1,7 @@
 import sqlite3
 
-SQLITE_DB_PATH = '/var/www/html/acaidb/database.db'
+# SQLITE_DB_PATH = '/var/www/html/acaidb/database.db'
+SQLITE_DB_PATH = './database.db'
 
 def add_new_chat_log(user_id, chat_log):
     sqliteConnection = None
@@ -101,16 +102,12 @@ def get_last_id_from_user_id(user_id):
         if sqliteConnection:
             sqliteConnection.close()
             print("The SQLite connection is closed")
+    
+    print(f'found last id: {last_id}')
 
     return last_id
 
 def update_pre_survey(user_id, pre_mindful, pre_stress, pre_aware, pre_perspective, pre_survey_click_ts):
-    last_id = get_last_id_from_user_id(user_id)
-
-    if last_id is None:
-        print(f"user_id {user_id} not found in table interfaceSession")
-        return
-
     sqliteConnection = None
     try:
         sqliteConnection = sqlite3.connect(SQLITE_DB_PATH)
@@ -123,8 +120,12 @@ def update_pre_survey(user_id, pre_mindful, pre_stress, pre_aware, pre_perspecti
                                 pre_aware = ?,
                                 pre_perspective = ?,
                                 pre_survey_click_ts = ?
-                                WHERE id = ?;"""
-        param_tuple = (pre_mindful, pre_stress, pre_aware, pre_perspective, pre_survey_click_ts, last_id)
+                                WHERE id = (
+                                    SELECT MAX(id)
+                                    FROM interfaceSession
+                                    WHERE user_id = ?
+                                );"""
+        param_tuple = (pre_mindful, pre_stress, pre_aware, pre_perspective, pre_survey_click_ts, user_id)
         count = cursor.execute(sqlite_insert_query, param_tuple)
         sqliteConnection.commit()
         print(
@@ -140,12 +141,6 @@ def update_pre_survey(user_id, pre_mindful, pre_stress, pre_aware, pre_perspecti
             print("The SQLite connection is closed")
 
 def udpate_diary(user_id, diary_1, diary_2, video_name, main_interface_click_ts_1):
-    last_id = get_last_id_from_user_id(user_id)
-
-    if last_id is None:
-        print(f"user_id {user_id} not found in table interfaceSession")
-        return
-
     sqliteConnection = None
     try:
         sqliteConnection = sqlite3.connect(SQLITE_DB_PATH)
@@ -156,9 +151,13 @@ def udpate_diary(user_id, diary_1, diary_2, video_name, main_interface_click_ts_
                                 SET diary_1 = ?, 
                                 diary_2 = ?,
                                 video_name = ?,
-                                main_interface_click_ts_1 = ?,
-                                WHERE id = ?;"""
-        param_tuple = (diary_1, diary_2, video_name, main_interface_click_ts_1, last_id)
+                                main_interface_click_ts_1 = ?
+                                WHERE id = (
+                                    SELECT MAX(id)
+                                    FROM interfaceSession
+                                    WHERE user_id = ?
+                                );"""
+        param_tuple = (diary_1, diary_2, video_name, main_interface_click_ts_1, user_id)
         count = cursor.execute(sqlite_insert_query, param_tuple)
         sqliteConnection.commit()
         print(
@@ -174,12 +173,6 @@ def udpate_diary(user_id, diary_1, diary_2, video_name, main_interface_click_ts_
             print("The SQLite connection is closed")
 
 def update_reflect_chat(user_id, reflect_chatlog):
-    last_id = get_last_id_from_user_id(user_id)
-
-    if last_id is None:
-        print(f"user_id {user_id} not found in table interfaceSession")
-        return
-
     sqliteConnection = None
     try:
         sqliteConnection = sqlite3.connect(SQLITE_DB_PATH)
@@ -188,8 +181,12 @@ def update_reflect_chat(user_id, reflect_chatlog):
 
         sqlite_insert_query = """UPDATE interfaceSession
                                 SET reflect_chatlog = ?
-                                WHERE id = ?;"""
-        param_tuple = (reflect_chatlog, last_id)
+                                WHERE id = (
+                                    SELECT MAX(id)
+                                    FROM interfaceSession
+                                    WHERE user_id = ?
+                                );"""
+        param_tuple = (reflect_chatlog, user_id)
         count = cursor.execute(sqlite_insert_query, param_tuple)
         sqliteConnection.commit()
         print(
@@ -205,12 +202,6 @@ def update_reflect_chat(user_id, reflect_chatlog):
             print("The SQLite connection is closed")
 
 def update_reflect(user_id, diary_1, diary_2, main_interface_click_ts_2):
-    last_id = get_last_id_from_user_id(user_id)
-
-    if last_id is None:
-        print(f"user_id {user_id} not found in table interfaceSession")
-        return
-    
     sqliteConnection = None
     try:
         sqliteConnection = sqlite3.connect(SQLITE_DB_PATH)
@@ -220,9 +211,13 @@ def update_reflect(user_id, diary_1, diary_2, main_interface_click_ts_2):
         sqlite_insert_query = """UPDATE interfaceSession
                                 SET diary_1 = ?, 
                                 diary_2 = ?,
-                                main_interface_click_ts_2 = ?,
-                                WHERE id = ?;"""
-        param_tuple = (diary_1, diary_2, main_interface_click_ts_2, last_id)
+                                main_interface_click_ts_2 = ?
+                                WHERE id = (
+                                    SELECT MAX(id)
+                                    FROM interfaceSession
+                                    WHERE user_id = ?
+                                );"""
+        param_tuple = (diary_1, diary_2, main_interface_click_ts_2, user_id)
         count = cursor.execute(sqlite_insert_query, param_tuple)
         sqliteConnection.commit()
         print(
@@ -238,12 +233,6 @@ def update_reflect(user_id, diary_1, diary_2, main_interface_click_ts_2):
             print("The SQLite connection is closed")
 
 def update_post_survey(user_id, post_mindful, post_stress, post_aware, post_survey_click_ts):
-    last_id = get_last_id_from_user_id(user_id)
-
-    if last_id is None:
-        print(f"user_id {user_id} not found in table interfaceSession")
-        return
-    
     sqliteConnection = None
     try:
         sqliteConnection = sqlite3.connect(SQLITE_DB_PATH)
@@ -254,9 +243,13 @@ def update_post_survey(user_id, post_mindful, post_stress, post_aware, post_surv
                                 SET post_mindful = ?, 
                                 post_stress = ?,
                                 post_aware = ?,
-                                post_survey_click_ts = ?,
-                                WHERE id = ?;"""
-        param_tuple = (post_mindful, post_stress, post_aware, post_survey_click_ts, last_id)
+                                post_survey_click_ts = ?
+                                WHERE id = (
+                                    SELECT MAX(id)
+                                    FROM interfaceSession
+                                    WHERE user_id = ?
+                                );"""
+        param_tuple = (post_mindful, post_stress, post_aware, post_survey_click_ts, user_id)
         count = cursor.execute(sqlite_insert_query, param_tuple)
         sqliteConnection.commit()
         print(
@@ -270,3 +263,35 @@ def update_post_survey(user_id, post_mindful, post_stress, post_aware, post_surv
         if sqliteConnection:
             sqliteConnection.close()
             print("The SQLite connection is closed")
+
+def get_diary_answers_from_latest_user_id(user_id):
+    sqliteConnection = None
+    diary_1, diary_2 = None, None
+    try:
+        sqliteConnection = sqlite3.connect(SQLITE_DB_PATH)
+        cursor = sqliteConnection.cursor()
+        print("Successfully Connected to SQLite")
+
+        query_sql = """SELECT diary_1, diary_2
+                        FROM interfaceSession 
+                        WHERE id = (
+                            SELECT MAX(id)
+                            FROM interfaceSession
+                            WHERE user_id = ?
+                        );"""
+        param_tuple = (user_id)
+        count = cursor.execute(query_sql, param_tuple)
+
+        diary_1, diary_2 = cursor.fetchone()
+
+        print(f'diary_answers: {diary_1}, {diary_2}')
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Failed to select data from sqlite table", error)
+    finally:
+        if sqliteConnection:
+            sqliteConnection.close()
+            print("The SQLite connection is closed")
+
+    return diary_1, diary_2

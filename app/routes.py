@@ -24,7 +24,8 @@ from app.database import (
     udpate_diary,
     update_reflect_chat,
     update_reflect,
-    update_post_survey
+    update_post_survey,
+    get_diary_answers_from_latest_user_id
 )
 from flask import (
     Flask,
@@ -619,9 +620,6 @@ def full_chat_window(user_id, show_bot_avatar):
 def survey(user_id):
     session["user"] = user_id
 
-    track_link_click(user_id=user_id, timestamp=datetime.now())
-    add_new_user_to_diary_study(user_id=user_id, session_start_ts=datetime.now())
-
     form = SurveyForm()
     if form.validate_on_submit():
         presurvey_1 = form.mindful_today.data
@@ -641,6 +639,15 @@ def survey(user_id):
         )
 
         return redirect(url_for('video_diary', user_id=user_id))
+    
+    track_link_click(user_id=user_id, timestamp=datetime.now())
+    add_new_user_to_diary_study(user_id=user_id, session_start_ts=datetime.now())
+    
+    delete_variables = [
+        'reflect_diary'
+    ]
+    for variable in delete_variables:
+        _delete_session_variable(variable)
 
     return render_template(
         "/pages/survey.html",
@@ -657,14 +664,16 @@ def video_diary(user_id):
     if form.validate_on_submit():
         diary_1 = form.diary_1.data
         diary_2 = form.diary_2.data
+        video_name = form.video_name.data
         print("VIDEO DIARY FORM IS SUBMITTED!!!")
         print(f"diary 1: {diary_1}\ndiary 2: {diary_2}")
+        print(f"video_name: {video_name}")
 
         udpate_diary(
             user_id=user_id, 
-            diary_1=diary_1, 
-            diary_2=diary_2, 
-            video_name=video_url, 
+            diary_1=str(diary_1), 
+            diary_2=str(diary_2), 
+            video_name=str(video_name), 
             main_interface_click_ts_1=datetime.now()
         )
 
@@ -739,10 +748,16 @@ def reflect_diary(user_id):
         )
 
         return redirect(url_for('post_survey', user_id=user_id))
-
+    
+    diary_1, diary_2 = get_diary_answers_from_latest_user_id(user_id)
+    form.diary_1.default = diary_1 if diary_1 is not None else ''
+    form.diary_2.default = diary_2 if diary_2 is not None else ''
+    form.process()
+    
     return render_template(
         "/pages/reflect_diary.html", 
         convo_start=session['reflect_diary'].get('start'),
+        user_id=user_id,
         form=form
     )
 
@@ -763,6 +778,8 @@ def reflect_bot(user_id, convo_end, show_bot_avatar):
             "chatbot": select_prompt["chatbot"],
             "user": user_id,
         }
+    else:
+        reflection_bot["user"] = user_id
 
     convo = GPTConversation(
         user=reflection_bot.get("user"),
