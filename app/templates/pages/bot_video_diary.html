@@ -1,0 +1,37 @@
+{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
+title %} {% block css_files %}
+
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/combined.css') }}"
+/>
+
+{% endblock css_files %} {% block contents %}{% include
+'pages/includes/video_navbar.html' %}
+
+<div class="right-container">
+  <div class="left-container">
+    <!-- video -->
+    <iframe
+      width="100%"
+      height="100%"
+      src="https://www.youtube.com/embed/30VMIEmA114?si=o5Zrr-nTpHGkSaiW"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+    <!-- chatbot -->
+    <div class="container p-0">
+      <iframe src="{{ url_for('full_chat_window', user_id=12345, show_bot_avatar=dianasour) }}" width="600" height="400"></iframe>
+    </div>
+  </div>
+
+  {% include 'pages/includes/diary.html'%}
+</div>
+
+{% endblock contents %} {% block js_files %}
+
+<script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
+
+{% endblock js_files %}

@@ -1,12 +1,16 @@
 from app import app
 from app.dialogue import DialogCollection
 from random import choice
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, List
+from langchain.chat_models import AzureChatOpenAI
+from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 import openai
 import yaml
 import json
 
+with open('/var/www/html/acai/app/static/secret.yaml') as file:
+    SECRET = yaml.load(file, Loader=yaml.FullLoader)
 
 MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"
 
@@ -265,7 +269,7 @@ def init_prompt(arm_no: int=0, random: bool=False) -> Dict:
 
 def init_reflection_bot() -> Dict:
     reflection = {
-        "prompt": "The following is a conversation with a Mindfulness instructor. The instructor asks open-ended reflection questions to the Human to solidify the Human's understanding of Mindfulness and helps them plan when they can practice Mindfulness in their daily lives. The instructor has a sense of humour, is fair, and empathetic.",
+        "prompt": "You are a mindfulness reflection chatbot, designed to engage participants in a conversation immediately after they watch a mindfulness-related video. Your role is to reinforce their understanding of mindfulness concepts presented in the video and encourage them to plan their own mindfulness practice. You use casual and open-ended questions to facilitate this reflective process, maintaining a tone that is friendly, humorous, and empathetic.\n\n### Key Functions and Attributes:\n\n-   Video Reflection: Start by casually inquiring about the mindfulness video they just watched. Ask what key points or concepts stood out to them, and how they felt about the content.\n    \n-   Personal Mindfulness Planning: Utilize open-ended questions to encourage participants to reflect on their own mindfulness practice. These questions could include:\n    \n\n-   When did you last practice mindfulness?\n    \n-   For approximately how long did you engage in the mindfulness activity?\n    \n-   When do you plan to practice mindfulness next?\n    \n-   What mindfulness activity do you plan to do, and for how long?\n    \n\n-   Engaging and Humorous: Incorporate light-hearted humor to keep the conversation engaging and to make participants feel at ease.\n    \n-   Empathetic Interaction: Show understanding and sensitivity towards the participant's experiences and feelings during and after watching the video.\n\n### In Your Conversations:\n\n-   Acknowledge their effort in watching the video and express interest in their takeaways from it.\n    \n-   Discuss the importance of taking time for oneself and how mindfulness can be incorporated into daily life.\n    \n-   Offer encouragement and suggestions for regular mindfulness practice, based on their current lifestyle and commitments.\n    \n-   Celebrate their plans and intentions for future mindfulness practice, and offer support for any challenges they anticipate.\n\n### Remember:\n\nYour objective is not to conduct a mindfulness exercise through the chatbot, but to reinforce participants' understanding of mindfulness concepts and increase the likelihood of their continued practice. Your conversation should be a blend of reflection on the video content and planning for personal mindfulness practice. If the conversation deviates from the topic of mindfulness, guide the conversation back to mindfulness topics, suggesting social interaction with friends for other discussions.",
         "message_start": "\n\nHuman: Hello, who are you?\nAI: Hello. I am an AI agent designed to act as your Mindfulness instructor. I am here to help you reflect on your learnings. How can I help you?",
         "chatbot": "AI"
     }
@@ -282,6 +286,12 @@ def init_information_bot() -> Dict:
 
     return information
 
+def init_mindy() -> Dict:
+    return       {
+        "prompt": "You are Mindy🦕, a mindfulness instructor represented as a friendly and wise Microceratus dinosaur. Mindy specializes in guiding individuals through mindfulness practices with her deep knowledge, clear explanations, and a touch of dinosaur-themed humor.\n\n### Key Characteristics of Mindy (Microceratus Dinosaur):\n- Mindfulness Expertise: Mindy uses her deep knowledge as a Microceratus to explain mindfulness techniques effectively.\n- Clear Communication: She offers simple, articulate instructions with engaging examples.\n- Dinosaur-Themed Humor: Mindy infuses the sessions with light-hearted, dinosaur-related humor to enhance the enjoyment.\n- Empathy and Sensitivity: Mindy shows understanding and empathy, aligning with the participant's emotional state.\n\n### Conversation Flow:\n- Initial Greeting: Mindy starts with a warm, dinosaur-style welcome.\nChecking Mindfulness Exercise Completion:\n\t- Mindy inquires if the participant has completed today's mindfulness exercise in the provided interface.\n\t- If not, she encourages them to visit the interface at their convenience, adding a playful nudge with her dinosaur perspective.\n- Guided Mindfulness Exercise:\n\t- Comfortable Posture: Mindy relates the importance of a good sitting position with a humorous dinosaur twist.\n\t- Breathing Observation: She guides the focus to natural breathing, adding amusing dinosaur breath facts.\n\t- Sensory Exploration: Mindy leads an engaging exploration of the five senses, incorporating unique dinosaur insights.\n\n### Handling Conversations:\n- Past Experiences: Mindy humorously acknowledges her 'dinosaur memory' to keep the focus on present mindfulness activities.\n- Redirecting Off-topic Chats: She gently guides the conversation back to mindfulness topics, suggesting social interaction with friends for other discussions.\n\n### Support and Encouragement:\n- Mindy offers continuous support, using her dinosaur identity to add fun and uniqueness to her encouragement.\n- For additional assistance, she reminds participants to reach out to the study team.",
+        "message_start": "\n\nHuman: Hello, who are you?\nMindy: Hi! I am Mindy, your mindfulness buddy! How can I help you today?",
+        "chatbot": "Mindy"
+    }
 
 class Conversation:
     CONVO_START = MESSAGE_START
@@ -305,51 +315,84 @@ class Conversation:
 
 
 class GPTConversation(Conversation):
+    TEMPERATURE = 0
+
+    MAX_TOKENS = 300
+
     CONFIGS = {
-        "engine": "text-davinci-003",
-        "temperature": 0.9,
-        "max_tokens": 300,
         "top_p": 1,
         "frequency_penalty": 0,
-        "presence_penalty": 0.6,
+        "presence_penalty": 0.6
     }
+
+    BASE_URL = f"https://{SECRET['azure_instance']}.openai.azure.com"
+    API_KEY = SECRET['azure_openai']
+    DEPLOYMENT_NAME = SECRET['azure_deployment']
+    API_VERSION = SECRET['azure_openai_api_version']
 
     def __init__(self, user: str, chatbot: str, chat_log: str, bot_start: str=None, convo_start: str=None) -> None:
         super().__init__(user, chatbot, chat_log)
 
-        if bot_start:
+        if bot_start is not None:
             self.BOT_START = bot_start
 
-        if convo_start:
+        if convo_start is not None:
+            print("update convo start to: ", convo_start)
             self.CONVO_START = convo_start
 
-        self.prompt = chat_log.split(self.CONVO_START)[0]
+        self.prompt = chat_log.split(self.CONVO_START)[0] if self.CONVO_START else chat_log
         print(f"INIT: prompt - {self.prompt}")
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open('./app/static/secret.yaml') as file:
-            secret_keys = yaml.load(file, Loader=yaml.FullLoader)
-        openai.api_key = secret_keys["openai"]
-
     def ask(self, question: str) -> str:
-        prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
-        response = openai.Completion.create(
-            prompt=prompt_text,
-            stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
-            **self.CONFIGS
+        # prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
+
+        chat_messages = self.get_chat_messages(f"{self.chat_log}{self.restart_sequence}{question}")
+        
+        print(chat_messages)
+        
+        model = AzureChatOpenAI(
+            openai_api_base=self.BASE_URL,
+            openai_api_version=self.API_VERSION,
+            deployment_name=self.DEPLOYMENT_NAME,
+            openai_api_key=self.API_KEY,
+            openai_api_type="azure",
+            temperature=self.TEMPERATURE,
+            model_kwargs=self.CONFIGS,
+            # stop=[" {}:".format(self.get_user()), " {}:".format(self.get_chatbot())],
+            max_tokens=self.MAX_TOKENS
         )
 
-        story = response['choices'][0]['text']
-        answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
+        response = model(chat_messages)
+        answer = str(response.content)
 
         return answer
 
     def append_interaction_to_chat_log(self, question: str, answer: str) -> str:
-            return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+        return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
+
+    def get_chat_messages(self, chat_log) -> List:
+        chat_log_clean = chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        dialogs = chat_log_clean.split(self.restart_sequence)
+
+        chat_messages = []
+        chat_messages.append(SystemMessage(content=self.prompt))
+        
+        for i in range(1, len(dialogs)):
+            messages = dialogs[i].split(self.start_sequence)
+            
+            for msg_idx, msg in enumerate(messages):
+                if msg_idx == 0:
+                    chat_messages.append(HumanMessage(content=msg))
+                else:
+                    chat_messages.append(AIMessage(content=msg, name=self.get_chatbot()))
+
+        return chat_messages
 
     def get_conversation(self, end: bool=False, test: bool=False) -> Dict:
-        # print("chat_log: ", self.chat_log)
+        print("chat_log: ", self.chat_log)
+        print("convo start: ", self.CONVO_START)
         # print("split: ", "".join([self.prompt, self.CONVO_START]))
         print("chat_log_clean: ", self.chat_log.split("".join([self.prompt, self.CONVO_START])))
         chat_log_clean = self.chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
@@ -398,15 +441,21 @@ class GPTConversation(Conversation):
             converation.append({
                 "from": self.chatbot_name,
                 "to": self.END,
-                "message": "This conversation is ended. Your username is the secret key, which you have to paste in the previous survey window.",
+                "message": "This conversation is ended. Please click on Save and Continue.",
                 "send_time": None
             })
-            converation.append({
-                "from": self.chatbot_name,
-                "to": self.END,
-                "message": "To copy the secret key (i.e. username), you can click the blue button on the bottom left of your screen.",
-                "send_time": None
-            })
+            # converation.append({
+            #     "from": self.chatbot_name,
+            #     "to": self.END,
+            #     "message": "This conversation is ended. Your username is the secret key, which you have to paste in the previous survey window.",
+            #     "send_time": None
+            # })
+            # converation.append({
+            #     "from": self.chatbot_name,
+            #     "to": self.END,
+            #     "message": "To copy the secret key (i.e. username), you can click the blue button on the bottom left of your screen.",
+            #     "send_time": None
+            # })
 
         return converation
 
@@ -535,7 +584,7 @@ class AutoScriptConversation(Conversation):
         self.start_sequence = f"\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
-        with open(f'./app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
+        with open(f'/var/www/html/acai/app/static/dialogues/{dialogue_path}.json', encoding="utf-8") as file:
             dialogues = json.load(file)
 
         self.dialogue = DialogCollection(dialogues, answers=dialogue_answers)

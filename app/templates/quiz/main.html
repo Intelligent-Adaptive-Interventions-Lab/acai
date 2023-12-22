@@ -1,113 +1,112 @@
-{% extends '_base.html' %}
+{% extends '_base.html' %} {% block title %} Quiz {% endblock title %} {% block
+css_files %}
+<style>
+  #countdown {
+    font-size: 3rem;
+    font-weight: bold;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+  }
 
-{% block title %}
-    Quiz
-{% endblock title %}
+  .img-fluid {
+    object-fit: none;
+    object-position: center;
+    width: 100%;
+    max-height: 250px;
+  }
 
-{% block css_files %}
-    <style>
-        #countdown {
-            font-size: 3rem;
-            font-weight: bold;
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-        }
+  .info {
+    font-weight: bold;
+    font-size: medium;
+  }
 
-        .img-fluid {
-            object-fit: none;
-            object-position: center;
-            width: 100%;
-            max-height: 250px;
-        }
+  .card-title {
+    font-weight: bold;
+  }
 
-        .info {
-            font-weight: bold;
-            font-size: medium;
-        }
-
-        .card-title {
-            font-weight: bold;
-        }
-
-        .ins {
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
-    </style>
-{% endblock css_files %}
-
-{% block contents %}
-    <h1 class="text-left">LOGO</h1>
-    <div class="container mt-5">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-left mt-4">Exercise</h2>
-                <p class="card-text text-left mb-4">Read the following
-                    instructions:</p>
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <img src="{{ url_for('static', filename='img.png') }}"
-                             class="img-fluid rounded mx-auto d-block border border-2"
-                             alt="Exercise Image">
-                    </div>
-                    <div class="col-md-6">
-                        <div class="row align-items-start">
-                            <div class="col-md-6">
-                                <p class="info">Date:</p>
-                                <p class="info">Time Limit:</p>
-                                <p class="info">Attempts:</p>
-                                <p class="info">Points:</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="info">DD/MM/YYYY</p>
-                                <p class="info">Mins</p>
-                                <p class="info">Once</p>
-                                <p class="info">Points</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ins">
-                        Instructions
-                    </div>
-                    <div class="card-text">
-                        <p>The exercise will consist on simple mathematical
-                            addition. In a sequence of three screens, you will
-                            be shown three independent numbers, one at a time.
-
-                        <p>Your job will be to simply add “X” to each of those
-                            numbers. “X” will vary depending one whether you
-                            choose the easy or the difficult task. In the easy
-                            task, you will always be asked to add “0” to the
-                            number. In the difficult task, the number will be
-                            either 1, 3, or 7.</p>
-
-                        <p>At the end of the three screens, you will be shown a
-                            correct answer and an incorrect answer to the
-                            addition. Choose the correct answer to secure the
-                            credits!</p>
-
-                        <p>To start, click the "Start" button. When finished,
-                            click the "Submit " button.</p>
-                    </div>
-                    <div class="d-grid gap-2 col-md-2 mx-auto mb-4">
-                         <button id="quiz-page-btn" class="btn btn-primary position-absoluted-flex" type="button">Start</button>
-                    </div>
-                </div>
-            </div>
+  .ins {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+</style>
+{% endblock css_files %} {% block contents %}
+<h1 class="text-left">LOGO</h1>
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-left mt-4">Exercise</h2>
+      <p class="card-text text-left mb-4">Read the following instructions:</p>
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <img
+            src="{{ url_for('static', filename='img.png') }}"
+            class="img-fluid rounded mx-auto d-block border border-2"
+            alt="Exercise Image"
+          />
         </div>
+        <div class="col-md-6">
+          <div class="row align-items-start">
+            <div class="col-md-6">
+              <p class="info">Date:</p>
+              <p class="info">Time Limit:</p>
+              <p class="info">Attempts:</p>
+              <p class="info">Points:</p>
+            </div>
+            <div class="col-md-6">
+              <p class="info">DD/MM/YYYY</p>
+              <p class="info">Mins</p>
+              <p class="info">Once</p>
+              <p class="info">Points</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ins">Instructions</div>
+        <div class="card-text">
+          <p>
+            The exercise will consist on simple mathematical addition. In a
+            sequence of three screens, you will be shown three independent
+            numbers, one at a time.
+          </p>
+
+          <p>
+            Your job will be to simply add “X” to each of those numbers. “X”
+            will vary depending one whether you choose the easy or the difficult
+            task. In the easy task, you will always be asked to add “0” to the
+            number. In the difficult task, the number will be either 1, 3, or 7.
+          </p>
+
+          <p>
+            At the end of the three screens, you will be shown a correct answer
+            and an incorrect answer to the addition. Choose the correct answer
+            to secure the credits!
+          </p>
+
+          <p>
+            To start, click the "Start" button. When finished, click the "Submit
+            " button.
+          </p>
+        </div>
+        <div class="d-grid gap-2 col-md-2 mx-auto mb-4">
+          <button
+            id="quiz-page-btn"
+            class="btn btn-primary position-absoluted-flex"
+            type="button"
+          >
+            Start
+          </button>
+        </div>
+      </div>
     </div>
-{% endblock contents %}
-
-{% block js_files %}
-    <script>
-        document.getElementById("quiz-page-btn").onclick = function () {
-            location.href = '{{ url_for('quiz_content') }}';
-        }
-
-    </script>
-
+  </div>
+</div>
+{% endblock contents %} {% block js_files %}
+<script>
+  document.getElementById("quiz-page-btn").onclick = function () {
+      location.href = '{{ url_for('quiz_content') }}';
+  }
+</script>
 
 {% endblock js_files %}

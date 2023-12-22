@@ -1,0 +1,227 @@
+{% extends '_base.html' %} 
+
+{% block title %}
+Quiz
+{% endblock title %} 
+
+{% block css_files %}
+<style>
+
+  .question {
+    padding-bottom: 20px;
+
+  }
+  
+  .slider-label {
+    display: block;
+    padding: 10px 0px;
+  }
+
+  .slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .custom-slider {
+      flex-grow: 1;
+      margin: 0 10px;
+  }
+
+  .slider-steps span {
+      position: relative;
+      text-align: center;
+  }
+</style>
+{% endblock css_files %} 
+
+{% block contents %}
+<div class="container" style="margin-top:30px">
+  <h1 class="text-left">Follow-Up Questions</h1>
+
+  <form class="container" style="padding: 20px; background: white" method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    
+    <div class="question">
+      <label class="slider-label" for="question1">Please slide to the number that accurately reflects the level of stress you are experiencing at this moment</label>
+      <div class="row gx-5 pt-1">
+        <div class="col-2 text-center pe-0">No stress</div>
+        <div class="d-flex flex-column col-8">
+          <input
+            type="range"
+            class="form-range flex-1"
+            id="question1"
+            name="question1"
+            min="1"
+            max="10"
+            step="1"
+            list="steplist"
+          />
+          <div class="slider-steps flex-1 d-flex justify-content-between">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+            <span>6</span>
+            <span>7</span>
+            <span>8</span>
+            <span>9</span>
+            <span>10</span>
+          </div>
+        </div>
+        <div class="col-2 text-center ps-0">Extreme stress</div>
+      </div>
+
+      {{form.stress(hidden='true', id='form-stress')}}
+    </div>
+
+    <p class="pt-4">Please indicate the extent to which you agree with the following statements, based on your current state.</p>
+    <div class="question">
+      <label class="slider-label fst-italic" for="question2">I have the sense that I am fully aware of what is going on around me and inside me.</label>
+      <div class="row gx-5 pt-1">
+        <div class="col-2 text-center pe-0">Strongly disagree</div>
+        <div class="d-flex flex-column col-8">
+          <input
+            type="range"
+            class="form-range"
+            id="question2"
+            name="question2"
+            min="1"
+            max="5"
+            step="1"
+          />
+          <div class="slider-steps flex-1 d-flex justify-content-between">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+          </div>
+        </div>
+        <div class="col-2 text-center ps-0">Strongly agree</div>
+      </div>
+      {{form.statement_1(hidden='true', id='form-statement-1')}}
+    </div>
+
+    <div class="question">
+      <label class="slider-label fst-italic" for="question3">I view things from a wider perspective.</label>
+      <div class="row gx-5 pt-1">
+        <div class="col-2 text-center pe-0">Strongly disagree</div>
+        <div class="d-flex flex-column col-8">
+          <input
+            type="range"
+            class="form-range"
+            id="question3"
+            name="question3"
+            min="1"
+            max="5"
+            step="1"
+          />
+          <div class="slider-steps flex-1 d-flex justify-content-between">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+          </div>
+        </div>
+        <div class="col-2 text-center ps-0">Strongly agree</div>
+      </div>
+      {{form.statement_2(hidden='true', id='form-statement-2')}}
+    </div>
+
+    <div style="text-align: right">
+      <button type="submit" class="submit-button" id="finish-btn">
+        Finish
+      </button>
+      {{form.submit(hidden='true', id='form-submit')}}
+    </div>
+  </form>
+</div>
+{% endblock contents %}
+
+{% block js_files %}
+<script>
+  var Survey = function() {
+    this.formStress = document.getElementById(`form-stress`),
+    this.formStatement1 = document.getElementById(`form-statement-1`),
+    this.formStatement2 = document.getElementById(`form-statement-2`),
+    this.formSubmit = document.getElementById(`form-submit`),
+    this.rangeStress = document.getElementById(`question1`),
+    this.rangeStatement1 = document.getElementById(`question2`),
+    this.rangeStatement2 = document.getElementById(`question3`),
+    this.submitBtn = document.getElementById(`finish-btn`)
+  };
+
+  Survey.prototype = {
+    ini: function() {
+      this._prepareAPI();
+      this._prepareFrontEnd();
+      this._addEventListner();
+    },
+    _prepareFrontEnd: function() {
+      this.rangeStress.value = this.formStress.value = 0;
+      this.rangeStatement1.value = this.formStatement1.value = 3;
+      this.rangeStatement2.value = this.formStatement2.value = 3;
+    },
+    _prepareAPI: function() {
+      var that = this;
+
+      this.syncValueChange = function(items) {
+        let curr = this;
+
+        items.forEach(item => {
+            item.value = curr.value;
+        });
+      }
+
+      this.onReady = (target, selector, event, callback) => {
+        let clickables = [...target.querySelectorAll(selector)];
+
+        let clickObserver = function(nodeID) {
+          callback(nodeID);
+        };
+
+        clickables.forEach(el => {
+            el.addEventListener(event, clickObserver.bind(el, el), true);
+        });
+      };
+    },
+    _addEventListner: function() {
+      var that = this;
+
+      this.rangeStress.addEventListener(
+        "input", 
+        that.syncValueChange.bind(that.rangeStress, [that.formStress])
+      );
+
+      this.rangeStatement1.addEventListener(
+        "input", 
+        that.syncValueChange.bind(that.rangeStatement1, [that.formStatement1])
+      );
+
+      this.rangeStatement2.addEventListener(
+        "input", 
+        that.syncValueChange.bind(that.rangeStatement2, [that.formStatement2])
+      );
+
+      this.submitBtn.addEventListener(
+        "click",
+        function() {
+
+          console.log(`clicked!!!`);
+
+          that.formSubmit.click();
+        }
+      );
+    }
+  };
+
+  window.onload = function() {
+    new Survey().ini();
+  };
+</script>
+{% endblock js_files %}
+
+    

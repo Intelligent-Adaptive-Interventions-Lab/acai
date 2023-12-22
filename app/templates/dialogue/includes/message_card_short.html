@@ -4,11 +4,7 @@
       <li class="nav-item">
         <a href="#!" class="nav-link p-0">
           <div class="bot__icon position-relative">
-            {% if show_bot_avatar %}
-              <img class="img-fluid rounded-circle avatar" src="{{ url_for('static', filename='bot_avatar.jpeg') }}" />
-            {% else %}
-              <div class="img-fluid rounded-circle avatar bot__avatar"></div>
-            {% endif %}
+            <div class="img-fluid rounded-circle avatar bot__avatar"></div>
             <span
               id="bot-new-message"
               class="position-absolute bottom-0 end-0 badge border border-light rounded-circle bg-danger bg-gradient p-1"
@@ -62,11 +58,7 @@
   if (convo.from == bot) and (convo.to == user) %}
   <div class="convo__box d-flex align-items-start mb-2 me-4">
     <div class="d-none d-sm-flex bot__icon">
-      {% if show_bot_avatar %}
-        <img class="img-fluid rounded-circle avatar" src="{{ url_for('static', filename='bot_avatar.jpeg') }}" />
-      {% else %}
-        <div class="img-fluid rounded-circle avatar bot__avatar"></div>
-      {% endif %}
+      <div class="img-fluid rounded-circle avatar bot__avatar"></div>
     </div>
 
     <div class="ps-0 ps-sm-2">
@@ -179,7 +171,7 @@
       >
         {{ form.hidden_tag() }}
         <div class="row">
-          <div class="align-self-center col-9 pe-0">
+          <div class="align-self-center col-8 pe-0">
             <textarea
               id="textarea-message"
               type="textbox"

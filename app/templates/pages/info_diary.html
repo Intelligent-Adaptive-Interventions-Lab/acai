@@ -1,0 +1,38 @@
+{% extends '_base.html' %} {% block title %} Chatbot Conversation {% endblock
+title %} {% block css_files %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/combined.css') }}"
+/>
+{% endblock css_files %} {% block contents %}{% include
+  'pages/includes/video_navbar.html' %}
+
+<h5 id="page-id" class="m-0 fs-3 d-none">Chatbot Conversation</h5>
+
+<div style="display: flex; padding:20px">
+  <div style="display: flex; flex-direction: column; width: 50vw">
+    <div class="info" style="padding: 20px">
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora sunt
+        nostrum digsnissimos? Vero eaque quam amet molestias fuga! Vero velit
+        numquam beatae unde repellendus explicabo minus distinctio? Quisquam,
+        animi assumenda.
+      </p>
+    </div>
+  </div>
+    {% include 'pages/includes/diary.html' %}
+  </div>
+
+  {% include 'dialogue/includes/confirmation_dialog.html' %} {% endblock
+  contents %} {% block js_files %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
+  <script src="{{ url_for('static', filename='scripts/vanillaEmojiPicker.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/breadcrumb.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/emojipicker.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/scrollToLastChatBox.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/showTooltip.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/submitConversation.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/diary.js') }}"></script>
+
+  {% endblock js_files %}
+</div>
