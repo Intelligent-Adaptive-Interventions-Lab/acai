@@ -9,7 +9,7 @@ import openai
 import yaml
 import json
 
-with open('/var/www/html/acai/app/static/secret.yaml') as file:
+with open('./app/static/secret.yaml') as file:
     SECRET = yaml.load(file, Loader=yaml.FullLoader)
 
 MESSAGE_START = "\n\nHuman: Hello, who are you?\nAI: I am an AI created by OpenAI. How are you doing today?"

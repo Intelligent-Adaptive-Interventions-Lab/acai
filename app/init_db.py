@@ -4,7 +4,7 @@ import sqlite3
 connection = sqlite3.connect('/var/www/html/acaidb/database.db')
 
 # Execute the schema script to create tables
-with open('schema.sql') as f:
+with open('/var/www/html/acai/app/schema.sql') as f:
     connection.executescript(f.read())
 
 cur = connection.cursor()

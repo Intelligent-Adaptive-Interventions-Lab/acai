@@ -16,6 +16,16 @@ from app.conversation import (
     init_mindy
 )
 from app.video import init_video_for_mindfulness
+from app.database import (
+    add_new_chat_log,
+    track_link_click,
+    add_new_user_to_diary_study,
+    update_pre_survey,
+    udpate_diary,
+    update_reflect_chat,
+    update_reflect,
+    update_post_survey
+)
 from flask import (
     Flask,
     request,
@@ -27,8 +37,6 @@ from flask import (
 )
 
 from datetime import datetime, timezone
-
-import sqlite3
 
 # run_with_ngrok(app)
 
@@ -275,31 +283,7 @@ def bot_to_bot():
         session['bot_chat_log'] = bot_chat_log
         form.process()
 
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
-
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = ("BTB - {}".format(bot.get_user()), bot_chat_log)
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        add_new_chat_log("BTB - {}".format(bot.get_user()), bot_chat_log)
 
         # print("============== END ==============")
         # Render conversation from BOT
@@ -355,31 +339,8 @@ def start_conversation():
         answer = convo.ask(user_message)
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
         session["chat_log"] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
-
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (session["user"], session["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        
+        add_new_chat_log(session["user"], session["chat_log"])
 
         return redirect(url_for('start_conversation'))
 
@@ -443,31 +404,8 @@ def start_qualtrics_conversation():
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
         session['chat_log'] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
 
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (session["user"], session["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        add_new_chat_log(session["user"], session["chat_log"])
 
         return redirect(url_for('start_qualtrics_conversation'))
 
@@ -612,31 +550,8 @@ def info_bot():
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
         info_bot['chat_log'] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
 
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (info_bot["user"], info_bot["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        add_new_chat_log(info_bot["user"], info_bot["chat_log"])
 
         session["info_bot"] = info_bot
         return redirect(url_for('info_bot'))
@@ -652,7 +567,7 @@ def info_bot():
         conversation=convo.get_conversation(end=info_bot.get('end')),
         form=form
     )
-  
+
 @app.route('/full_chat/<user_id>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
 @app.route('/full_chat/<user_id>/<show_bot_avatar>', methods=['GET', 'POST'])
 def full_chat_window(user_id, show_bot_avatar):
@@ -682,31 +597,8 @@ def full_chat_window(user_id, show_bot_avatar):
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
         session['chat_log'] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
 
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (session["user"], session["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        add_new_chat_log(session["user"], session["chat_log"])
 
         return redirect(url_for('full_chat_window', user_id=user_id, show_bot_avatar=show_bot_avatar))
 
@@ -726,6 +618,10 @@ def full_chat_window(user_id, show_bot_avatar):
 @app.route('/survey/<user_id>', methods=['GET', 'POST'])
 def survey(user_id):
     session["user"] = user_id
+
+    track_link_click(user_id=user_id, timestamp=datetime.now())
+    add_new_user_to_diary_study(user_id=user_id, session_start_ts=datetime.now())
+
     form = SurveyForm()
     if form.validate_on_submit():
         presurvey_1 = form.mindful_today.data
@@ -734,6 +630,16 @@ def survey(user_id):
         presurvey_4 = form.decentering.data
         print("SURVEY FORM IS SUBMITTED!!!")
         print(f"presurvey 1: {presurvey_1}\npresurvey 2: {presurvey_2}\npresurvey 3: {presurvey_3}\npresurvey 4: {presurvey_4}")
+
+        update_pre_survey(
+            user_id=user_id, 
+            pre_mindful=presurvey_1, 
+            pre_stress=presurvey_2,
+            pre_aware=presurvey_3,
+            pre_perspective=presurvey_4,
+            pre_survey_click_ts=datetime.now()
+        )
+
         return redirect(url_for('video_diary', user_id=user_id))
 
     return render_template(
@@ -753,6 +659,14 @@ def video_diary(user_id):
         diary_2 = form.diary_2.data
         print("VIDEO DIARY FORM IS SUBMITTED!!!")
         print(f"diary 1: {diary_1}\ndiary 2: {diary_2}")
+
+        udpate_diary(
+            user_id=user_id, 
+            diary_1=diary_1, 
+            diary_2=diary_2, 
+            video_name=video_url, 
+            main_interface_click_ts_1=datetime.now()
+        )
 
         if int(user_id) % 2 == 0:
             return redirect(url_for('reflect_diary', user_id=user_id))
@@ -776,6 +690,15 @@ def post_survey(user_id):
         statement_2 = form.statement_2.data
         print("POST SURVEY FORM IS SUBMITTED!!!")
         print(f"stress: {stress}\nstatement 1: {statement_1}\nstatement 2: {statement_2}")
+
+        update_post_survey(
+            user_id=user_id, 
+            post_stress=stress, 
+            post_aware=statement_1, 
+            post_mindful=statement_2, 
+            post_survey_click_ts=datetime.now()
+        )
+
         return redirect(url_for('end_survey', user_id=user_id))
 
     return render_template(
@@ -798,7 +721,7 @@ def reflect_diary(user_id):
     start = session['reflect_diary'].get('start')
     if start is None:
         session['reflect_diary']["start"] = start_time
-        
+
     print(f"start time: {session['reflect_diary'].get('start')}")
 
     form = DiaryForm()
@@ -807,6 +730,14 @@ def reflect_diary(user_id):
         diary_2 = form.diary_2.data
         print("VIDEO DIARY FORM IS SUBMITTED!!!")
         print(f"diary 1: {diary_1}\ndiary 2: {diary_2}")
+
+        update_reflect(
+            user_id=user_id, 
+            diary_1=diary_1, 
+            diary_2=diary_2, 
+            main_interface_click_ts_2=datetime.now()
+        )
+
         return redirect(url_for('post_survey', user_id=user_id))
 
     return render_template(
@@ -848,31 +779,9 @@ def reflect_bot(user_id, convo_end, show_bot_avatar):
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
         reflection_bot['chat_log'] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
 
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (reflection_bot["user"], reflection_bot["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        add_new_chat_log(reflection_bot["user"], reflection_bot["chat_log"])
+        update_reflect_chat(user_id=user_id, reflect_chatlog=chat_log)
 
         session["reflection_bot"] = reflection_bot
         return redirect(url_for('reflect_bot', user_id=user_id, convo_end=1 if end else 0))
@@ -938,31 +847,8 @@ def mindy(user_id):
         chat_log = convo.append_interaction_to_chat_log(user_message, answer)
 
         session["mindy"]['chat_log'] = chat_log
-        sqliteConnection = None
-        try:
-            sqliteConnection = sqlite3.connect(
-                '/var/www/html/acaidb/database.db')
-            cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
 
-            sqlite_insert_query = """INSERT INTO chats
-                                  (user_id, chat_log) 
-                                   VALUES 
-                                  (?,?);"""
-            param_tuple = (session["user"], session["mindy"]["chat_log"])
-            count = cursor.execute(sqlite_insert_query, param_tuple)
-            sqliteConnection.commit()
-            print(
-                "Record inserted successfully into SqliteDb_developers table ",
-                cursor.rowcount)
-            cursor.close()
-
-        except sqlite3.Error as error:
-            print("Failed to insert data into sqlite table", error)
-        finally:
-            if sqliteConnection:
-                sqliteConnection.close()
-                print("The SQLite connection is closed")
+        add_new_chat_log(session["user"], session["mindy"]['chat_log'])
 
         return redirect(url_for('mindy', user_id=user_id))
 
