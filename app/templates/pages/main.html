@@ -161,7 +161,7 @@ css_files %} {% endblock css_files %} {% block contents %} {% include
     };
 
     document.getElementById("bot-video-diary-page-btn").onclick = function () {
-      location.href = "{{ url_for('survey', route_num=1) }}";
+      location.href = "{{ url_for('survey', user_id=1) }}";
     };
   
 
