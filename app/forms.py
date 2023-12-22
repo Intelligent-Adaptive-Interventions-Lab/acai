@@ -46,7 +46,7 @@ class SurveyForm(FlaskForm):
         validators=[DataRequired()]
     )
 
-    stress = IntegerField('Stress', default=0)
+    stress = IntegerField('Stress', default=5)
 
     positive_mindset = IntegerField('Positive Mindset', default=3)
 

@@ -1,7 +1,7 @@
 import sqlite3
 
-# SQLITE_DB_PATH = '/var/www/html/acaidb/database.db'
-SQLITE_DB_PATH = './database.db'
+SQLITE_DB_PATH = '/var/www/html/acaidb/database.db'
+# SQLITE_DB_PATH = './database.db'
 
 def add_new_chat_log(user_id, chat_log):
     sqliteConnection = None

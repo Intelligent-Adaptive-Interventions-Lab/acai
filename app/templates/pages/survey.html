@@ -33,7 +33,7 @@ Quiz
     <p>How often have you found yourself being consciously mindful today?</p>
     <div class="question radio-options">
       <div>
-        <input type="radio" id="mc1-0" name="mindful-today" value="none" />
+        <input type="radio" id="mc1-0" name="mindful-today" value="none" required/>
         <label for="mc1-0">None: I have not engaged in mindful practices or moments today.</label>
       </div>
     
@@ -177,7 +177,7 @@ Quiz
         this.radMindfulToday[i].check = false;
       }
 
-      this.rangeStress.value = this.formStress.value = 1;
+      this.rangeStress.value = this.formStress.value = 5;
       this.rangePosMindset.value = this.formPosMindset.value = 3;
       this.rangeDecentering.value = this.formDecenering.value = 3;
 
