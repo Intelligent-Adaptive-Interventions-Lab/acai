@@ -1,7 +1,7 @@
 {% extends '_base.html' %} 
 
 {% block title %}
-Chatbot Conversation
+Daily Mindfulness
 {% endblock title %} 
 
 {% block css_files %}
@@ -16,7 +16,8 @@ Chatbot Conversation
   <div class="d-flex justify-content-center align-items-center">
     <div class="d-flex" style="flex: 1; padding:20px;">
       <div class="d-flex flex-column" style="flex: 1;">
-        <div class="container d-flex p-0" style="flex:1;">
+        <p>We recommend you to engage in at least 4-5 exchanges with the following bot. You should click on "Save and Continue" after your interaction.</p>
+        <div class="container d-flex p-0" style="flex:1;">          
           <iframe
             id="reflect-iframe"
             src="{{ url_for('reflect_bot', user_id=12345, convo_end=0) }}"
@@ -132,29 +133,29 @@ ReflectDiary.prototype = {
       }
     );
 
-    if (((new Date().getTime() - this.startTime) % (1000 * 60 * 60)) / (1000 * 60) > 5) {
-      this.inactivateBot();
-    } else {
-      // Update the count down every 1 second
-      let countDownEvent = setInterval(function() {
+    //if (((new Date().getTime() - this.startTime) % (1000 * 60 * 60)) / (1000 * 60) > 5) {
+    //  this.inactivateBot();
+    //} else {
+    //  // Update the count down every 1 second
+    //  let countDownEvent = setInterval(function() {
 
-        // Find the distance between now and the count down date
-        let distance = new Date().getTime() - that.startTime;
+    //    // Find the distance between now and the count down date
+    //    let distance = new Date().getTime() - that.startTime;
 
-        // Time calculations for days, hours, minutes and seconds
-        // let days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        // let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        // let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    //    // Time calculations for days, hours, minutes and seconds
+    //    // let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    //    // let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    //    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    //    // let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        // If the count down is finished in 5 minutes
-        if (minutes > 5) {
-          clearInterval(countDownEvent);
+    //    // If the count down is finished in 5 minutes
+    //    if (minutes > 5) {
+    //      clearInterval(countDownEvent);
 
-          that.inactivateBot();
-        }
-      }, 1000);
-    }
+    //      that.inactivateBot();
+    //    }
+    //  }, 1000);
+    //}
   }
 };
 

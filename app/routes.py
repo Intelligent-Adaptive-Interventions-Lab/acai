@@ -841,16 +841,16 @@ def end_survey(user_id):
 
 @app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
 def mindy(user_id):
-    session["user"] = user_id
+    session["user"] = str(user_id)
     session["mindy"] = session.get("mindy", {})
-    chat_log = session.get('chat_log')
+    chat_log = session["mindy"].get('chat_log')
     if chat_log is None:
         select_prompt = init_mindy()
         session["mindy"]["chat_log"] = select_prompt["prompt"] + select_prompt["message_start"]
         session["mindy"]["chatbot"] = select_prompt["chatbot"]
 
     convo = GPTConversation(
-        session["mindy"].get("user"), 
+        user_id, 
         session["mindy"].get("chatbot"),
         session["mindy"].get("chat_log"),
         bot_start="Hi! I am Mindy, your mindfulness buddy! How can I help you today?",
@@ -865,7 +865,7 @@ def mindy(user_id):
 
         session["mindy"]['chat_log'] = chat_log
 
-        add_new_chat_log(session["user"], session["mindy"]['chat_log'])
+        add_new_chat_log(user_id, session["mindy"]['chat_log'])
 
         return redirect(url_for('mindy', user_id=user_id))
 
@@ -878,6 +878,7 @@ def mindy(user_id):
         end=convo.END,
         notification=convo.NOTI,
         conversation=convo.get_conversation(end=session.get('end')),
+        title="Mindy",
         form=form
     )
 

@@ -66,7 +66,7 @@ class DiaryForm(FlaskForm):
 
 
 class PostSurveyForm(FlaskForm):
-    stress = IntegerField('Stress', default=0)
+    stress = IntegerField('Stress', default=5)
 
     statement_1 = IntegerField('Statement 1', default=3)
 
