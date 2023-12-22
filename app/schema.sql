@@ -10,11 +10,13 @@ CREATE TABLE chats (
 );
 
 CREATE TABLE linkClick (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE interfaceSession (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
     pre_mindful TEXT,
     pre_stress TEXT,
