@@ -840,6 +840,18 @@ def end_survey(user_id):
 
 
 @app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
+def mindy_chat(user_id):
+    delete_variables = [
+        'user',
+        'mindy'
+    ]
+    for variable in delete_variables:
+        _delete_session_variable(variable)
+    
+    return redirect(url_for('mindy', user_id=user_id))
+
+
+@app.route('/mindy_chat/<user_id>', methods=['GET', 'POST'])
 def mindy(user_id):
     session["user"] = str(user_id)
     session["mindy"] = session.get("mindy", {})
