@@ -34,7 +34,8 @@ from flask import (
     jsonify,
     render_template, 
     redirect,
-    url_for
+    url_for,
+    abort
 )
 
 from datetime import datetime, timezone
@@ -618,6 +619,8 @@ def full_chat_window(user_id, show_bot_avatar):
 
 @app.route('/survey/<user_id>', methods=['GET', 'POST'])
 def survey(user_id):
+    abort(404)
+    
     session["user"] = user_id
 
     form = SurveyForm()
@@ -657,6 +660,8 @@ def survey(user_id):
 
 @app.route('/video_diary/<user_id>', methods=['GET', 'POST'])
 def video_diary(user_id):
+    abort(404)
+    
     session["user"] = user_id
     video_url = init_video_for_mindfulness()
 
@@ -691,6 +696,8 @@ def video_diary(user_id):
 
 @app.route('/post_survey/<user_id>', methods=['GET', 'POST'])
 def post_survey(user_id):
+    abort(404)
+    
     session["user"] = user_id
     form = PostSurveyForm()
     if form.validate_on_submit():
@@ -718,6 +725,8 @@ def post_survey(user_id):
 
 @app.route('/reflect_diary/<user_id>', methods=['GET', 'POST'])
 def reflect_diary(user_id):
+    abort(404)
+    
     session["user"] = user_id
     reflect_diary = session.get("reflect_diary", None)
     start_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
@@ -765,6 +774,8 @@ def reflect_diary(user_id):
 @app.route('/reflect_bot/<user_id>/<convo_end>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
 @app.route('/reflect_bot/<user_id>/<show_bot_avatar>/<convo_end>', methods=['GET', 'POST'])
 def reflect_bot(user_id, convo_end, show_bot_avatar):
+    abort(404)
+    
     end = bool(int(convo_end))
     session["user"] = user_id
     reflection_bot = session.get("reflection_bot", None)
@@ -819,6 +830,8 @@ def reflect_bot(user_id, convo_end, show_bot_avatar):
 
 @app.route('/end_survey/<user_id>', methods=['GET', 'POST'])
 def end_survey(user_id):
+    abort(404)
+    
     session["user"] = user_id
 
     delete_variables = [
@@ -841,6 +854,8 @@ def end_survey(user_id):
 
 @app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
 def mindy_chat(user_id):
+    abort(404)
+    
     delete_variables = [
         'user',
         'mindy'
@@ -853,6 +868,8 @@ def mindy_chat(user_id):
 
 @app.route('/mindy_chat/<user_id>', methods=['GET', 'POST'])
 def mindy(user_id):
+    abort(404)
+    
     session["user"] = str(user_id)
     session["mindy"] = session.get("mindy", {})
     chat_log = session["mindy"].get('chat_log')
@@ -897,9 +914,13 @@ def mindy(user_id):
 
 @app.route('/bot_video_diary', methods=['GET', 'POST'])
 def bot_video_diary():
+    abort(404)
+    
     return render_template("/pages/bot_video_diary.html")
 
 
 @app.route('/info_diary')
 def info_diary():
+    abort(404)
+    
     return render_template("/pages/info_diary.html")
