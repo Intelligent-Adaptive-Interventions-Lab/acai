@@ -387,13 +387,13 @@ def mi_conversation():
         conversation=convo.get_conversation(test=True),
         form=form,
         enable_typing_animation=1,
-        timer=timer_remaining
+        # timer=timer_remaining
     )
 
 
 @app.route('/np_mi_conversation', methods=['GET', 'POST'])
 def np_mi_conversation():
-    INITIAL_TIMER = 300
+    INITIAL_TIMER = 1
 
     chat_log = session.get('np_mi_chat_log', f"You are a conversational chatbot.\n\n{MI_Conversation.CHATBOT}: Hey there! I'm an AI developed by the University of Toronto. How can I help you?")
     chatbot = session.get('np_mi_chatbot', "Alex (chatbot)")
@@ -439,7 +439,7 @@ def np_mi_conversation():
         conversation=convo.get_conversation(test=True),
         form=form,
         enable_typing_animation=1,
-        timer=timer_remaining
+        # timer=timer_remaining
     )
 
 
@@ -518,7 +518,7 @@ def d_mi_conversation():
         conversation=convo.get_conversation(),
         form=form,
         enable_typing_animation=1,
-        timer=timer_remaining
+        # timer=timer_remaining
     )
 
 
