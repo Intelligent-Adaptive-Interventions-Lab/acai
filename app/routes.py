@@ -619,7 +619,6 @@ def full_chat_window(user_id, show_bot_avatar):
 
 @app.route('/survey/<user_id>', methods=['GET', 'POST'])
 def survey(user_id):
-    abort(404)
     
     session["user"] = user_id
 
@@ -660,7 +659,6 @@ def survey(user_id):
 
 @app.route('/video_diary/<user_id>', methods=['GET', 'POST'])
 def video_diary(user_id):
-    abort(404)
     
     session["user"] = user_id
     video_url = init_video_for_mindfulness()
@@ -696,7 +694,6 @@ def video_diary(user_id):
 
 @app.route('/post_survey/<user_id>', methods=['GET', 'POST'])
 def post_survey(user_id):
-    abort(404)
     
     session["user"] = user_id
     form = PostSurveyForm()
@@ -725,7 +722,6 @@ def post_survey(user_id):
 
 @app.route('/reflect_diary/<user_id>', methods=['GET', 'POST'])
 def reflect_diary(user_id):
-    abort(404)
     
     session["user"] = user_id
     reflect_diary = session.get("reflect_diary", None)
@@ -774,7 +770,6 @@ def reflect_diary(user_id):
 @app.route('/reflect_bot/<user_id>/<convo_end>', defaults={'show_bot_avatar': None}, methods=['GET', 'POST'])
 @app.route('/reflect_bot/<user_id>/<show_bot_avatar>/<convo_end>', methods=['GET', 'POST'])
 def reflect_bot(user_id, convo_end, show_bot_avatar):
-    abort(404)
     
     end = bool(int(convo_end))
     session["user"] = user_id
@@ -830,7 +825,6 @@ def reflect_bot(user_id, convo_end, show_bot_avatar):
 
 @app.route('/end_survey/<user_id>', methods=['GET', 'POST'])
 def end_survey(user_id):
-    abort(404)
     
     session["user"] = user_id
 
@@ -854,7 +848,6 @@ def end_survey(user_id):
 
 @app.route('/chat_with_mindy/<user_id>', methods=['GET', 'POST'])
 def mindy_chat(user_id):
-    abort(404)
     
     delete_variables = [
         'user',
@@ -868,7 +861,6 @@ def mindy_chat(user_id):
 
 @app.route('/mindy_chat/<user_id>', methods=['GET', 'POST'])
 def mindy(user_id):
-    abort(404)
     
     session["user"] = str(user_id)
     session["mindy"] = session.get("mindy", {})
@@ -914,13 +906,11 @@ def mindy(user_id):
 
 @app.route('/bot_video_diary', methods=['GET', 'POST'])
 def bot_video_diary():
-    abort(404)
     
     return render_template("/pages/bot_video_diary.html")
 
 
 @app.route('/info_diary')
 def info_diary():
-    abort(404)
     
     return render_template("/pages/info_diary.html")
