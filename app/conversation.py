@@ -318,7 +318,7 @@ class Conversation:
 class GPTConversation(Conversation):
     TEMPERATURE = 0
 
-    MAX_TOKENS = 300
+    MAX_TOKENS = 500
 
     CONFIGS = {
         "top_p": 1,
@@ -343,13 +343,13 @@ class GPTConversation(Conversation):
 
         self.prompt = chat_log.split(self.CONVO_START)[0] if self.CONVO_START else chat_log
         print(f"INIT: prompt - {self.prompt}")
-        self.start_sequence = f"\n{self.CHATBOT}:"
+        self.start_sequence = f"\n\n{self.CHATBOT}:"
         self.restart_sequence = f"\n\n{self.USER}: "
 
     def ask(self, question: str) -> str:
-        # prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
+        only_conversation = f"{self.chat_log}{self.restart_sequence}{question}".split("".join([self.prompt, self.CONVO_START]))[1]
 
-        chat_messages = self.get_chat_messages(f"{self.chat_log}{self.restart_sequence}{question}")
+        chat_messages = self.get_chat_messages(only_conversation)
         
         print(chat_messages)
         
@@ -374,8 +374,8 @@ class GPTConversation(Conversation):
         return f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence} {answer}".strip()
 
     def get_chat_messages(self, chat_log) -> List:
-        chat_log_clean = chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
-        dialogs = chat_log_clean.split(self.restart_sequence)
+        # chat_log_clean = chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
+        dialogs = chat_log.split(self.restart_sequence)
 
         chat_messages = []
         chat_messages.append(SystemMessage(content=self.prompt))
@@ -507,18 +507,30 @@ class CustomGPTConversation(GPTConversation):
 
     def ask(self, question: str=None) -> str:
         if not question:
-            prompt_text = f"{self.chat_log}{self.start_sequence}"
+            prompt_text = f"{self.chat_log}"
         else:
-            prompt_text = f"{self.chat_log}{self.restart_sequence}{question}{self.start_sequence}"
-
-        response = openai.Completion.create(
-            prompt=prompt_text,
-            stop=[" {}:".format(self.USER), " {}:".format(self.CHATBOT)],
-            **self.CONFIGS
+            prompt_text = f"{self.chat_log}{self.restart_sequence}{question}"
+        
+        print(f'prompt_text: {prompt_text}')
+    
+        chat_messages = self.get_chat_messages(prompt_text)
+        
+        print(chat_messages)
+        
+        model = AzureChatOpenAI(
+            openai_api_base=self.BASE_URL,
+            openai_api_version=self.API_VERSION,
+            deployment_name=self.DEPLOYMENT_NAME,
+            openai_api_key=self.API_KEY,
+            openai_api_type="azure",
+            temperature=self.TEMPERATURE,
+            model_kwargs=self.CONFIGS,
+            # stop=[" {}:".format(self.get_user()), " {}:".format(self.get_chatbot())],
+            max_tokens=self.MAX_TOKENS
         )
 
-        story = response['choices'][0]['text']
-        answer = str(story).strip().split(self.restart_sequence.rstrip())[0]
+        response = model(chat_messages)
+        answer = str(response.content)
 
         return answer
 

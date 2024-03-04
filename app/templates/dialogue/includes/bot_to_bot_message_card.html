@@ -26,9 +26,24 @@
                 {% endif %}
             </li>
         </ul>
-        <ul class="navbar-nav ms-auto">
+        <ul class="navbar-nav ms-auto gap-2">
             <li class="nav-item">
-                <button type="button" class="btn-close" aria-label="Close" data-bs-toggle="modal" data-bs-target="#confirmation"></button>
+                <a href="/bot_to_bot/clear" role="button" class="btn btn-outline-danger">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    <span>Clear</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/bot_to_bot/download/bot" role="button" class="btn btn-outline-secondary">
+                    <i class="bi bi-file-earmark-arrow-down"></i>
+                    <span>Bot A</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/bot_to_bot/download/user" role="button" class="btn btn-outline-secondary">
+                    <i class="bi bi-file-earmark-arrow-down"></i>
+                    <span>Bot B</span>
+                </a>
             </li>
         </ul>
     </div>
@@ -141,11 +156,6 @@
                             </span>
                         </button>
                     </div>
-                    <div class="input-group-text bg-transparent justify-content-end border-0 col-7 ps-1 d-flex d-md-none">
-                        <button class="btn bg-transparent emoji response__box">
-                            <i class="bi bi-emoji-smile"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
             <div id='all-form' class="col-12 col-md-9">
@@ -155,12 +165,7 @@
                     </div>
                     <div class="col-3">
                         <div class="row">
-                            <div class="input-group-text bg-transparent border-0 ps-0 col-4 pe-2 ps-lg-3 d-none d-md-block">
-                                <button class="btn bg-transparent emoji">
-                                    <i class="bi bi-emoji-smile"></i>
-                                </button>
-                            </div>
-                            <div class="input-group-text bg-transparent border-0 ps-1 col-12 col-md-8 ps-lg-3">
+                            <div class="input-group-text bg-transparent border-0 ps-1 col-12 ps-lg-3">
                                 <button id="btn-submit" class="btn send response__box" type="submit">
                                     <div class="d-none d-md-block">
                                         Send

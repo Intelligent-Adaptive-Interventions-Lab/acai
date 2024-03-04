@@ -11,13 +11,13 @@ class ChatForm(FlaskForm):
 class BotToBotChatForm(FlaskForm):
     bot_prompt = TextAreaField(
         'Prompt', 
-        default="The following is a conversation with a Psychoanalytic Coach. The Psychoanalytic Coach facilitates awareness of unconscious motivations, thereby increasing choice. The Psychoanalytic Coach explores the ways in which the human avoids painful or threatening feelings, fantasies, and thoughts. The assistant is helpful, creative, clever, and very friendly. The Psychoanalytic Coach makes empathic reflections and interpretations to make the human more aware of unconscious experiences and relational patterns. The Psychoanalytic Coach pays attention to the therapeutic relationship, including transference and countertransference.", 
+        default="You are a friend, aiming to promote well-being, guided by the Theory of Planned Behavior, which suggests that an individual's behavior is directly influenced by their intention, shaped by their attitudes towards the behavior, the subjective norms surrounding it, and their perceived control over the behavior. Your approach involves providing emotional through a direct, while maintaining a positive tone throughout the interaction.", 
         validators=[DataRequired()]
     )
 
     user_prompt = TextAreaField(
         'Prompt', 
-        default="The following is a conversation with a person suffering from anxiety. The person is seeking help to manage their thoughts and emotions.", 
+        default="You are a student who feels generally positive about life. Recently, you've been managing your academic and personal responsibilities well, feeling confident in your ability to handle challenges. You seek to maintain or slightly improve your current state of well-being. During a conversation with a well-being improvement agent, you express interest in strategies that could further enhance your productivity and overall happiness without indicating any significant distress or issues.", 
         validators=[DataRequired()]
     )
 

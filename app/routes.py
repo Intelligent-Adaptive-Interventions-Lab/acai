@@ -35,7 +35,8 @@ from flask import (
     render_template, 
     redirect,
     url_for,
-    abort
+    abort,
+    Response
 )
 
 from datetime import datetime, timezone
@@ -166,10 +167,47 @@ def mindfulness_conversation():
         form=form
     )
 
+@app.route('/bot_to_bot/download/bot')
+def download_bot_chat_log():
+    form = BotToBotChatForm(turn="User")
+    
+    # Extract data from form
+    chat_log = session.get('bot_chat_log', form.bot_prompt.data)
+    
+    return Response(
+        chat_log,
+        mimetype="text/plain",
+        headers={"Content-Disposition": "attachment;filename=bot_a_chat_log.txt"}
+    )
+
+@app.route('/bot_to_bot/download/user')
+def download_user_chat_log():
+    form = BotToBotChatForm(turn="Bot")
+    
+    # Extract data from form
+    chat_log = session.get('user_chat_log', form.user_prompt.data)
+    
+    return Response(
+        chat_log,
+        mimetype="text/plain",
+        headers={"Content-Disposition": "attachment;filename=bot_b_chat_log.txt"}
+    )
+
+@app.route('/bot_to_bot/clear')
+def bot_to_bot_refresh():
+    delete_variables = [
+        'bot_chat_log',
+        'user_chat_log'
+    ]
+    for variable in delete_variables:
+        _delete_session_variable(variable)
+    
+    return redirect(url_for('bot_to_bot'))
+
 
 @app.route('/bot_to_bot', methods=['GET', 'POST'])
 def bot_to_bot():
-    form = BotToBotChatForm(turn="Bot")
+    form = BotToBotChatForm(turn="User")
 
     bot = CustomGPTConversation(
         user="HUMAN",
@@ -179,7 +217,6 @@ def bot_to_bot():
         default_start="I am an AI created by OpenAI. How are you doing today?"
     )
     bot.prompt = bot.get_prompt()
-    form.bot_prompt.default = bot.get_prompt()
 
     user = CustomGPTConversation(
         user="HUMAN",
@@ -189,10 +226,9 @@ def bot_to_bot():
         default_start="Hello, who are you?"
     )
     user.prompt = user.get_prompt()
-    form.user_prompt.default = user.get_prompt()
 
     if form.validate_on_submit():
-        # print("============== START ==============")
+        print("============== START ==============")
         message = form.message.data
         turn = form.turn.data
 
@@ -287,7 +323,7 @@ def bot_to_bot():
 
         add_new_chat_log("BTB - {}".format(bot.get_user()), bot_chat_log)
 
-        # print("============== END ==============")
+        print("============== END ==============")
         # Render conversation from BOT
         return render_template(
             "/pages/bot_to_bot.html",
@@ -299,6 +335,11 @@ def bot_to_bot():
             conversation=bot.get_conversation(test=False),
             form=form
         )
+    else:
+        form.bot_prompt.default = bot.get_prompt()
+        form.user_prompt.default = user.get_prompt()
+        form.turn.default = 'User'
+        form.process()
 
     return render_template(
         "/pages/bot_to_bot.html",
