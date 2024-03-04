@@ -8,6 +8,7 @@ from langchain.schema import AIMessage, HumanMessage, SystemMessage
 import openai
 import yaml
 import json
+import re
 
 with open('/var/www/html/acai/app/static/secret.yaml', 'rt', encoding='utf8') as file:
 # with open('./app/static/secret.yaml') as file:
@@ -375,19 +376,20 @@ class GPTConversation(Conversation):
 
     def get_chat_messages(self, chat_log) -> List:
         # chat_log_clean = chat_log.split("".join([self.prompt, self.CONVO_START]))[1]
-        dialogs = chat_log.split(self.restart_sequence)
+        chat_log_clean = chat_log.split(self.prompt, 1)[-1]
 
         chat_messages = []
         chat_messages.append(SystemMessage(content=self.prompt))
-        
-        for i in range(1, len(dialogs)):
-            messages = dialogs[i].split(self.start_sequence)
-            
-            for msg_idx, msg in enumerate(messages):
-                if msg_idx == 0:
-                    chat_messages.append(HumanMessage(content=msg))
-                else:
-                    chat_messages.append(AIMessage(content=msg, name=self.get_chatbot()))
+
+        pattern_str = f'({re.escape(self.start_sequence.strip())}|{re.escape(self.start_sequence.strip())})(.+?)(?=\n\n({re.escape(self.start_sequence.strip())}|{re.escape(self.start_sequence.strip())})|\Z)'
+        pattern = re.compile(pattern_str, re.DOTALL)
+
+        for match in pattern.finditer(chat_log_clean):
+            role, message = match.group(1), match.group(2).strip()
+            if role == self.start_sequence.strip():
+                chat_messages.append(AIMessage(content=message))
+            else:  # role == human_role
+                chat_messages.append(HumanMessage(content=message))
 
         return chat_messages
 
@@ -497,13 +499,12 @@ class CustomGPTConversation(GPTConversation):
 
     def get_last_message(self) -> str:
         # Get last message from the user (opposite) in the chat log
-        separate_bot_message = self.chat_log.rsplit(self.restart_sequence, 1)
-
-        if len(separate_bot_message) > 1:
-            last_turn_msg = separate_bot_message[-1].rsplit(self.start_sequence, 1)[0]
-            return last_turn_msg.strip()
-
-        return ''
+        chatlog_and_bot_msg = self.chat_log.rsplit(self.restart_sequence, 1)
+        
+        if len(chatlog_and_bot_msg) <= 1:
+            return ''
+        
+        return chatlog_and_bot_msg[-1]
 
     def ask(self, question: str=None) -> str:
         if not question:

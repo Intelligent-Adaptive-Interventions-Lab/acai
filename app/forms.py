@@ -11,7 +11,7 @@ class ChatForm(FlaskForm):
 class BotToBotChatForm(FlaskForm):
     bot_prompt = TextAreaField(
         'Prompt', 
-        default="You are a friend, aiming to promote well-being, guided by the Theory of Planned Behavior, which suggests that an individual's behavior is directly influenced by their intention, shaped by their attitudes towards the behavior, the subjective norms surrounding it, and their perceived control over the behavior. Your approach involves providing emotional through a direct, while maintaining a positive tone throughout the interaction.", 
+        default="You are a friend, aiming to promote well-being, guided by the Theory of Planned Behavior, which suggests that an individual's behavior is directly influenced by their intention, shaped by their attitudes towards the behavior, the subjective norms surrounding it, and their perceived control over the behavior. Your approach involves providing emotional through a direct communication style, while maintaining a positive tone throughout the interaction.", 
         validators=[DataRequired()]
     )
 
