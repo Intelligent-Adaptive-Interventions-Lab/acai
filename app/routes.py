@@ -215,7 +215,7 @@ def bot_to_bot():
         chatbot="AI",
         chat_log=session.get('bot_chat_log', form.bot_prompt.data),
         prompt=form.bot_prompt.data,
-        default_start="I am an AI created by OpenAI. How are you doing today?"
+        default_start="I am an AI agent designed to improve your well-being. How are you doing today?"
     )
     bot.prompt = bot.get_prompt()
 
