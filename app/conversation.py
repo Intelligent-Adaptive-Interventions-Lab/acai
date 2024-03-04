@@ -381,7 +381,7 @@ class GPTConversation(Conversation):
         chat_messages = []
         chat_messages.append(SystemMessage(content=self.prompt))
 
-        pattern_str = f'({re.escape(self.start_sequence.strip())}|{re.escape(self.start_sequence.strip())})(.+?)(?=\n\n({re.escape(self.start_sequence.strip())}|{re.escape(self.start_sequence.strip())})|\Z)'
+        pattern_str = f'({re.escape(self.start_sequence.strip())}|{re.escape(self.restart_sequence.strip())})(.+?)(?=\n\n({re.escape(self.start_sequence.strip())}|{re.escape(self.restart_sequence.strip())})|\Z)'
         pattern = re.compile(pattern_str, re.DOTALL)
 
         for match in pattern.finditer(chat_log_clean):

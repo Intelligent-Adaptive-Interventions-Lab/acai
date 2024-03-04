@@ -236,15 +236,15 @@ def bot_to_bot():
         print(f'turn: {turn}')
 
         if message == '':
-            last_question = bot.get_last_message() if turn == 'User' else user.get_last_message()
+            last_question = user.get_last_message() if turn == 'User' else bot.get_last_message()
 
             if last_question == '':
                 answer = user.default_start if turn == 'User' else bot.default_start
             else:
                 answer = user.ask() if turn == 'User' else bot.ask()
 
-            bot_chat_log = bot.append_interaction_to_chat_log(answer=answer) if turn == 'User' else bot.append_interaction_to_chat_log(question=answer)
-            user_chat_log = user.append_interaction_to_chat_log(question=answer) if turn == 'User' else user.append_interaction_to_chat_log(answer=answer)
+            bot_chat_log = bot.append_interaction_to_chat_log(question=answer) if turn == 'User' else bot.append_interaction_to_chat_log(answer=answer)
+            user_chat_log = user.append_interaction_to_chat_log(answer=answer) if turn == 'User' else user.append_interaction_to_chat_log(question=answer)
             form.turn.default = 'Bot' if turn == 'User' else 'User'
         else:
             answer = user.ask(question=message) if turn == 'User' else bot.ask(question=message)
@@ -258,103 +258,6 @@ def bot_to_bot():
                 bot_chat_log = bot.append_interaction_to_chat_log(question=answer)
                 user_chat_log = user.append_interaction_to_chat_log(question=message, answer=answer)
 
-        # # Check current turn of the conversation
-        # if turn == 'User':
-        #     # USER turn
-        #     # Check if providing message manually
-        #     if message != '':
-        #         # [USER] Add answer (self) message to chat log
-        #         user.append_interaction_to_chat_log(answer=message)
-
-        #         # [BOT] Generate message to chat log
-        #         answer = bot.ask(question=message)
-
-        #         # [BOT] Add message back to chat log
-        #         bot_chat_log = bot.append_interaction_to_chat_log(
-        #             question=message, answer=answer)
-
-        #         # [USER] Add question (opposite) message to chat log
-        #         user_chat_log = user.append_interaction_to_chat_log(
-        #             question=answer)
-
-        #         # print(f'user_chat_log: {user_chat_log}')
-        #         # print(f'bot_chat_log: {bot_chat_log}')
-
-        #         form.turn.default = 'User'
-        #     else:
-        #         # [USER] Get last message for question
-        #         question = user.get_last_message()
-
-        #         print('[USER] Get last message for question')
-        #         print_first_50_words(question)
-
-        #         if question == '':
-        #             # [USER] If no starting message is given, use the default start
-        #             answer = user.default_start
-        #         else:
-        #             # [USER] Ask to get answer
-        #             answer = user.ask()
-
-        #         # [BOT] Add question (opposite) message to chat log
-        #         bot_chat_log = bot.append_interaction_to_chat_log(
-        #             question=answer)
-
-        #         # [USER] Add answer (self) message to chat log
-        #         user_chat_log = user.append_interaction_to_chat_log(
-        #             answer=answer)
-
-        #         # print(f'user_chat_log: {user_chat_log}')
-        #         # print(f'bot_chat_log: {bot_chat_log}')
-
-        #         form.turn.default = 'Bot'
-        # else:
-        #     # BOT turn
-        #     # Check if providing message manually
-        #     if message != '':
-        #         # [BOT] Add answer (self) message to chat log
-        #         bot.append_interaction_to_chat_log(answer=message)
-
-        #         # [USER] Generate message to chat log
-        #         answer = user.ask(question=message)
-
-        #         # [USER] Add message back to chat log
-        #         user_chat_log = user.append_interaction_to_chat_log(
-        #             question=message, answer=answer)
-
-        #         # [BOT] Add question (opposite) message to chat log
-        #         bot_chat_log = bot.append_interaction_to_chat_log(
-        #             question=answer)
-
-        #         # print(f'user_chat_log: {user_chat_log}')
-        #         # print(f'bot_chat_log: {bot_chat_log}')
-
-        #         form.turn.default = 'Bot'
-        #     else:
-        #         # [BOT] Get last message for question
-        #         question = bot.get_last_message()
-
-        #         print('[BOT] Get last message for question')
-        #         print_first_50_words(question)
-
-        #         if question == '':
-        #             # [BOT] If no starting message is given, use the default start
-        #             answer = bot.default_start
-        #         else:
-        #             # [BOT] Ask to get answer
-        #             answer = bot.ask()
-
-        #         # [USER] Add question (opposite) message to chat log
-        #         user_chat_log = user.append_interaction_to_chat_log(
-        #             question=answer)
-
-        #         # [BOT] Add answer (self) message to chat log
-        #         bot_chat_log = bot.append_interaction_to_chat_log(answer=answer)
-
-        #         # print(f'user_chat_log: {user_chat_log}')
-        #         # print(f'bot_chat_log: {bot_chat_log}')
-
-        #         form.turn.default = 'User'
-
         # Sync both USER and BOT chat logs
         user.sync_chat_log(user_chat_log)
         bot.sync_chat_log(bot_chat_log)
@@ -367,15 +270,16 @@ def bot_to_bot():
         add_new_chat_log("BTB - {}".format(user.get_user()), user_chat_log)
 
         print("============== END ==============")
-        # Render conversation from BOT
+        print(f'Current turn is: {form.turn.default}')
+        # Render conversation
         return render_template(
             "/pages/bot_to_bot.html",
-            user=user.get_user(),
-            bot=user.get_chatbot(),
-            warning=user.WARNING,
-            end=user.END,
-            notification=user.NOTI,
-            conversation=user.get_conversation(test=False),
+            user=bot.get_user(),
+            bot=bot.get_chatbot(),
+            warning=bot.WARNING,
+            end=bot.END,
+            notification=bot.NOTI,
+            conversation=bot.get_conversation(test=False),
             form=form
         )
     else:
@@ -386,12 +290,12 @@ def bot_to_bot():
 
     return render_template(
         "/pages/bot_to_bot.html",
-        user=user.get_user(),
-        bot=user.get_chatbot(),
-        warning=user.WARNING,
-        end=user.END,
-        notification=user.NOTI,
-        conversation=user.get_conversation(test=False),
+        user=bot.get_user(),
+        bot=bot.get_chatbot(),
+        warning=bot.WARNING,
+        end=bot.END,
+        notification=bot.NOTI,
+        conversation=bot.get_conversation(test=False),
         form=form
     )
 
