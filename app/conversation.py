@@ -9,7 +9,7 @@ import openai
 import yaml
 import json
 
-with open('/var/www/html/acai/app/static/secret.yaml') as file:
+with open('/var/www/html/acai/app/static/secret.yaml', 'rt', encoding='utf8') as file:
 # with open('./app/static/secret.yaml') as file:
     SECRET = yaml.load(file, Loader=yaml.FullLoader)
 
